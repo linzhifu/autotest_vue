@@ -1,7 +1,7 @@
 <template>
 <div>
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
-    <br><br>
+    <br><br>  
     <el-button type="primary" @click="new_apicase">添加API</el-button>
     <el-input placeholder="请输入名称" v-model="apiname" style="width:200px"></el-input>
     <el-input placeholder="请输入URL" v-model="apiurl" style="width:200px"></el-input>
