@@ -25,6 +25,8 @@
             <el-button type="primary" @click="update_password">修改密码</el-button>
         </el-collapse-item>
     </el-collapse>
+    <br><br>
+    <el-button type="danger" @click="logout">注销用户</el-button>
 </div>
 </template>
 
@@ -37,23 +39,44 @@ export default {
         return {
             axios: this.axios,
             url: this.url,
-            storage: this.storage,
-            username: user.data.username,
+            userId: this.storage.getItem('userId'),
+            token: this.storage.getItem('token'),
+            username: '',
             username_new: '',
-            email: user.data.email,
+            email: '',
             password_1: '',
             password_2: '',
             activeName:'1'
         }
     },
     methods: {
+        // 获取用户信息
+        get_user() {
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'v1/user/'+this.userId+'/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.username = response.data.data.username
+                this.email = response.data.data.email
+            },error=>{
+                this.$router.push('/')
+            })
+        },
         // 修改用户名
         update_username() {
-            var json_data = {
-                'username': this.username_new
-            }
-            this.axios.patch(this.url+'api/v1/user/'+user.data.id+'/',json_data).then(response=>{
-                // 判断是否登陆成功，登陆成功errcode为0
+            var params_data = {'userId':this.userId,'token':this.token}
+            var body_data = {'username': this.username_new}
+            this.axios({
+                baseURL:this.url,
+                url:'v1/user/'+this.userId+'/',
+                method:'patch',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
+                // 判断是否成功，成功errcode为0
                 if (!response.data.errcode) {
                     this.$message({
                         message: '修改成功',
@@ -61,7 +84,6 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    this.storage.setItem('user',JSON.stringify(response.data))
                     this.username = this.username_new
                     this.username_new = ''
                 }
@@ -75,7 +97,7 @@ export default {
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data.username,
+                        message: "修改失败",
                         type: 'error',
                         center: true,
                     })
@@ -84,19 +106,23 @@ export default {
         // 修改密码
         update_password() {
             if (this.password_1 && this.password_1==this.password_2) {
-                var json_data = {
-                    'password': this.password_1
-                }
-                this.axios.patch(this.url+'api/v1/user/'+user.data.id+'/',json_data).then(response=>{
+                var params_data = {'userId':this.userId,'token':this.token}
+                var body_data = {'password': this.password_1}
+                this.axios({
+                    baseURL:this.url,
+                    url:'v1/user/'+this.userId+'/',
+                    method:'patch',
+                    params:params_data,
+                    data:body_data,
+                }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
                         this.$message({
-                            message: '修改成功,请重新登录',
+                            message: '修改成功',
                             type: 'success',
                             center: true,
                             showClose: true,
                         });
-                        this.$router.push('/login/')
                     }
                     else {
                         this.$message({
@@ -106,6 +132,12 @@ export default {
                             showClose: true,
                         })
                     }
+                },error=>{
+                    this.$message({
+                            message: "修改失败",
+                            type: 'error',
+                            center: true,
+                        })
                 })
             }
             else {
@@ -118,11 +150,20 @@ export default {
             }
             this.password_1 = this.password_2 = ''
         },
+        // 注销用户
+        logout() {
+            this.storage.removeItem('userId')
+            this.storage.removeItem('token')
+            this.$router.push('/')
+        }
     },
     beforeCreate() { 
         // 获取本地缓存最新数据user
         user = JSON.parse(window.localStorage.getItem('user'))
     },
+    created() {
+        this.get_user()
+    }
 }
 </script>
 

@@ -27,10 +27,6 @@
                 <i class="el-icon-document"></i>
                 <span slot="title">测试结果</span>
             </el-menu-item>
-            <el-menu-item index="5" type="flex" align="right">
-                <i class="el-icon-thirdtuisongpeizhi-"></i>
-                <span slot="title">注销用户</span>
-            </el-menu-item>
             </el-menu>
     </el-header>
     <el-main>

@@ -6,7 +6,7 @@
         <el-tabs v-model="activeName" type="border-card" value="first">
             <!-- 用户名登陆 -->
             <el-tab-pane label="用户名登陆">
-                <el-input v-model="username" placeholder="请输入用户名" clearable></el-input>
+                <el-input v-model="username" placeholder="请输入用户名" clearable required></el-input>
                 <el-input v-model="password" placeholder="请输入登陆密码" show-password clearable></el-input>
                 <el-button id="login" type="primary" @click="login('username')">登陆</el-button>
             </el-tab-pane>
@@ -41,16 +41,21 @@ export default {
         }
     },
     methods: {
+        // 用户登陆
         login(type) {
-            // alert(this.username+'---'+this.password+'---'+type)
-            var json_data = {
+            var body_data = {
                 'type': type,
                 'username': this.username,
                 'password': this.password,
                 'email':this.email,
                 'captcha': this.captcha,
             }
-            this.axios.post(this.url+'api/v1/login/',json_data).then(response=>{
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/login/',
+                method:'post',
+                data:body_data,
+            }).then(response=>{
                 // 判断是否登陆成功，登陆成功errcode为0
                 if (!response.data.errcode) {
                     this.$message({
@@ -58,7 +63,8 @@ export default {
                         type: 'success',
                         center: true,
                     });
-                    this.storage.setItem('user',JSON.stringify(response.data))
+                    this.storage.setItem('userId',response.data.data.id)
+                    this.storage.setItem('token',response.data.token)
                     // 登陆成功后跳转
                     this.$router.push({ path: '/home/'})
                 }
@@ -69,10 +75,23 @@ export default {
                         center: true,
                     })
                 }
+            },error=>{
+                this.$message({
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                })
             })
         },
+        // 获取验证码
         get_captcha() {
-            this.axios.get(this.url+'api/v1/captcha/?email='+this.email).then(response=>{
+            var params_data = {'email':this.email}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/captcha/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
                 if (!response.data.errcode) {
                     this.$message({
                         message: '发送成功',
@@ -103,6 +122,12 @@ export default {
                         center: true,
                     })
                 }
+            },error=>{
+                this.$message({
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                })
             })
         }
     }
@@ -110,9 +135,6 @@ export default {
 </script>
 
 <style scoped>
-    body {
-        background: #93defe;
-    }
     img {
         position: absolute;
         left: 160px;
