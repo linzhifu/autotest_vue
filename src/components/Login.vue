@@ -37,12 +37,37 @@ export default {
             activeName: '',
             storage: this.storage,
             is_ok: false,
-            captcha_button: '获取验证码'
+            captcha_button: '获取验证码',
         }
     },
     methods: {
         // 用户登陆
         login(type) {
+            // 验证邮箱格式
+            if (type == 'email') {
+                if (!this.check_email(this.email)) {
+                    return
+                }
+            }
+            // 验证用户名密码不能为空
+            if (type == 'username') {
+                if (!this.username) {
+                    this.$message({
+                        message: '用户名不能为空',
+                        type: 'error',
+                        center: true,
+                    })
+                    return
+                }
+                if (!this.password) {
+                    this.$message({
+                        message: '密码不能为空',
+                        type: 'error',
+                        center: true,
+                    })
+                    return
+                }
+            }
             var body_data = {
                 'type': type,
                 'username': this.username,
@@ -85,6 +110,9 @@ export default {
         },
         // 获取验证码
         get_captcha() {
+            if (!this.check_email(this.email)) {
+                    return
+                }
             var params_data = {'email':this.email}
             this.axios({
                 baseURL:this.url,
@@ -129,7 +157,21 @@ export default {
                     center: true,
                 })
             })
-        }
+        },
+        // 验证邮箱格式
+        check_email(value) {
+            var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+            var isok= reg.test(value);
+            if (!isok) {
+                this.$message({
+                    message: '邮箱格式不对，请重新输入',
+                    type: 'error',
+                    center: true,
+                })
+                return false
+            }
+            return true
+        },
     }
 };
 </script>
