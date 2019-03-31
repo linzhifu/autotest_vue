@@ -246,6 +246,7 @@ export default {
                             showClose: true,
                         })
                 })
+            }).catch(() => {
             })
 
         },
@@ -378,16 +379,11 @@ export default {
         },
         // 进入前端测试案例
         go_webTest(webManagerId) {
-            var url = '/home/webCase/'+webManagerId
-            this.$router.push({ path: url})
-        }
-    },
-    beforeCreate() {
-    },
-    created() {
-        this.get_webManagers()
+            var url = '/home/webCase/'
+            this.$router.push({ path: url,query:{'webManagerId': webManagerId}})
+        },
         // 获取项目列表
-        if (!this.$route.query.projectId) {
+        get_projects() {
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
@@ -439,6 +435,22 @@ export default {
                     })
                 this.$router.push('/')
             })
+        }
+    },
+    watch: {
+        '$route.query.projectId':function(val) {
+            if (!val) {
+                this.get_projects()
+            }
+        }
+    },
+    beforeCreate() {
+    },
+    created() {
+        this.get_webManagers()
+        // 获取项目列表
+        if (!this.$route.query.projectId) {
+            this.get_projects()
         }
     }
 }

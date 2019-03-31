@@ -1,11 +1,16 @@
 <template>
 <div>
+    <!-- 返回上一级 -->
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
     <br><br>
-    <el-button type="primary" @click="new_webcase">添加步骤</el-button>
-    <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
-    <el-input placeholder="请输入操作类型" v-model="weboprateOBj" style="width:200px"></el-input>
-    <br><br>
+    <!-- 添加web操作 -->
+    <div>
+        <el-button type="primary" @click="new_webcase">添加步骤</el-button>
+        <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+        <el-input placeholder="请输入操作类型" v-model="weboprateOBj" style="width:200px"></el-input>
+        <br><br>
+    </div>
+    <!-- 前端selenium操作步骤 -->
     <el-collapse accordion>
         <el-collapse-item v-for="(oprateObj,key) in oprateObjs" :title="oprateObj" :name="oprateObj" :key="key">
             <el-button type="primary" @click="webTest(oprateObj)">开始测试</el-button><br><br>
@@ -49,8 +54,11 @@
                 </el-table-column>
             </el-table>
             <br>
-            <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
-            <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
+            <!-- 翻页 -->
+            <div style="text-align: center;">
+                <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
+                <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
+            </div>
         </el-collapse-item>
     </el-collapse>
     <!-- 修改数据 -->
@@ -102,7 +110,8 @@ export default {
         return {
             axios: this.axios,
             url: this.url,
-            userID:user.data.id,
+            userId: this.storage.getItem('userId'),
+            token: this.storage.getItem('token'),
             webname: '',
             weburl:'',
             weboprateOBj:'',
@@ -110,7 +119,7 @@ export default {
             webCases: [],
             pre:'',
             next:'',
-            webManagerId: this.$route.params.webManagerId,
+            webManagerId: this.$route.query.webManagerId,
             isNextDisabled:false,
             isPreDisabled:false,
             dialogFormVisible:false,
@@ -149,67 +158,56 @@ export default {
         },
         // 获取数据列表
         get_webCases() {
-            var url = this.url+'api/v1/webCase/?webManager='+this.webManagerId
-            this.axios.get(url).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    // this.$message({
-                    //     message: '加载成功',
-                    //     type: 'success',
-                    //     center: true,
-                    //     showClose: true,
-                    // });
-                    this.webCases=[]
-                    this.testObj=[]
-                    this.weburl = ''
-                    this.oprateObjs = []
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.webCases.push(response.data.results[i])
-                        var element = {}
-                        element['css']=response.data.results[i].webcss
-                        element['method']=response.data.results[i].weboprate
-                        element['param']=response.data.results[i].webparam
-                        if (!this.weburl) {
-                            this.weburl = response.data.results[i].weburl
-                        }
-                        if (this.oprateObjs.indexOf(response.data.results[i].oprateOBj)==-1) {
-                            this.oprateObjs.push(response.data.results[i].oprateOBj)
-                            this.$set(this.testObj,response.data.results[i].oprateOBj,[])
-                        }
-                        this.testObj[response.data.results[i].oprateOBj].push(element)
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/webCase/?webManager='+this.webManagerId,
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.webCases=[]
+                this.testObj=[]
+                this.weburl = ''
+                this.oprateObjs = []
+                for (var i=0;i<response.data.results.length;i++){
+                    this.webCases.push(response.data.results[i])
+                    var element = {}
+                    element['css']=response.data.results[i].webcss
+                    element['method']=response.data.results[i].weboprate
+                    element['param']=response.data.results[i].webparam
+                    if (!this.weburl) {
+                        this.weburl = response.data.results[i].weburl
                     }
-                    // 判断是否有上一页
-                    this.pre=response.data.previous
-                    if (!this.pre) {
-                        this.isPreDisabled=true
+                    if (this.oprateObjs.indexOf(response.data.results[i].oprateOBj)==-1) {
+                        this.oprateObjs.push(response.data.results[i].oprateOBj)
+                        this.$set(this.testObj,response.data.results[i].oprateOBj,[])
                     }
-                    else {
-                        this.isPreDisabled=false
-                    }
-                    // 判断是否有下一页
-                    this.next=response.data.next
-                    if (!this.next) {
-                        this.isNextDisabled=true
-                    }
-                    else {
-                        this.isNextDisabled=false
-                    }
+                    this.testObj[response.data.results[i].oprateOBj].push(element)
+                }
+                // 判断是否有上一页
+                this.pre=response.data.previous
+                if (!this.pre) {
+                    this.isPreDisabled=true
                 }
                 else {
-                    this.$message({
-                        message: "加载失败",
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    this.isPreDisabled=false
+                }
+                // 判断是否有下一页
+                this.next=response.data.next
+                if (!this.next) {
+                    this.isNextDisabled=true
+                }
+                else {
+                    this.isNextDisabled=false
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
+                        message: '匿名用户，请先登录',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
+                this.$router.push('/')
             })
         },
         // 打开编辑
@@ -220,7 +218,14 @@ export default {
         // 编辑修改数据
         handleEdit(row) {
             this.dialogFormVisible = false
-            this.axios.patch(this.url+'api/v1/webCase/'+row.id+'/',row).then(response=>{
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/webCase/'+row.id+'/',
+                method:'patch',
+                params:params_data,
+                data:row
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
                     this.$message({
@@ -256,7 +261,13 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
-                this.axios.delete(this.url+'api/v1/webCase/'+row.id+'/').then(response=>{
+                var params_data = {'userId':this.userId,'token':this.token}
+                this.axios({
+                    baseURL:this.url,
+                    url:'api/v1/webCase/'+row.id+'/',
+                    method:'delete',
+                    params:params_data
+                }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
                         this.$message({
@@ -287,12 +298,20 @@ export default {
         },
         // 添加数据
         new_webcase() {
-            var json_data = {
+            var body_data = {
                     'webname': this.webname,
                     'oprateOBj': this.weboprateOBj,
-                    'webManager': this.webManagerId
+                    'webManager': this.webManagerId,
+                    'user':this.userId
                 }
-            this.axios.post(this.url+'api/v1/webCase/',json_data).then(response=>{
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/webCase/',
+                method:'post',
+                params:params_data,
+                data:body_data
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
                     this.$message({
@@ -302,8 +321,6 @@ export default {
                         showClose: true,
                     });
                     this.get_webCases()
-                    this.webname=''
-                    this.weboprateOBj=''
                 }
                 else {
                     this.$message({
@@ -321,6 +338,8 @@ export default {
                         showClose: true,
                     })
             })
+            this.webname=''
+            this.weboprateOBj=''
         },
         // 上一页
         get_pre() {

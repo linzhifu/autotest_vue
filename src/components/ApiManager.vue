@@ -246,6 +246,7 @@ export default {
                             showClose: true,
                         })
                 })
+            }).catch(() => {
             })
         },
         // 添加数据
@@ -377,17 +378,11 @@ export default {
         },
         // 进入API
         go_apiTest(apiManagerId) {
-            var url = '/home/apiCase/'+apiManagerId
-            this.$router.push({ path: url})
-        }
-    },
-    beforeCreate() {
-    },
-    created() {
-        // 获取数据列表
-        this.get_apiManagers()
+            var url = '/home/apiCase/'
+            this.$router.push({ path: url,query:{'apiManagerId': apiManagerId}})
+        },
         // 获取项目列表
-        if (!this.$route.query.projectId) {
+        get_projects() {
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
@@ -439,6 +434,23 @@ export default {
                     })
                 this.$router.push('/')
             })
+        }
+    },
+    watch: {
+        '$route.query.projectId':function(val) {
+            if (!val) {
+                this.get_projects()
+            }
+        }
+    },
+    beforeCreate() {
+    },
+    created() {
+        // 获取数据列表
+        this.get_apiManagers()
+        // 获取项目列表
+        if (!this.$route.query.projectId) {
+            this.get_projects()
         }
     },
 }

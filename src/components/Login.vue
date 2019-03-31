@@ -83,11 +83,11 @@ export default {
             }).then(response=>{
                 // 判断是否登陆成功，登陆成功errcode为0
                 if (!response.data.errcode) {
-                    this.$message({
-                        message: '登陆成功',
-                        type: 'success',
-                        center: true,
-                    });
+                    // this.$message({
+                    //     message: '登陆成功',
+                    //     type: 'success',
+                    //     center: true,
+                    // });
                     this.storage.setItem('userId',response.data.data.id)
                     this.storage.setItem('token',response.data.token)
                     // 登陆成功后跳转
