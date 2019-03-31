@@ -62,6 +62,12 @@ export default {
                 this.username = response.data.data.username
                 this.email = response.data.data.email
             },error=>{
+                this.$message({
+                        message: '匿名用户，请先登录',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
                 this.$router.push('/')
             })
         },
@@ -97,7 +103,7 @@ export default {
                 }
             },error=>{
                 this.$message({
-                        message: "修改失败",
+                        message: error.response.data,
                         type: 'error',
                         center: true,
                     })
@@ -134,7 +140,7 @@ export default {
                     }
                 },error=>{
                     this.$message({
-                            message: "修改失败",
+                            message: error.response.data,
                             type: 'error',
                             center: true,
                         })
@@ -157,9 +163,7 @@ export default {
             this.$router.push('/')
         }
     },
-    beforeCreate() { 
-        // 获取本地缓存最新数据user
-        user = JSON.parse(window.localStorage.getItem('user'))
+    beforeCreate() {
     },
     created() {
         this.get_user()

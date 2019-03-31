@@ -19,8 +19,6 @@
         </el-table-column>
         <el-table-column label="项目描述" align="center" prop="prodes">
         </el-table-column>
-        <el-table-column label="创建人" align="center" prop="username">
-        </el-table-column>
         <el-table-column label="测试中心" align="center">
             <template slot-scope="scope">
                 <el-button type="primary" @click="go_webTest(scope.row.id)" size="mini">前端</el-button>
@@ -44,6 +42,7 @@
         </el-table-column>
     </el-table>
     <br>
+    <!-- 翻页 -->
     <div style="text-align: center;">
         <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
         <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
@@ -70,14 +69,14 @@
 
 <script>
 /* eslint-disable */
-var user;
 export default {
 	name: "Project",
 	data() {
 		return {
             axios: this.axios,
             url: this.url,
-            userID:user.data.id,
+            userId: this.storage.getItem('userId'),
+            token: this.storage.getItem('token'),
             proname: '',
             prodes: '',
             projects:[],
@@ -96,62 +95,57 @@ export default {
 	methods: {
         // 加载数据
         get_projects() {
-            this.axios.get(this.url+'api/v1/project/').then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    // this.$message({
-                    //     message: '加载成功',
-                    //     type: 'success',
-                    //     center: true,
-                    //     showClose: true,
-                    // });
-                    this.projects=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.projects.push(response.data.results[i])
-                    }
-                    // 判断是否有上一页
-                    this.pre=response.data.previous
-                    if (!this.pre) {
-                        this.isPreDisabled=true
-                    }
-                    else {
-                        this.isPreDisabled=false
-                    }
-                    // 判断是否有下一页
-                    this.next=response.data.next
-                    if (!this.next) {
-                        this.isNextDisabled=true
-                    }
-                    else {
-                        this.isNextDisabled=false
-                    }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/project/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.projects=response.data.results
+                // 判断是否有上一页
+                this.pre=response.data.previous
+                if (!this.pre) {
+                    this.isPreDisabled=true
                 }
                 else {
-                    this.$message({
-                        message: "加载失败",
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    this.isPreDisabled=false
+                }
+                // 判断是否有下一页
+                this.next=response.data.next
+                if (!this.next) {
+                    this.isNextDisabled=true
+                }
+                else {
+                    this.isNextDisabled=false
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
+                        message: '匿名用户，请先登录',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
+                this.$router.push('/')
             })
         },
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
-            this.editObj = row
+            this.editObj=row
         },
         // 编辑修改数据
         handleEdit(row) {
+            // 关闭编辑框
             this.dialogFormVisible = false
-            this.axios.patch(this.url+'api/v1/project/'+row.id+'/',row).then(response=>{
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/project/'+row.id+'/',
+                method:'patch',
+                params:params_data,
+                data:row,
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
                     this.$message({
@@ -160,7 +154,6 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    this.get_projects()
                 }
                 else {
                     this.$message({
@@ -187,7 +180,13 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消'
             }).then(() => {
-                this.axios.delete(this.url+'api/v1/project/'+row.id+'/').then(response=>{
+                var params_data = {'userId':this.userId,'token':this.token}
+                this.axios({
+                    baseURL:this.url,
+                    url:'api/v1/project/'+row.id+'/',
+                    method:'delete',
+                    params:params_data,
+                }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
                         this.$message({
@@ -196,7 +195,6 @@ export default {
                             center: true,
                             showClose: true,
                         });
-                        this.get_projects()
                     }
                     else {
                         this.$message({
@@ -206,6 +204,7 @@ export default {
                             showClose: true,
                         })
                     }
+                    this.get_projects()
                 },error=>{
                     this.$message({
                             message: error.response.data,
@@ -214,16 +213,25 @@ export default {
                             showClose: true,
                         })
                 })
+            }).catch(action=>{
+                // console.log(action)
             })
         },
         // 添加数据
         new_product() {
-            var json_data = {
+            var body_data = {
                     'proname': this.proname,
                     'prodes': this.prodes,
-                    'user': this.userID,
+                    'user': this.userId,
                 }
-            this.axios.post(this.url+'api/v1/project/',json_data).then(response=>{
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/project/',
+                method:'post',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
                     this.$message({
@@ -232,11 +240,6 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    // this.projects.push(response.data.data)
-                    // 重新加载数据
-                    this.get_projects()
-                    this.proname=''
-                    this.prodes=''
                 }
                 else {
                     this.$message({
@@ -254,22 +257,20 @@ export default {
                         showClose: true,
                     })
             })
+            // 重新加载数据
+            this.get_projects()
+            this.proname=''
+            this.prodes=''
         },
         // 上一页
         get_pre() {
-            this.axios.get(this.pre).then(response=>{
+            this.axios({
+                url:this.pre,
+                method:'get',
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.$message({
-                        message: '加载成功',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
-                    this.projects=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.projects.push(response.data.results[i])
-                    }
+                    this.projects=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -297,28 +298,23 @@ export default {
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
+                        message: '匿名用户，请先登录',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
+                this.$router.push('/')
             })
         },
         // 下一页
         get_next() {
-            this.axios.get(this.next).then(response=>{
+            this.axios({
+                url:this.next,
+                method:'get',
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.$message({
-                        message: '加载成功',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
-                    this.projects=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.projects.push(response.data.results[i])
-                    }
+                    this.projects=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -346,27 +342,26 @@ export default {
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
+                        message: '匿名用户，请先登录',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
+                this.$router.push('/')
             })
         },
         // 前端测试
         go_webTest(projectId) {
-            var url = '/home/webManager/'+projectId
-            this.$router.push({ path: url})
+            var url = '/home/webManager/'
+            this.$router.push({ path: url,query:{'projectId': projectId}})
         },
         // 后端测试
         go_apiTest(projectId) {
-            var url = '/home/apiManager/'+projectId
-            this.$router.push({ path: url})
+            var url = '/home/apiManager/'
+            this.$router.push({ path: url, query:{'projectId': projectId}})
         }
     },
-    beforeCreate() { 
-        // 获取本地缓存最新数据user
-        user = JSON.parse(window.localStorage.getItem('user'))
+    beforeCreate() {
     },
     created() {
         this.get_projects()

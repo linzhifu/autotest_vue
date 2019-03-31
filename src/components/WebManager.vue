@@ -1,21 +1,26 @@
 <template>
 <div>
-    <a v-if="this.$route.params.projectId" href="#" @click.prevent="go_back">
+    <!-- 返回上一级 -->
+    <a v-if="this.$route.query.projectId" href="#" @click.prevent="go_back">
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
-    <el-button type="primary" @click="new_webcase">添加测试</el-button>
-    <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
-    <el-input placeholder="请输入描述" v-model="webdes" style="width:200px"></el-input>
-    <el-select v-if="!this.$route.params.projectId" v-model="projectId" placeholder="请选择">
-    <el-option
-        v-for="item in project_options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
-        </el-option>
-    </el-select>
-    <br>
-    <br>
+    <!-- 添加web -->
+    <div>
+        <el-button type="primary" @click="new_webcase">添加测试</el-button>
+        <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+        <el-input placeholder="请输入描述" v-model="webdes" style="width:200px"></el-input>
+        <el-input placeholder="请输入URL" v-model="weburl" style="width:200px"></el-input>
+        <el-select v-if="!this.$route.query.projectId" v-model="projectId" placeholder="请选择">
+        <el-option
+            v-for="item in project_options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+        </el-select>
+        <br><br>
+    </div>
+    <!-- web列表 -->
     <el-table
      stripe
      border
@@ -28,8 +33,6 @@
         <el-table-column label="描述" align="center" prop="webdes">
         </el-table-column>
         <el-table-column label="URL" align="center" prop="weburl">
-        </el-table-column>
-        <el-table-column label="创建人" align="center" prop="username">
         </el-table-column>
         <el-table-column label="项目" align="center" prop="proname">
         </el-table-column>
@@ -55,6 +58,7 @@
         </el-table-column>
     </el-table>
     <br>
+    <!-- 翻页 -->
     <div style="text-align: center;">
         <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
         <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
@@ -93,9 +97,11 @@ export default {
         return {
             axios: this.axios,
             url: this.url,
-            userID:user.data.id,
+            userId: this.storage.getItem('userId'),
+            token: this.storage.getItem('token'),
             webname: '',
             webdes: '',
+            weburl:'',
             search: '',
             webManagers: [],
             project_options: [],
@@ -103,7 +109,7 @@ export default {
             next:'',
             isNextDisabled:false,
             isPreDisabled:false,
-            projectId: this.$route.params.projectId,
+            projectId: this.$route.query.projectId,
             dialogFormVisible:false,
             editObj:{
                 webname:'',
@@ -119,54 +125,41 @@ export default {
         // 获取数据
         get_webManagers() {
             var url = this.url+'api/v1/webManager/'
-            if (this.$route.params.projectId) {
-                url = url +'?project='+this.$route.params.projectId
+            if (this.$route.query.projectId) {
+                url = url +'?project='+this.$route.query.projectId
             }
-            this.axios.get(url).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    // this.$message({
-                    //     message: '加载成功',
-                    //     type: 'success',
-                    //     center: true,
-                    //     showClose: true,
-                    // });
-                    this.webManagers=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.webManagers.push(response.data.results[i])
-                    }
-                    // 判断是否有上一页
-                    this.pre=response.data.previous
-                    if (!this.pre) {
-                        this.isPreDisabled=true
-                    }
-                    else {
-                        this.isPreDisabled=false
-                    }
-                    // 判断是否有下一页
-                    this.next=response.data.next
-                    if (!this.next) {
-                        this.isNextDisabled=true
-                    }
-                    else {
-                        this.isNextDisabled=false
-                    }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:url,
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.webManagers=response.data.results
+                // 判断是否有上一页
+                this.pre=response.data.previous
+                if (!this.pre) {
+                    this.isPreDisabled=true
                 }
                 else {
-                    this.$message({
-                        message: "加载失败",
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    this.isPreDisabled=false
+                }
+                // 判断是否有下一页
+                this.next=response.data.next
+                if (!this.next) {
+                    this.isNextDisabled=true
+                }
+                else {
+                    this.isNextDisabled=false
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
+                        message: '匿名用户，请先登录',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
+                this.$router.push('/')
             })
         },
         // 打开编辑
@@ -177,7 +170,14 @@ export default {
         // 编辑修改数据
         handleEdit(row) {
             this.dialogFormVisible = false
-            this.axios.patch(this.url+'api/v1/webManager/'+row.id+'/',row).then(response=>{
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/webManager/'+row.id+'/',
+                method:'patch',
+                params:params_data,
+                data:row,
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
                     this.$message({
@@ -213,7 +213,13 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
-                this.axios.delete(this.url+'api/v1/webManager/'+row.id+'/').then(response=>{
+                var params_data = {'userId':this.userId,'token':this.token}
+                this.axios({
+                    baseURL:this.url,
+                    url:'api/v1/webManager/'+row.id+'/',
+                    method:'delete',
+                    params:params_data,
+                }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
                         this.$message({
@@ -245,13 +251,21 @@ export default {
         },
         // 添加数据
         new_webcase() {
-            var json_data = {
+            var body_data = {
                     'webname': this.webname,
                     'webdes': this.webdes,
-                    'user': this.userID,
+                    'weburl': this.weburl,
+                    'user': this.userId,
                     'project': this.projectId
                 }
-            this.axios.post(this.url+'api/v1/webManager/',json_data).then(response=>{
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/webManager/',
+                method:'post',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
                     this.$message({
@@ -260,10 +274,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    // this.webManagers.push(response.data.data)
                     this.get_webManagers()
-                    this.webname=''
-                    this.webdes=''
                 }
                 else {
                     this.$message({
@@ -281,22 +292,16 @@ export default {
                         showClose: true,
                     })
             })
+            this.webname=''
+            this.webdes=''
+            this.weburl=''
         },
         // 上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.$message({
-                        message: '加载成功',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
-                    this.webManagers=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.webManagers.push(response.data.results[i])
-                    }
+                    this.webManagers=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -336,16 +341,7 @@ export default {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.$message({
-                        message: '加载成功',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
-                    this.webManagers=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.webManagers.push(response.data.results[i])
-                    }
+                    this.webManagers=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -386,23 +382,21 @@ export default {
             this.$router.push({ path: url})
         }
     },
-    beforeCreate() { 
-        // 获取本地缓存最新数据user
-        user = JSON.parse(window.localStorage.getItem('user'))
+    beforeCreate() {
     },
     created() {
         this.get_webManagers()
         // 获取项目列表
-        if (!this.$route.params.projectId) {
-            this.axios.get(this.url+'api/v1/project/').then(response=>{
+        if (!this.$route.query.projectId) {
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/project/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    // this.$message({
-                    //     message: '加载成功',
-                    //     type: 'success',
-                    //     center: true,
-                    //     showClose: true,
-                    // });
                     this.project_options=[]
                     for (var i=0;i<response.data.results.length;i++){
                         var data = {
@@ -438,11 +432,12 @@ export default {
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
+                        message: '匿名用户，请先登录',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
+                this.$router.push('/')
             })
         }
     }
