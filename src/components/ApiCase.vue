@@ -183,7 +183,8 @@
         </el-form>
         <el-form >
             <el-form-item label="Index" label-width="120px">
-            <el-input v-model="editObj.index" autocomplete="off"></el-input>
+            <!-- <el-input v-model="editObj.index" autocomplete="off"></el-input> -->
+            <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -218,12 +219,10 @@ export default {
             isPreDisabled:false,
             dialogFormVisible:false,
             editObj:{
+                id:'',
                 apiname:'',
                 apimethod:'',
                 apiurl:'',
-                apiparam:'',
-                apijson:'',
-                apiresponse:'',
                 index:'',
             },
             method_options: [
@@ -398,7 +397,12 @@ export default {
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
-            this.editObj = row
+            // this.editObj = row
+            this.editObj['id']=row.id
+            this.editObj['apiname']=row.apiname
+            this.editObj['apimethod']=row.apimethod
+            this.editObj['apiurl']=row.apiurl
+            this.editObj['index']=row.index
         },
         // 编辑修改数据
         handleEdit(row) {

@@ -85,7 +85,8 @@
         </el-form>
         <el-form >
             <el-form-item label="Index" label-width="120px">
-            <el-input v-model="editObj.index" autocomplete="off"></el-input>
+            <!-- <el-input v-model="editObj.index" autocomplete="off"></el-input> -->
+            <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
             </el-form-item>
         </el-form>
         <el-form >
@@ -124,10 +125,11 @@ export default {
             isPreDisabled:false,
             dialogFormVisible:false,
             editObj:{
+                id:'',
                 webname:'',
                 webcss:'',
                 weboprate:'',
-                webresponse:'',
+                webparam:'',
                 index:'',
                 oprateOBj:'',
             },
@@ -213,7 +215,14 @@ export default {
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
-            this.editObj = row
+            // this.editObj = row
+            this.editObj['id']=row.id
+            this.editObj['webname']=row.webname
+            this.editObj['webcss']=row.webcss
+            this.editObj['weboprate']=row.weboprate
+            this.editObj['webparam']=row.webparam
+            this.editObj['oprateOBj']=row.oprateOBj
+            this.editObj['index']=row.index
         },
         // 编辑修改数据
         handleEdit(row) {

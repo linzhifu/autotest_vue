@@ -87,6 +87,7 @@ export default {
             isPreDisabled:false,
             dialogFormVisible:false,
             editObj:{
+                id:'',
                 proname:'',
                 prodes:'',
             }
@@ -132,7 +133,10 @@ export default {
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
-            this.editObj=row
+            // this.editObj=row
+            this.editObj['id']=row.id
+            this.editObj['proname']=row.proname
+            this.editObj['prodes']=row.prodes
         },
         // 编辑修改数据
         handleEdit(row) {
@@ -154,6 +158,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
+                    this.get_projects()
                 }
                 else {
                     this.$message({

@@ -112,6 +112,7 @@ export default {
             isPreDisabled:false,
             dialogFormVisible:false,
             editObj:{
+                id:'',
                 apiname:'',
                 apides:'',
                 apiurl:'',
@@ -166,7 +167,11 @@ export default {
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
-            this.editObj = row
+            // this.editObj = row
+            this.editObj['id']=row.id
+            this.editObj['apiname']=row.apiname
+            this.editObj['apides']=row.apides
+            this.editObj['apiurl']=row.apiurl
         },
         // 编辑修改数据
         handleEdit(row) {
@@ -187,6 +192,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
+                    this.get_apiManagers()
                 }
                 else {
                     this.$message({

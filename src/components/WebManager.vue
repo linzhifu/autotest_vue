@@ -112,8 +112,10 @@ export default {
             projectId: this.$route.query.projectId,
             dialogFormVisible:false,
             editObj:{
+                id:'',
                 webname:'',
                 webdes:'',
+                weburl:'',
             }
         }
     },
@@ -165,7 +167,11 @@ export default {
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
-            this.editObj = row
+            // this.editObj = row
+            this.editObj['id']=row.id
+            this.editObj['webname']=row.webname
+            this.editObj['webdes']=row.webdes
+            this.editObj['weburl']=row.weburl
         },
         // 编辑修改数据
         handleEdit(row) {
