@@ -1,42 +1,39 @@
 <template>
 <div>
     <!-- 返回上一级 -->
-    <a v-if="this.$route.query.projectId" href="#" @click.prevent="go_back">
+    <a href="#" @click.prevent="go_back">
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
-    <!-- 添加web -->
+    <el-button type="primary" @click="webTest">开始测试</el-button>
+    <br><br>
+    <!-- 添加测试分类 -->
     <div>
-        <el-button type="primary" @click="new_webcase">添加测试</el-button>
-        <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
-        <el-input placeholder="请输入描述" v-model="webdes" style="width:200px"></el-input>
-        <el-input placeholder="请输入URL" v-model="weburl" style="width:200px"></el-input>
-        <el-select v-if="!this.$route.query.projectId" v-model="projectId" placeholder="请选择">
-        <el-option
-            v-for="item in project_options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            </el-option>
-        </el-select>
+        <el-button type="primary" @click="new_webcase">添加分类</el-button>
+        <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
+        <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
         <br><br>
     </div>
     <!-- web列表 -->
     <el-table
      stripe
      border
-     :data="webManagers.filter(data => !search || data.webname.toLowerCase().includes(search.toLowerCase()) || data.webdes.toLowerCase().includes(search.toLowerCase()))"
+     :data="testtypes.filter(data => !search || data.typename.toLowerCase().includes(search.toLowerCase()) || data.typedes.toLowerCase().includes(search.toLowerCase()))"
      empty-text="暂无项目"
      :header-cell-style="{background:'#ddd'}"
+     :default-sort = "{prop: 'index', order: 'ascending'}"
      highlight-current-row>
-        <el-table-column label="名称" align="center" prop="webname">
+        <el-table-column label="" align="center" prop="is_test" width="50px">
+            <template slot-scope="scope">
+                <input type="checkbox" :checked="scope.row.is_test" disabled>
+            </template>
         </el-table-column>
-        <el-table-column label="描述" align="center" prop="webdes">
+        <el-table-column label="" align="center" prop="index" width="50px" sortable>
         </el-table-column>
-        <el-table-column label="URL" align="center" prop="weburl">
+        <el-table-column label="名称" align="center" prop="typename">
         </el-table-column>
-        <el-table-column label="项目" align="center" prop="proname">
+        <el-table-column label="描述" align="center" prop="typedes">
         </el-table-column>
-        <el-table-column label="测试结果" align="center" prop="result">
+        <el-table-column label="测试" align="center" prop="result">
             <template slot-scope="scope">
                 <p v-if="scope.row.result" style="color:green">PASS</p>
                 <p v-else style="color:red">FAIL</p>
@@ -49,7 +46,7 @@
         </el-table-column>
         <el-table-column label="测试案例" align="center">
             <template slot-scope="scope">
-                <el-button type="primary" @click="go_webTest(scope.row)" size="mini">点击进入</el-button>
+                <el-button type="primary" @click="go_webTest(scope.row.id)" size="mini">点击进入</el-button>
             </template>
         </el-table-column>
         <el-table-column align="center">
@@ -78,17 +75,22 @@
     <el-dialog :visible.sync="dialogFormVisible">
         <el-form>
             <el-form-item label="名称" label-width="120px">
-            <el-input v-model="editObj.webname" autocomplete="off"></el-input>
+            <el-input v-model="editObj.typename" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
             <el-form-item label="描述" label-width="120px">
-            <el-input v-model="editObj.webdes" autocomplete="off"></el-input>
+            <el-input v-model="editObj.typedes" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
-            <el-form-item label="URL" label-width="120px">
-            <el-input v-model="editObj.weburl" autocomplete="off"></el-input>
+            <el-form-item label="优先级" label-width="120px">
+             <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
+            </el-form-item>
+        </el-form>
+        <el-form >
+            <el-form-item label="是否测试" label-width="120px">
+             <el-checkbox v-model="editObj.is_test"></el-checkbox>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -103,30 +105,31 @@
 /* eslint-disable */
 var user;
 export default {
-    name:'WebManager',
+    name:'WebType',
     data() {
         return {
             axios: this.axios,
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
-            webname: '',
-            webdes: '',
-            weburl:'',
+            typename: '',
+            typedes: '',
             search: '',
-            webManagers: [],
-            project_options: [],
+            testtypes: [],
             pre:'',
             next:'',
             isNextDisabled:false,
             isPreDisabled:false,
-            projectId: this.$route.query.projectId,
+            content_type: this.$route.query.content_type,
+            object_id: this.$route.query.object_id,
+            weburl: this.$route.query.weburl,
             dialogFormVisible:false,
             editObj:{
                 id:'',
-                webname:'',
-                webdes:'',
-                weburl:'',
+                index:'',
+                typename:'',
+                typedes:'',
+                is_test:''
             }
         }
     },
@@ -135,20 +138,56 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // 获取数据
-        get_webManagers() {
-            var url = 'api/v1/webManager/'
-            if (this.$route.query.projectId) {
-                url = url +'?project='+this.$route.query.projectId
-            }
-            var params_data = {'userId':this.userId,'token':this.token}
+        // web测试
+        webTest() {
             this.axios({
                 baseURL:this.url,
-                url:url,
+                url:'/api/v1/webTypeTest/',
+                method:'post',
+                params:{'url': this.weburl},
+                data:this.testtypes,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: 'PASS',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                    });
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.$message({
+                        message: error.response.data,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+            })
+        },
+        // 获取数据
+        get_testtypes() {
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'object_id':this.object_id,
+                'content_type':this.content_type
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/testType/',
                 method:'get',
                 params:params_data,
             }).then(response=>{
-                this.webManagers=response.data.results
+                this.testtypes=response.data.results
                 // 判断是否有上一页
                 this.pre=response.data.previous
                 if (!this.pre) {
@@ -180,9 +219,10 @@ export default {
             this.dialogFormVisible = true
             // this.editObj = row
             this.editObj['id']=row.id
-            this.editObj['webname']=row.webname
-            this.editObj['webdes']=row.webdes
-            this.editObj['weburl']=row.weburl
+            this.editObj['index']=row.index
+            this.editObj['typename']=row.typename
+            this.editObj['typedes']=row.typedes
+            this.editObj['is_test']=row.is_test
         },
         // 编辑修改数据
         handleEdit(row) {
@@ -190,7 +230,7 @@ export default {
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/webManager/'+row.id+'/',
+                url:'api/v1/testType/'+row.id+'/',
                 method:'patch',
                 params:params_data,
                 data:row,
@@ -203,7 +243,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    this.get_webManagers()
+                    this.get_testtypes()
                 }
                 else {
                     this.$message({
@@ -233,7 +273,7 @@ export default {
                 var params_data = {'userId':this.userId,'token':this.token}
                 this.axios({
                     baseURL:this.url,
-                    url:'api/v1/webManager/'+row.id+'/',
+                    url:'api/v1/testType/'+row.id+'/',
                     method:'delete',
                     params:params_data,
                 }).then(response=>{
@@ -245,7 +285,7 @@ export default {
                             center: true,
                             showClose: true,
                         });
-                        this.get_webManagers()
+                        this.get_testtypes()
                     }
                     else {
                         this.$message({
@@ -270,16 +310,16 @@ export default {
         // 添加数据
         new_webcase() {
             var body_data = {
-                    'webname': this.webname,
-                    'webdes': this.webdes,
-                    'weburl': this.weburl,
-                    'user': this.userId,
-                    'project': this.projectId
+                    'typename': this.typename,
+                    'typedes': this.typedes,
+                    'object_id': this.object_id,
+                    'content_type': this.content_type,
+                    'user': this.userId
                 }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/webManager/',
+                url:'api/v1/testType/',
                 method:'post',
                 params:params_data,
                 data:body_data,
@@ -292,7 +332,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    this.get_webManagers()
+                    this.get_testtypes()
                 }
                 else {
                     this.$message({
@@ -310,16 +350,15 @@ export default {
                         showClose: true,
                     })
             })
-            this.webname=''
-            this.webdes=''
-            this.weburl=''
+            this.typename=''
+            this.typedes=''
         },
         // 上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.webManagers=response.data.results
+                    this.testtypes=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -359,7 +398,7 @@ export default {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.webManagers=response.data.results
+                    this.testtypes=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -395,85 +434,16 @@ export default {
             })
         },
         // 进入前端测试案例
-        go_webTest(object) {
-            var url = '/home/webType/'
-            var query_data = {
-                'object_id':object.id, 
-                'content_type': object.contenttype,
-                'weburl':object.weburl
-            }
-            this.$router.push({ path: url,query:query_data})
+        go_webTest(testType) {
+            var url = '/home/webCase/'
+            this.$router.push({ path: url,query:{'testType': testType,'weburl':this.weburl}})
         },
-        // 获取项目列表
-        get_projects() {
-            var params_data = {'userId':this.userId,'token':this.token}
-            this.axios({
-                baseURL:this.url,
-                url:'api/v1/project/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.project_options=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        var data = {
-                            "value":response.data.results[i].id,
-                            "label":response.data.results[i].proname
-                        }
-                        this.project_options.push(data)
-                    }
-                    // 判断是否有上一页
-                    this.pre=response.data.previous
-                    if (!this.pre) {
-                        this.isPreDisabled=true
-                    }
-                    else {
-                        this.isPreDisabled=false
-                    }
-                    // 判断是否有下一页
-                    this.next=response.data.next
-                    if (!this.next) {
-                        this.isNextDisabled=true
-                    }
-                    else {
-                        this.isNextDisabled=false
-                    }
-                }
-                else {
-                    this.$message({
-                        message: "加载失败",
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
-                }
-            },error=>{
-                this.$message({
-                        message: '匿名用户，请先登录',
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
-                this.$router.push('/')
-            })
-        }
-    },
-    watch: {
-        '$route.query.projectId':function(val) {
-            if (!val) {
-                this.get_projects()
-            }
-        }
     },
     beforeCreate() {
     },
     created() {
-        this.get_webManagers()
+        this.get_testtypes()
         // 获取项目列表
-        if (!this.$route.query.projectId) {
-            this.get_projects()
-        }
     },
     filters:{
         dateFormat:function(time) {

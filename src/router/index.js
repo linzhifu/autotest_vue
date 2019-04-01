@@ -8,6 +8,7 @@ import WebManager from '@/components/WebManager'
 import ApiManager from '@/components/ApiManager'
 import ApiCase from '@/components/ApiCase'
 import WebCase from '@/components/WebCase'
+import WebType from '@/components/WebType'
 
 Vue.use(Router)
 
@@ -53,6 +54,10 @@ export default new Router({
         {
           path: 'webCase/:webManagerId?',
           component: WebCase
+        },
+        {
+          path: 'webType/:webManagerId?',
+          component: WebType
         }
       ]
     }

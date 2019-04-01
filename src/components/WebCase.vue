@@ -3,64 +3,60 @@
     <!-- 返回上一级 -->
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
     <br><br>
+    <el-button type="primary" @click="webTest()">开始测试</el-button><br><br>
     <!-- 添加web操作 -->
     <div>
         <el-button type="primary" @click="new_webcase">添加步骤</el-button>
         <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
-        <el-input placeholder="请输入操作类型" v-model="weboprateOBj" style="width:200px"></el-input>
         <br><br>
     </div>
     <!-- 前端selenium操作步骤 -->
-    <el-collapse accordion>
-        <el-collapse-item v-for="(oprateObj,key) in oprateObjs" :title="oprateObj" :name="oprateObj" :key="key">
-            <el-button type="primary" @click="webTest(oprateObj)">开始测试</el-button><br><br>
-            <el-table
-            border
-            stripe
-            :data="webCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())) && data.oprateOBj.toLowerCase().includes(oprateObj))"
-            empty-text="暂无项目"
-            :default-sort = "{prop: 'index', order: 'ascending'}"
-            :header-cell-style="{background:'#ddd'}"
-            highlight-current-row>
-                <el-table-column label="步骤" align="center" prop="webname">
-                </el-table-column>
-                <el-table-column label="CSS选择器" align="center" prop="webcss">
-                </el-table-column>
-                <el-table-column label="元素操作" align="center" prop="weboprate">
-                </el-table-column>
-                <el-table-column label="操作参数" align="center" prop="webparam">
-                </el-table-column>
-                <el-table-column label="最近修改" align="center">
-                    <template slot-scope="scope">
-                        <p>{{scope.row.update_time|dateFormat}}</p>
-                    </template>
-                </el-table-column>
-                <el-table-column label="Index" align="center" prop="index" sortable>
-                </el-table-column>
-                <el-table-column align="center">
-                    <template slot="header" slot-scope="scope">
-                        <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
-                    </template>
-                    <template slot-scope="scope">
-                        <el-button
-                        size="mini"
-                        type="primary"
-                        @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
-                        <el-button
-                        size="mini"
-                        type="danger"
-                        @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <br>
-            <!-- 翻页 -->
-            <div style="text-align: center;">
-                <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
-                <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
-            </div>
-        </el-collapse-item>
-    </el-collapse>
+    <el-table
+     border
+     stripe
+     :data="webCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+     empty-text="暂无项目"
+     :default-sort = "{prop: 'index', order: 'ascending'}"
+     :header-cell-style="{background:'#ddd'}"
+     highlight-current-row>
+        <el-table-column label="" align="center" prop="index" width="50px" sortable>
+        </el-table-column>
+        <el-table-column label="步骤" align="center" prop="webname">
+        </el-table-column>
+        <el-table-column label="CSS选择器" align="center" prop="webcss">
+        </el-table-column>
+        <el-table-column label="元素操作" align="center" prop="weboprate">
+        </el-table-column>
+        <el-table-column label="操作参数" align="center" prop="webparam">
+        </el-table-column>
+        <el-table-column label="最近修改" align="center">
+            <template slot-scope="scope">
+                <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
+        <el-table-column align="center">
+            <template slot="header" slot-scope="scope">
+                <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
+            </template>
+            <template slot-scope="scope">
+                <el-button
+                size="mini"
+                type="primary"
+                @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
+                <el-button
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <br>
+    <!-- 翻页 -->
+    <div style="text-align: center;">
+        <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
+        <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
+    </div>
+    <br><br>
     <!-- 修改数据 -->
     <el-dialog :visible.sync="dialogFormVisible">
         <el-form>
@@ -78,9 +74,14 @@
             <el-input v-model="editObj.weboprate" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
-        <el-form >
+        <el-form>
             <el-form-item label="操作参数" label-width="120px">
             <el-input v-model="editObj.webparam" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <el-form v-if="editObj.type">
+            <el-form-item label="验证数据" label-width="120px">
+            <el-input v-model="editObj.checktext" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
@@ -89,16 +90,59 @@
             <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
             </el-form-item>
         </el-form>
-        <el-form >
-            <el-form-item label="操作类型" label-width="120px">
-            <el-input v-model="editObj.oprateOBj" autocomplete="off"></el-input>
-            </el-form-item>
-        </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleEdit(editObj)">确 定</el-button>
         </div>
     </el-dialog>
+    <!-- 添加验证操作 -->
+    <div>
+        <el-button type="primary" @click="new_webcase('check')">添加验证</el-button>
+        <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+        <br><br>
+    </div>
+    <!-- 验证数据列表 -->
+    <el-table
+     border
+     stripe
+     :data="checkWebCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+     empty-text="暂无项目"
+     :default-sort = "{prop: 'index', order: 'ascending'}"
+     :header-cell-style="{background:'#ddd'}"
+     highlight-current-row>
+        <el-table-column label="" align="center" prop="index" width="50px" sortable>
+        </el-table-column>
+        <el-table-column label="验证" align="center" prop="webname">
+        </el-table-column>
+        <el-table-column label="CSS选择器" align="center" prop="webcss">
+        </el-table-column>
+        <el-table-column label="元素操作" align="center" prop="weboprate">
+        </el-table-column>
+        <el-table-column label="操作参数" align="center" prop="webparam">
+        </el-table-column>
+        <el-table-column label="验证数据" align="center" prop="checktext">
+        </el-table-column>
+        <el-table-column label="最近修改" align="center">
+            <template slot-scope="scope">
+                <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
+        <el-table-column align="center">
+            <template slot="header" slot-scope="scope">
+                <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
+            </template>
+            <template slot-scope="scope">
+                <el-button
+                size="mini"
+                type="primary"
+                @click="open_edit(scope.row,'check')" class="el-icon-edit"></el-button>
+                <el-button
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row, 'check')" icon="el-icon-delete"></el-button>
+            </template>
+        </el-table-column>
+    </el-table>
 </div>
 </template>
 
@@ -114,13 +158,13 @@ export default {
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
             webname: '',
-            weburl:'',
-            weboprateOBj:'',
             search: '',
             webCases: [],
+            checkWebCases:[],
             pre:'',
             next:'',
-            webManagerId: this.$route.query.webManagerId,
+            testType: this.$route.query.testType,
+            weburl: this.$route.query.weburl,
             isNextDisabled:false,
             isPreDisabled:false,
             dialogFormVisible:false,
@@ -131,10 +175,11 @@ export default {
                 weboprate:'',
                 webparam:'',
                 index:'',
-                oprateOBj:'',
+                type:'',
+                checktext:'',
             },
-            testObj:{},
-            oprateObjs:[]
+            testObj:[],
+            checkObj:[],
         }
     },
     methods: {
@@ -143,48 +188,65 @@ export default {
             this.$router.back(-1)
         },
         // 前端测试
-        webTest(oprateObj) {
+        webTest() {
+            var body_data = {
+                test:this.testObj,
+                check:this.checkObj,
+            }
             this.axios({
                 baseURL:this.url,
-                url:'/api/v1/webTest/',
+                url:'/api/v1/webCaseTest/',
                 method:'post',
                 params:{'url': this.weburl},
-                data:this.testObj[oprateObj],
+                data:body_data,
             }).then(response=>{
-                alert('ok')
-                console.log(response.data)
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: 'PASS',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                    });
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
             },error=>{
-                alert('error')
-                console.log(error.response.data)
+                this.$message({
+                        message: error.response.data,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
             })
         },
         // 获取数据列表
         get_webCases() {
-            var params_data = {'userId':this.userId,'token':this.token}
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'testType':this.testType
+            }
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/webCase/?webManager='+this.webManagerId,
+                url:'api/v1/webCase/',
                 method:'get',
                 params:params_data,
             }).then(response=>{
-                this.webCases=[]
+                this.webCases=response.data.results
                 this.testObj=[]
-                this.weburl = ''
-                this.oprateObjs = []
                 for (var i=0;i<response.data.results.length;i++){
-                    this.webCases.push(response.data.results[i])
                     var element = {}
                     element['css']=response.data.results[i].webcss
                     element['method']=response.data.results[i].weboprate
                     element['param']=response.data.results[i].webparam
-                    if (!this.weburl) {
-                        this.weburl = response.data.results[i].weburl
-                    }
-                    if (this.oprateObjs.indexOf(response.data.results[i].oprateOBj)==-1) {
-                        this.oprateObjs.push(response.data.results[i].oprateOBj)
-                        this.$set(this.testObj,response.data.results[i].oprateOBj,[])
-                    }
-                    this.testObj[response.data.results[i].oprateOBj].push(element)
+                    this.testObj.push(element)
                 }
                 // 判断是否有上一页
                 this.pre=response.data.previous
@@ -212,8 +274,56 @@ export default {
                 this.$router.push('/')
             })
         },
+        get_checkWebCases() {
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'testType':this.testType
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/checkWebCase/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.checkWebCases=response.data.results
+                this.checkObj=[]
+                for (var i=0;i<response.data.results.length;i++){
+                    var element = {}
+                    element['css']=response.data.results[i].webcss
+                    element['method']=response.data.results[i].weboprate
+                    element['param']=response.data.results[i].webparam
+                    element['checktext']=response.data.results[i].checktext
+                    this.checkObj.push(element)
+                }
+                // // 判断是否有上一页
+                // this.pre=response.data.previous
+                // if (!this.pre) {
+                //     this.isPreDisabled=true
+                // }
+                // else {
+                //     this.isPreDisabled=false
+                // }
+                // // 判断是否有下一页
+                // this.next=response.data.next
+                // if (!this.next) {
+                //     this.isNextDisabled=true
+                // }
+                // else {
+                //     this.isNextDisabled=false
+                // }
+            },error=>{
+                this.$message({
+                        message: '匿名用户，请先登录',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                this.$router.push('/')
+            })
+        },
         // 打开编辑
-        open_edit(row) {
+        open_edit(row, type) {
             this.dialogFormVisible = true
             // this.editObj = row
             this.editObj['id']=row.id
@@ -221,16 +331,24 @@ export default {
             this.editObj['webcss']=row.webcss
             this.editObj['weboprate']=row.weboprate
             this.editObj['webparam']=row.webparam
-            this.editObj['oprateOBj']=row.oprateOBj
             this.editObj['index']=row.index
+            this.editObj['type']=type
+            if (type=='check') {
+                this.editObj['checktext']=row.checktext
+            }
         },
         // 编辑修改数据
         handleEdit(row) {
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
+            var url = 'api/v1/webCase/'+row.id+'/'
+            if (row['type']=='check') {
+                // 判断是操作哪个表格的数据
+                url = 'api/v1/checkWebCase/'+row.id+'/'
+            }
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/webCase/'+row.id+'/',
+                url:url,
                 method:'patch',
                 params:params_data,
                 data:row
@@ -244,6 +362,7 @@ export default {
                         showClose: true,
                     });
                     this.get_webCases()
+                    this.get_checkWebCases()
                 }
                 else {
                     this.$message({
@@ -263,7 +382,7 @@ export default {
             })
         },
         // 删除数据
-        handleDelete(index, row) {
+        handleDelete(index, row, type) {
             this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
                 type: 'warning',
@@ -271,9 +390,14 @@ export default {
                 cancelButtonText: '取消',
             }).then(() => {
                 var params_data = {'userId':this.userId,'token':this.token}
+                var url = 'api/v1/webCase/'+row.id+'/'
+                if (type=='check') {
+                    // 判断是操作哪个表格的数据
+                    url = 'api/v1/checkWebCase/'+row.id+'/'
+                }
                 this.axios({
                     baseURL:this.url,
-                    url:'api/v1/webCase/'+row.id+'/',
+                    url:url,
                     method:'delete',
                     params:params_data
                 }).then(response=>{
@@ -286,6 +410,7 @@ export default {
                             showClose: true,
                         });
                         this.get_webCases()
+                        this.get_checkWebCases()
                     }
                     else {
                         this.$message({
@@ -306,17 +431,20 @@ export default {
             })
         },
         // 添加数据
-        new_webcase() {
+        new_webcase(type) {
             var body_data = {
                     'webname': this.webname,
-                    'oprateOBj': this.weboprateOBj,
-                    'webManager': this.webManagerId,
+                    'testType': this.testType,
                     'user':this.userId
                 }
+            var url = 'api/v1/webCase/'
+            if (type=='check') {
+                url = 'api/v1/checkWebCase/'
+            }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/webCase/',
+                url:url,
                 method:'post',
                 params:params_data,
                 data:body_data
@@ -330,6 +458,7 @@ export default {
                         showClose: true,
                     });
                     this.get_webCases()
+                    this.get_checkWebCases()
                 }
                 else {
                     this.$message({
@@ -348,23 +477,13 @@ export default {
                     })
             })
             this.webname=''
-            this.weboprateOBj=''
         },
         // 上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.$message({
-                        // message: '加载成功',
-                        // type: 'success',
-                        // center: true,
-                        // showClose: true,
-                    });
-                    this.webCases=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.webCases.push(response.data.results[i])
-                    }
+                    this.webCases=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -404,16 +523,7 @@ export default {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.$message({
-                        // message: '加载成功',
-                        // type: 'success',
-                        // center: true,
-                        // showClose: true,
-                    });
-                    this.webCases=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        this.webCases.push(response.data.results[i])
-                    }
+                    this.webCases=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -456,6 +566,7 @@ export default {
     created() {
         // 获取数据列表
         this.get_webCases()
+        this.get_checkWebCases()
     },
     filters:{
         dateFormat:function(time) {
