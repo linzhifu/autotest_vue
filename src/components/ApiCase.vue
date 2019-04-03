@@ -109,18 +109,18 @@
                         @click.prevent="apiTest(scope.row)">测试
                     </el-button>
                     <br>
-                    <pre style="font-size:14px" v-text="error"></pre>
+                    <pre style="font-size:14px" v-text="scope.row.testdata"></pre>
                 </el-tab-pane>
                 </el-tabs>
             </template>
+        </el-table-column>
+        <el-table-column label="" align="center" prop="index" width="50px" sortable>
         </el-table-column>
         <el-table-column label="名称" align="center" prop="apiname">
         </el-table-column>
         <el-table-column label="请求方法" align="center" prop="apimethod">
         </el-table-column>
         <el-table-column label="URL" align="center" prop="apiurl">
-        </el-table-column>
-        <el-table-column label="后端" align="center" prop="apiManagerName">
         </el-table-column>
         <el-table-column label="测试结果" align="center">
             <template slot-scope="scope">
@@ -132,8 +132,6 @@
             <template slot-scope="scope">
                 <p>{{scope.row.update_time|dateFormat}}</p>
             </template>
-        </el-table-column>
-        <el-table-column label="Index" align="center" prop="index" sortable>
         </el-table-column>
         <el-table-column align="center">
             <template slot="header" slot-scope="scope">
@@ -213,8 +211,9 @@ export default {
             apiCases: [],
             pre:'',
             next:'',
-            error:'请按测试按键开始API测试',
-            apiManagerId: this.$route.query.apiManagerId,
+            error:{},
+            testType: this.$route.query.testType,
+            weburl: this.$route.query.weburl,
             isNextDisabled:false,
             isPreDisabled:false,
             dialogFormVisible:false,
@@ -256,15 +255,15 @@ export default {
         // API测试
         apiTest(row) {
             this.axios({
-                baseURL:row.apiManagerUrl,
+                baseURL:this.weburl,
                 url:row.apiurl,
                 method:row.apimethod,
                 params:this.params[row.id],
                 data:this.body[row.id],
             }).then(response=>{
                 console.log(response.data)
-                this.error = response.data
-                if (!this.error.errcode) {
+                row.testdata = response.data
+                if (!response.data.errcode) {
                      this.$message({
                         message: 'PASS',
                         type: 'success',
@@ -282,7 +281,7 @@ export default {
                 }
             },error=>{
                 console.log(error.response.data)
-                this.error=error.response.data
+                row.testdata=error.response.data
             })
         },
         // 编辑参数——删除一项
@@ -319,70 +318,62 @@ export default {
         // 获取数据列表
         get_apiCases() {
             var params,body,response_obj
-            var params_data = {'userId':this.userId,'token':this.token}
-            var url = 'api/v1/apiCase/?apiManager='+this.apiManagerId
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'testType':this.testType
+            }
             this.axios({
                 baseURL:this.url,
-                url:url,
+                url:'api/v1/apiCase/',
                 method:'get',
                 params:params_data,
             }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.apiCases=response.data.results
-                    for (var i=0;i<response.data.results.length;i++){
-                        // 获取param
-                        if (response.data.results[i].apiparam) {
-                            params = JSON.parse(response.data.results[i].apiparam)
-                        }
-                        else {
-                            params={}
-                        }
-
-                        // 获取body
-                        if (response.data.results[i].apijson) {
-                            body = JSON.parse(response.data.results[i].apijson)
-                        }
-                        else {
-                            body={}
-                        }
-
-                        // 获取response
-                        if (response.data.results[i].apiresponse) {
-                            response_obj = JSON.parse(response.data.results[i].apiresponse)
-                        }
-                        else {
-                            response_obj={}
-                        }
-                        // 必须用这种全局方法，Vue才能监控数据变化
-                        this.$set(this.params,response.data.results[i].id,params)
-                        this.$set(this.body,response.data.results[i].id,body)
-                        this.$set(this.response,response.data.results[i].id,response_obj)
-                    }
-                    // 判断是否有上一页
-                    this.pre=response.data.previous
-                    if (!this.pre) {
-                        this.isPreDisabled=true
+                this.apiCases=response.data.results
+                for (var i=0;i<response.data.results.length;i++){
+                    // 获取param
+                    if (response.data.results[i].apiparam) {
+                        params = JSON.parse(response.data.results[i].apiparam)
                     }
                     else {
-                        this.isPreDisabled=false
+                        params={}
                     }
-                    // 判断是否有下一页
-                    this.next=response.data.next
-                    if (!this.next) {
-                        this.isNextDisabled=true
+
+                    // 获取body
+                    if (response.data.results[i].apijson) {
+                        body = JSON.parse(response.data.results[i].apijson)
                     }
                     else {
-                        this.isNextDisabled=false
+                        body={}
                     }
+
+                    // 获取response
+                    if (response.data.results[i].apiresponse) {
+                        response_obj = JSON.parse(response.data.results[i].apiresponse)
+                    }
+                    else {
+                        response_obj={}
+                    }
+                    // 必须用这种全局方法，Vue才能监控数据变化
+                    this.$set(this.params,response.data.results[i].id,params)
+                    this.$set(this.body,response.data.results[i].id,body)
+                    this.$set(this.response,response.data.results[i].id,response_obj)
+                }
+                // 判断是否有上一页
+                this.pre=response.data.previous
+                if (!this.pre) {
+                    this.isPreDisabled=true
                 }
                 else {
-                    this.$message({
-                        message: "加载失败",
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    this.isPreDisabled=false
+                }
+                // 判断是否有下一页
+                this.next=response.data.next
+                if (!this.next) {
+                    this.isNextDisabled=true
+                }
+                else {
+                    this.isNextDisabled=false
                 }
             },error=>{
                 this.$message({
@@ -492,7 +483,7 @@ export default {
                     'apiname': this.apiname,
                     'apiurl': this.apiurl,
                     'apimethod':this.editObj.apimethod,
-                    'apiManager': this.apiManagerId,
+                    'testType': this.testType,
                     'user':this.userId
                 }
             var params_data = {'userId':this.userId,'token':this.token}

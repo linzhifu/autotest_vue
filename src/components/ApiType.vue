@@ -1,49 +1,56 @@
 <template>
 <div>
     <!-- 返回上一级 -->
-    <a v-if="this.$route.query.projectId" href="#" @click.prevent="go_back">
+    <a href="#" @click.prevent="go_back">
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
-    <!-- 添加API -->
+    <!-- 添加测试分类 -->
     <div>
-        <el-button type="primary" @click="new_webcase">添加模块</el-button>
-        <el-input placeholder="请输入名称" v-model="apiname" style="width:200px"></el-input>
-        <el-input placeholder="请输入描述" v-model="apides" style="width:200px"></el-input>
-        <el-input placeholder="请输入URL" v-model="apiurl" style="width:200px"></el-input>
-        <el-select v-if="!this.$route.query.projectId" v-model="projectId" placeholder="请选择项目">
-        <el-option
-            v-for="item in project_options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            </el-option>
-        </el-select>
+        <el-button type="primary" @click="new_webcase">添加分类</el-button>
+        <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
+        <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
+        <el-button type="primary" @click="webTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
         <br><br>
     </div>
     <!-- API列表 -->
     <el-table
      stripe
      border
-     :data="apiManagers.filter(data => !search || data.apiname.toLowerCase().includes(search.toLowerCase()) || data.apides.toLowerCase().includes(search.toLowerCase()))"
+     :data="testtypes.filter(data => !search || data.typename.toLowerCase().includes(search.toLowerCase()) || data.typedes.toLowerCase().includes(search.toLowerCase()))"
      empty-text="暂无项目"
      :header-cell-style="{background:'#ddd'}"
+     :default-sort = "{prop: 'index', order: 'ascending'}"
      highlight-current-row>
-        <el-table-column label="名称" align="center" prop="apiname">
+        <el-table-column label="" align="center" prop="is_test" width="50px">
+            <template slot-scope="scope">
+                <input type="checkbox" :checked="scope.row.is_test" disabled>
+            </template>
         </el-table-column>
-        <el-table-column label="描述" align="center" prop="apides">
+        <el-table-column label="" align="center" prop="index" width="50px" sortable>
         </el-table-column>
-        <el-table-column label="URL" align="center" prop="apiurl">
+        <el-table-column label="名称" align="center" prop="typename">
         </el-table-column>
-        <el-table-column label="项目" align="center" prop="proname">
+        <el-table-column label="描述" align="center" prop="typedes">
+        </el-table-column>
+        <el-table-column label="测试" align="center" prop="result">
+            <template slot-scope="scope">
+                <p v-if="scope.row.result" style="color:green">PASS</p>
+                <p v-else style="color:red">FAIL</p>
+            </template>
+        </el-table-column>
+        <el-table-column label="最近修改" align="center" prop="update_time">
+            <template slot-scope="scope">
+                <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
         </el-table-column>
         <el-table-column label="测试案例" align="center">
             <template slot-scope="scope">
-                <el-button type="primary" @click="go_apiTest(scope.row)" size="mini">点击进入</el-button>
+                <el-button type="primary" @click="go_apiTest(scope.row.id)" size="mini">点击进入</el-button>
             </template>
         </el-table-column>
         <el-table-column align="center">
             <template slot="header" slot-scope="scope">
-                <el-input v-model="search" size="mini" placeholder="输入项目名称关键字搜索"/>
+                <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索"/>
             </template>
             <template slot-scope="scope">
                 <el-button
@@ -67,17 +74,22 @@
     <el-dialog :visible.sync="dialogFormVisible">
         <el-form>
             <el-form-item label="名称" label-width="120px">
-            <el-input v-model="editObj.apiname" autocomplete="off"></el-input>
+            <el-input v-model="editObj.typename" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
             <el-form-item label="描述" label-width="120px">
-            <el-input v-model="editObj.apides" autocomplete="off"></el-input>
+            <el-input v-model="editObj.typedes" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
-            <el-form-item label="URL" label-width="120px">
-            <el-input v-model="editObj.apiurl" autocomplete="off"></el-input>
+            <el-form-item label="优先级" label-width="120px">
+             <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
+            </el-form-item>
+        </el-form>
+        <el-form >
+            <el-form-item label="是否测试" label-width="120px">
+             <el-checkbox v-model="editObj.is_test"></el-checkbox>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -92,30 +104,33 @@
 /* eslint-disable */
 var user;
 export default {
-    name:'ApiManager',
+    name:'ApiType',
     data() {
         return {
             axios: this.axios,
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
-            apiname: '',
-            apides: '',
-            apiurl:'',
+            testBtn:'开始测试',
+            loading:false,
+            typename: '',
+            typedes: '',
             search: '',
-            apiManagers: [],
-            project_options: [],
+            testtypes: [],
             pre:'',
             next:'',
-            projectId: this.$route.query.projectId,
             isNextDisabled:false,
             isPreDisabled:false,
+            content_type: this.$route.query.content_type,
+            object_id: this.$route.query.object_id,
+            apiurl: this.$route.query.apiurl,
             dialogFormVisible:false,
             editObj:{
                 id:'',
-                apiname:'',
-                apides:'',
-                apiurl:'',
+                index:'',
+                typename:'',
+                typedes:'',
+                is_test:''
             }
         }
     },
@@ -124,20 +139,71 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // 获取数据列表
-        get_apiManagers() {
-            var url = 'api/v1/apiManager/'
-            if (this.$route.query.projectId) {
-                url = url +'?project='+this.$route.query.projectId
+        // web测试
+        webTest() {
+            this.loading=true
+            this.testBtn='测试中...'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'object_id':this.object_id,
+                'content_type':this.content_type,
+                'url': this.weburl
             }
-            var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
-                url:url,
+                url:'/api/v1/webTypeTest/',
                 method:'get',
                 params:params_data,
             }).then(response=>{
-                this.apiManagers=response.data.results
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: 'PASS',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                    });
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+                this.get_testtypes()
+                this.loading=false
+                this.testBtn='开始测试'
+                this.get_testtypes()
+            },error=>{
+                this.$message({
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                this.get_testtypes()
+                this.loading=false
+                this.testBtn='开始测试'
+            })
+        },
+        // 获取数据
+        get_testtypes() {
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'object_id':this.object_id,
+                'content_type':this.content_type
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/testType/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.testtypes=response.data.results
                 // 判断是否有上一页
                 this.pre=response.data.previous
                 if (!this.pre) {
@@ -169,9 +235,10 @@ export default {
             this.dialogFormVisible = true
             // this.editObj = row
             this.editObj['id']=row.id
-            this.editObj['apiname']=row.apiname
-            this.editObj['apides']=row.apides
-            this.editObj['apiurl']=row.apiurl
+            this.editObj['index']=row.index
+            this.editObj['typename']=row.typename
+            this.editObj['typedes']=row.typedes
+            this.editObj['is_test']=row.is_test
         },
         // 编辑修改数据
         handleEdit(row) {
@@ -179,7 +246,7 @@ export default {
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/apiManager/'+row.id+'/',
+                url:'api/v1/testType/'+row.id+'/',
                 method:'patch',
                 params:params_data,
                 data:row,
@@ -192,7 +259,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    this.get_apiManagers()
+                    this.get_testtypes()
                 }
                 else {
                     this.$message({
@@ -222,7 +289,7 @@ export default {
                 var params_data = {'userId':this.userId,'token':this.token}
                 this.axios({
                     baseURL:this.url,
-                    url:'api/v1/apiManager/'+row.id+'/',
+                    url:'api/v1/testType/'+row.id+'/',
                     method:'delete',
                     params:params_data,
                 }).then(response=>{
@@ -234,7 +301,7 @@ export default {
                             center: true,
                             showClose: true,
                         });
-                        this.get_apiManagers()
+                        this.get_testtypes()
                     }
                     else {
                         this.$message({
@@ -254,20 +321,21 @@ export default {
                 })
             }).catch(() => {
             })
+
         },
         // 添加数据
         new_webcase() {
             var body_data = {
-                    'apiname': this.apiname,
-                    'apides': this.apides,
-                    'apiurl':this.apiurl,
-                    'user': this.userId,
-                    'project': this.projectId
+                    'typename': this.typename,
+                    'typedes': this.typedes,
+                    'object_id': this.object_id,
+                    'content_type': this.content_type,
+                    'user': this.userId
                 }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/apiManager/',
+                url:'api/v1/testType/',
                 method:'post',
                 params:params_data,
                 data:body_data,
@@ -280,10 +348,11 @@ export default {
                         center: true,
                         showClose: true,
                     });
+                    this.get_testtypes()
                 }
                 else {
                     this.$message({
-                        message: "新建失败",
+                        message: "添加失败",
                         type: 'error',
                         center: true,
                         showClose: true,
@@ -297,17 +366,15 @@ export default {
                         showClose: true,
                     })
             })
-            this.get_apiManagers()
-            this.apiname=''
-            this.apides=''
-            this.apiurl=''
+            this.typename=''
+            this.typedes=''
         },
         // 上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.apiManagers=response.data.results
+                    this.testtypes=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -347,7 +414,7 @@ export default {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.apiManagers=response.data.results
+                    this.testtypes=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -382,89 +449,34 @@ export default {
                     })
             })
         },
-        // 进入API
-        go_apiTest(object) {
-            var url = '/home/ApiType/'
-            var query_data = {
-                'object_id':object.id, 
-                'content_type': object.contenttype,
-                'apiurl':object.apiurl
-            }
-            this.$router.push({ path: url,query:query_data})
+        // 进入前端测试案例
+        go_apiTest(testType) {
+            var url = '/home/apiCase/'
+            this.$router.push({ path: url,query:{'testType': testType,'weburl':this.apiurl}})
         },
-        // 获取项目列表
-        get_projects() {
-            var params_data = {'userId':this.userId,'token':this.token}
-            this.axios({
-                baseURL:this.url,
-                url:'api/v1/project/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.project_options=[]
-                    for (var i=0;i<response.data.results.length;i++){
-                        var data = {
-                            "value":response.data.results[i].id,
-                            "label":response.data.results[i].proname
-                        }
-                        this.project_options.push(data)
-                    }
-                    // 判断是否有上一页
-                    this.pre=response.data.previous
-                    if (!this.pre) {
-                        this.isPreDisabled=true
-                    }
-                    else {
-                        this.isPreDisabled=false
-                    }
-                    // 判断是否有下一页
-                    this.next=response.data.next
-                    if (!this.next) {
-                        this.isNextDisabled=true
-                    }
-                    else {
-                        this.isNextDisabled=false
-                    }
-                }
-                else {
-                    this.$message({
-                        message: "加载失败",
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
-                }
-            },error=>{
-                this.$message({
-                        message: '匿名用户，请先登录',
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
-                this.$router.push('/')
-            })
-        }
-    },
-    watch: {
-        '$route.query.projectId':function(val) {
-            if (!val) {
-                this.get_projects()
-                this.get_apiManagers()
-            }
-        }
     },
     beforeCreate() {
     },
     created() {
-        // 获取数据列表
-        this.get_apiManagers()
+        this.get_testtypes()
         // 获取项目列表
-        if (!this.$route.query.projectId) {
-            this.get_projects()
-        }
     },
+    filters:{
+        dateFormat:function(time) {
+            var date=new Date(time);
+            var year=date.getFullYear();
+            /* 在日期格式中，月份是从0开始的，因此要加0
+            * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+            * */
+            var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+            var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+            var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+            var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+            var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+            // 拼接
+            return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+        }
+    }
 }
 </script>
 

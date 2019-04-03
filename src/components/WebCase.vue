@@ -439,10 +439,10 @@ export default {
         // 添加数据
         new_webcase(type) {
             var body_data = {
-                    'webname': this.webname,
-                    'testType': this.testType,
-                    'user':this.userId
-                }
+                'webname': this.webname,
+                'testType': this.testType,
+                'user':this.userId
+            }
             var url = 'api/v1/webCase/'
             if (type=='check') {
                 url = 'api/v1/checkWebCase/'
