@@ -1,9 +1,11 @@
 <template>
 <div>
+    <div v-if="this.$route.query.projectId">
     <!-- 返回上一级 -->
-    <a v-if="this.$route.query.projectId" href="#" @click.prevent="go_back">
-        <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
-    </a>
+        <a href="#" @click.prevent="go_back">
+            <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
+        </a>
+    </div>
     <!-- 添加web -->
     <div>
         <el-button type="primary" @click="new_webcase">添加测试</el-button>
@@ -463,6 +465,7 @@ export default {
         '$route.query.projectId':function(val) {
             if (!val) {
                 this.get_projects()
+                this.get_webManagers()
             }
         }
     },

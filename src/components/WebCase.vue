@@ -2,61 +2,120 @@
 <div>
     <!-- 返回上一级 -->
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
-    <br><br>
-    <el-button type="primary" @click="webTest()">开始测试</el-button><br><br>
-    <!-- 添加web操作 -->
-    <div>
-        <el-button type="primary" @click="new_webcase">添加步骤</el-button>
-        <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
-        <br><br>
-    </div>
-    <!-- 前端selenium操作步骤 -->
-    <el-table
-     border
-     stripe
-     :data="webCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
-     empty-text="暂无项目"
-     :default-sort = "{prop: 'index', order: 'ascending'}"
-     :header-cell-style="{background:'#ddd'}"
-     highlight-current-row>
-        <el-table-column label="" align="center" prop="index" width="50px" sortable>
-        </el-table-column>
-        <el-table-column label="步骤" align="center" prop="webname">
-        </el-table-column>
-        <el-table-column label="CSS选择器" align="center" prop="webcss">
-        </el-table-column>
-        <el-table-column label="元素操作" align="center" prop="weboprate">
-        </el-table-column>
-        <el-table-column label="操作参数" align="center" prop="webparam">
-        </el-table-column>
-        <el-table-column label="最近修改" align="center">
-            <template slot-scope="scope">
-                <p>{{scope.row.update_time|dateFormat}}</p>
-            </template>
-        </el-table-column>
-        <el-table-column align="center">
-            <template slot="header" slot-scope="scope">
-                <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
-            </template>
-            <template slot-scope="scope">
-                <el-button
-                size="mini"
-                type="primary"
-                @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
-                <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
-            </template>
-        </el-table-column>
-    </el-table>
-    <br>
-    <!-- 翻页 -->
-    <div style="text-align: center;">
-        <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
-        <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
-    </div>
-    <br><br>
+    <el-button type="primary" @click="webTest()" style="float: right;" :loading="loading" v-text="testBtn">开始测试</el-button>
+    <br><br><br>
+    <el-collapse v-model="activeName" accordion>
+        <el-collapse-item title="操作步骤" name="1">
+            <!-- 添加web操作 -->
+            <div>
+                <el-button type="primary" @click="new_webcase">添加步骤</el-button>
+                <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+                <br><br>
+            </div>
+            <!-- 前端selenium操作步骤 -->
+            <el-table
+             border
+             stripe
+             :data="webCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+             empty-text="暂无项目"
+             :default-sort = "{prop: 'index', order: 'ascending'}"
+             :header-cell-style="{background:'#ddd'}"
+             highlight-current-row>
+                <el-table-column label="" align="center" prop="index" width="50px" sortable>
+                </el-table-column>
+                <el-table-column label="步骤" align="center" prop="webname">
+                </el-table-column>
+                <el-table-column label="CSS选择器" align="center" prop="webcss">
+                </el-table-column>
+                <el-table-column label="元素操作" align="center" prop="weboprate">
+                </el-table-column>
+                <el-table-column label="操作参数" align="center" prop="webparam">
+                </el-table-column>
+                <el-table-column label="最近修改" align="center">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.update_time|dateFormat}}</p>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center">
+                    <template slot="header" slot-scope="scope">
+                        <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button
+                        size="mini"
+                        type="primary"
+                        @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
+                        <el-button
+                        size="mini"
+                        type="danger"
+                        @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br>
+            <!-- 翻页 -->
+            <div style="text-align: center;">
+                <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
+                <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
+            </div>
+        </el-collapse-item>
+        <el-collapse-item title="操作验证" name="2">
+        <!-- 添加验证操作 -->
+        <div>
+            <el-button type="primary" @click="new_webcase('check')">添加验证</el-button>
+            <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+            <br><br>
+        </div>
+        <!-- 验证数据列表 -->
+        <el-table
+         border
+         stripe
+         :data="checkWebCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+         empty-text="暂无项目"
+         :default-sort = "{prop: 'index', order: 'ascending'}"
+         :header-cell-style="{background:'#ddd'}"
+         highlight-current-row>
+            <el-table-column label="" align="center" prop="index" width="50px" sortable>
+            </el-table-column>
+            <el-table-column label="验证" align="center" prop="webname">
+            </el-table-column>
+            <el-table-column label="CSS选择器" align="center" prop="webcss">
+            </el-table-column>
+            <el-table-column label="元素操作" align="center" prop="weboprate">
+            </el-table-column>
+            <el-table-column label="操作参数" align="center" prop="webparam">
+            </el-table-column>
+            <el-table-column label="验证数据" align="center" prop="checktext">
+            </el-table-column>
+            <el-table-column label="最近修改" align="center">
+                <template slot-scope="scope">
+                    <p>{{scope.row.update_time|dateFormat}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column align="center">
+                <template slot="header" slot-scope="scope">
+                    <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
+                </template>
+                <template slot-scope="scope">
+                    <el-button
+                    size="mini"
+                    type="primary"
+                    @click="open_edit(scope.row,'check')" class="el-icon-edit"></el-button>
+                    <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row, 'check')" icon="el-icon-delete"></el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <br>
+        <!-- 翻页 -->
+        <div style="text-align: center;">
+            <el-button type="primary" :disabled="isCheckPreDisabled" @click="get_checkPre">上一页</el-button>
+            <el-button type="primary" :disabled="isCheckNextDisabled" @click="get_checkNext">下一页</el-button>
+        </div>
+        </el-collapse-item>
+    </el-collapse>
     <!-- 修改数据 -->
     <el-dialog :visible.sync="dialogFormVisible">
         <el-form>
@@ -95,54 +154,6 @@
             <el-button type="primary" @click="handleEdit(editObj)">确 定</el-button>
         </div>
     </el-dialog>
-    <!-- 添加验证操作 -->
-    <div>
-        <el-button type="primary" @click="new_webcase('check')">添加验证</el-button>
-        <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
-        <br><br>
-    </div>
-    <!-- 验证数据列表 -->
-    <el-table
-     border
-     stripe
-     :data="checkWebCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
-     empty-text="暂无项目"
-     :default-sort = "{prop: 'index', order: 'ascending'}"
-     :header-cell-style="{background:'#ddd'}"
-     highlight-current-row>
-        <el-table-column label="" align="center" prop="index" width="50px" sortable>
-        </el-table-column>
-        <el-table-column label="验证" align="center" prop="webname">
-        </el-table-column>
-        <el-table-column label="CSS选择器" align="center" prop="webcss">
-        </el-table-column>
-        <el-table-column label="元素操作" align="center" prop="weboprate">
-        </el-table-column>
-        <el-table-column label="操作参数" align="center" prop="webparam">
-        </el-table-column>
-        <el-table-column label="验证数据" align="center" prop="checktext">
-        </el-table-column>
-        <el-table-column label="最近修改" align="center">
-            <template slot-scope="scope">
-                <p>{{scope.row.update_time|dateFormat}}</p>
-            </template>
-        </el-table-column>
-        <el-table-column align="center">
-            <template slot="header" slot-scope="scope">
-                <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
-            </template>
-            <template slot-scope="scope">
-                <el-button
-                size="mini"
-                type="primary"
-                @click="open_edit(scope.row,'check')" class="el-icon-edit"></el-button>
-                <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row, 'check')" icon="el-icon-delete"></el-button>
-            </template>
-        </el-table-column>
-    </el-table>
 </div>
 </template>
 
@@ -157,16 +168,22 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testBtn:'开始测试',
+            loading:false,
             webname: '',
             search: '',
             webCases: [],
             checkWebCases:[],
             pre:'',
             next:'',
+            checkPre:'',
+            checkNext:'',
             testType: this.$route.query.testType,
             weburl: this.$route.query.weburl,
             isNextDisabled:false,
             isPreDisabled:false,
+            isCheckNextDisabled:false,
+            isCheckPreDisabled:false,
             dialogFormVisible:false,
             editObj:{
                 id:'',
@@ -178,8 +195,7 @@ export default {
                 type:'',
                 checktext:'',
             },
-            testObj:[],
-            checkObj:[],
+            activeName:'1'
         }
     },
     methods: {
@@ -189,16 +205,19 @@ export default {
         },
         // 前端测试
         webTest() {
-            var body_data = {
-                test:this.testObj,
-                check:this.checkObj,
+            this.loading=true
+            this.testBtn='测试中...'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'testType':this.testType,
+                'url': this.weburl
             }
             this.axios({
                 baseURL:this.url,
                 url:'/api/v1/webCaseTest/',
-                method:'post',
-                params:{'url': this.weburl},
-                data:body_data,
+                method:'get',
+                params:params_data,
             }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
@@ -217,13 +236,17 @@ export default {
                         showClose: true,
                     })
                 }
+                this.loading=false
+                this.testBtn='开始测试'
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                this.loading=false
+                this.testBtn='开始测试'
             })
         },
         // 获取数据列表
@@ -240,14 +263,6 @@ export default {
                 params:params_data,
             }).then(response=>{
                 this.webCases=response.data.results
-                this.testObj=[]
-                for (var i=0;i<response.data.results.length;i++){
-                    var element = {}
-                    element['css']=response.data.results[i].webcss
-                    element['method']=response.data.results[i].weboprate
-                    element['param']=response.data.results[i].webparam
-                    this.testObj.push(element)
-                }
                 // 判断是否有上一页
                 this.pre=response.data.previous
                 if (!this.pre) {
@@ -287,31 +302,22 @@ export default {
                 params:params_data,
             }).then(response=>{
                 this.checkWebCases=response.data.results
-                this.checkObj=[]
-                for (var i=0;i<response.data.results.length;i++){
-                    var element = {}
-                    element['css']=response.data.results[i].webcss
-                    element['method']=response.data.results[i].weboprate
-                    element['param']=response.data.results[i].webparam
-                    element['checktext']=response.data.results[i].checktext
-                    this.checkObj.push(element)
+                // 判断是否有上一页
+                this.checkPre=response.data.previous
+                if (!this.checkPre) {
+                    this.isCheckPreDisabled=true
                 }
-                // // 判断是否有上一页
-                // this.pre=response.data.previous
-                // if (!this.pre) {
-                //     this.isPreDisabled=true
-                // }
-                // else {
-                //     this.isPreDisabled=false
-                // }
-                // // 判断是否有下一页
-                // this.next=response.data.next
-                // if (!this.next) {
-                //     this.isNextDisabled=true
-                // }
-                // else {
-                //     this.isNextDisabled=false
-                // }
+                else {
+                    this.isCheckPreDisabled=false
+                }
+                // 判断是否有下一页
+                this.checkNext=response.data.next
+                if (!this.checkNext) {
+                    this.isCheckNextDisabled=true
+                }
+                else {
+                    this.isCheckNextDisabled=false
+                }
             },error=>{
                 this.$message({
                         message: '匿名用户，请先登录',
@@ -518,6 +524,45 @@ export default {
                     })
             })
         },
+        get_checkPre() {
+            this.axios.get(this.checkPre).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.checkWebCases=response.data.results
+                    // 判断是否有上一页
+                    this.checkPre=response.data.previous
+                    if (!this.checkPre) {
+                        this.isCheckPreDisabled=true
+                    }
+                    else {
+                        this.isCheckPreDisabled=false
+                    }
+                    // 判断是否有下一页
+                    this.checkNext=response.data.next
+                    if (!this.checkNext) {
+                        this.isCheckNextDisabled=true
+                    }
+                    else {
+                        this.isCheckNextDisabled=false
+                    }
+                }
+                else {
+                    this.$message({
+                        message: "加载失败",
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.$message({
+                        message: error.response.data,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+            })
+        },
         // 下一页
         get_next() {
             this.axios.get(this.next).then(response=>{
@@ -558,10 +603,47 @@ export default {
                     })
             })
         },
+        get_checkNext() {
+            this.axios.get(this.checkNext).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.checkWebCases=response.data.results
+                    // 判断是否有上一页
+                    this.checkPre=response.data.previous
+                    if (!this.checkPre) {
+                        this.isCheckPreDisabled=true
+                    }
+                    else {
+                        this.isCheckPreDisabled=false
+                    }
+                    // 判断是否有下一页
+                    this.checkNext=response.data.next
+                    if (!this.checkNext) {
+                        this.isCheckNextDisabled=true
+                    }
+                    else {
+                        this.isCheckNextDisabled=false
+                    }
+                }
+                else {
+                    this.$message({
+                        message: "加载失败",
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.$message({
+                        message: error.response.data,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+            })
+        },
     },
-    beforeCreate() { 
-        // 获取本地缓存最新数据user
-        user = JSON.parse(window.localStorage.getItem('user'))
+    beforeCreate() {
     },
     created() {
         // 获取数据列表

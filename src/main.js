@@ -12,6 +12,7 @@ import './assets/icon/iconfont.css'
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+// Vue.prototype.url = 'http://10.1.18.178:8000/'
 Vue.prototype.url = 'http://127.0.0.1:8000/'
 Vue.prototype.axios = axios
 Vue.prototype.storage = window.localStorage

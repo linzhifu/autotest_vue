@@ -446,6 +446,7 @@ export default {
         '$route.query.projectId':function(val) {
             if (!val) {
                 this.get_projects()
+                this.get_apiManagers()
             }
         }
     },

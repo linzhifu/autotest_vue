@@ -4,13 +4,12 @@
     <a href="#" @click.prevent="go_back">
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
-    <el-button type="primary" @click="webTest">开始测试</el-button>
-    <br><br>
     <!-- 添加测试分类 -->
     <div>
         <el-button type="primary" @click="new_webcase">添加分类</el-button>
         <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
         <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
+        <el-button type="primary" @click="webTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
         <br><br>
     </div>
     <!-- web列表 -->
@@ -112,6 +111,8 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testBtn:'开始测试',
+            loading:false,
             typename: '',
             typedes: '',
             search: '',
@@ -140,12 +141,20 @@ export default {
         },
         // web测试
         webTest() {
+            this.loading=true
+            this.testBtn='测试中...'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'object_id':this.object_id,
+                'content_type':this.content_type,
+                'url': this.weburl
+            }
             this.axios({
                 baseURL:this.url,
                 url:'/api/v1/webTypeTest/',
-                method:'post',
-                params:{'url': this.weburl},
-                data:this.testtypes,
+                method:'get',
+                params:params_data,
             }).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
@@ -164,13 +173,20 @@ export default {
                         showClose: true,
                     })
                 }
+                this.get_testtypes()
+                this.loading=false
+                this.testBtn='开始测试'
+                this.get_testtypes()
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                this.get_testtypes()
+                this.loading=false
+                this.testBtn='开始测试'
             })
         },
         // 获取数据
