@@ -9,7 +9,7 @@
         <el-button type="primary" @click="new_webcase">添加分类</el-button>
         <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
         <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
-        <el-button type="primary" @click="webTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
+        <el-button type="primary" @click="apiTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
         <br><br>
     </div>
     <!-- API列表 -->
@@ -139,8 +139,8 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // web测试
-        webTest() {
+        // api测试
+        apiTest() {
             this.loading=true
             this.testBtn='测试中...'
             var params_data = {
@@ -148,11 +148,11 @@ export default {
                 'token':this.token,
                 'object_id':this.object_id,
                 'content_type':this.content_type,
-                'url': this.weburl
+                'url': this.apiurl
             }
             this.axios({
                 baseURL:this.url,
-                url:'/api/v1/webTypeTest/',
+                url:'/api/v1/apiTypeTest/',
                 method:'get',
                 params:params_data,
             }).then(response=>{

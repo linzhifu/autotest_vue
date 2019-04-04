@@ -16,6 +16,7 @@
                 :value="item.value">
             </el-option>
         </el-select>
+        <el-button type="primary" @click="apiCaseTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
         <br><br>
     </div>
     <!-- API列表 -->
@@ -124,7 +125,7 @@
         </el-table-column>
         <el-table-column label="测试结果" align="center">
             <template slot-scope="scope">
-                <p v-if="scope.row.apistatus" style="color:green">PASS</p>
+                <p v-if="scope.row.result" style="color:green">PASS</p>
                 <p v-else style="color:red">FAIL</p>
             </template>
         </el-table-column>
@@ -203,6 +204,8 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testBtn:'开始测试',
+            loading:false,
             apiname: '',
             apiurl:'',
             apiparams:{},
@@ -252,8 +255,12 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // API测试
+        // API单元测试
         apiTest(row) {
+            if (this.body[row.id].hasOwnProperty('timestamp')) {
+                this.body[row.id]['timestamp'] = Date.parse(new Date())
+            }
+            console.log(this.params[row.id])
             this.axios({
                 baseURL:this.weburl,
                 url:row.apiurl,
@@ -263,7 +270,7 @@ export default {
             }).then(response=>{
                 console.log(response.data)
                 row.testdata = response.data
-                if (!response.data.errcode) {
+                if (parseInt(response.data.errcode)==this.response[row.id].errcode) {
                      this.$message({
                         message: 'PASS',
                         type: 'success',
@@ -282,6 +289,53 @@ export default {
             },error=>{
                 console.log(error.response.data)
                 row.testdata=error.response.data
+            })
+        },
+        // 全部API测试
+        apiCaseTest() {
+            this.loading=true
+            this.testBtn='测试中...'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'testType':this.testType,
+                'url': this.weburl
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'/api/v1/apiCaseTest/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: 'PASS',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                    });
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+                this.loading=false
+                this.testBtn='开始测试'
+                this.get_apiCases()
+            },error=>{
+                this.$message({
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                this.loading=false
+                this.testBtn='开始测试'
             })
         },
         // 编辑参数——删除一项

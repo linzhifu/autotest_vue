@@ -36,6 +36,17 @@
         </el-table-column>
         <el-table-column label="项目" align="center" prop="proname">
         </el-table-column>
+        <el-table-column label="测试结果" align="center" prop="result">
+            <template slot-scope="scope">
+                <p v-if="scope.row.result" style="color:green">PASS</p>
+                <p v-else style="color:red">FAIL</p>
+            </template>
+        </el-table-column>
+        <el-table-column label="最近修改" align="center" prop="update_time">
+            <template slot-scope="scope">
+                <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
         <el-table-column label="测试案例" align="center">
             <template slot-scope="scope">
                 <el-button type="primary" @click="go_apiTest(scope.row)" size="mini">点击进入</el-button>
@@ -445,7 +456,7 @@ export default {
                     })
                 this.$router.push('/')
             })
-        }
+        },
     },
     watch: {
         '$route.query.projectId':function(val) {
@@ -465,6 +476,22 @@ export default {
             this.get_projects()
         }
     },
+    filters:{
+        dateFormat:function(time) {
+            var date=new Date(time);
+            var year=date.getFullYear();
+            /* 在日期格式中，月份是从0开始的，因此要加0
+            * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+            * */
+            var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+            var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+            var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+            var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+            var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+            // 拼接
+            return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+        }
+    }
 }
 </script>
 
