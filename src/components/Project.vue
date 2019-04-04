@@ -23,6 +23,7 @@
             <template slot-scope="scope">
                 <el-button type="primary" @click="go_webTest(scope.row.id)" size="mini">前端</el-button>
                 <el-button type="primary" @click="go_apiTest(scope.row.id)" size="mini">后端</el-button>
+                <el-button type="primary" @click="projectTest(scope.row.id)" size="mini" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
             </template>
         </el-table-column>
         <el-table-column align="center">
@@ -77,6 +78,8 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testBtn:'开始测试',
+            loading:false,
             proname: '',
             prodes: '',
             projects:[],
@@ -94,6 +97,53 @@ export default {
 		};
 	},
 	methods: {
+        // 项目测试
+        projectTest(id) {
+            this.loading=true
+            this.testBtn='测试中...'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'projectId':id
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'/api/v1/projectTest/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: 'PASS',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                    });
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+                this.loading=false
+                this.testBtn='开始测试'
+                this.get_webManagers()
+            },error=>{
+                this.$message({
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                this.get_webManagers()
+                this.loading=false
+                this.testBtn='开始测试'
+            })
+        },
         // 加载数据
         get_projects() {
             var params_data = {'userId':this.userId,'token':this.token}

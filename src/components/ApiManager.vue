@@ -18,6 +18,7 @@
             :value="item.value">
             </el-option>
         </el-select>
+        <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
         <br><br>
     </div>
     <!-- API列表 -->
@@ -110,6 +111,8 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testBtn:'开始测试',
+            loading:false,
             apiname: '',
             apides: '',
             apiurl:'',
@@ -134,6 +137,53 @@ export default {
         // 返回上一级
         go_back() {
             this.$router.back(-1)
+        },
+        // api测试
+        apiManagerTest() {
+            this.loading=true
+            this.testBtn='测试中...'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'projectId':this.projectId
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'/api/v1/apiManagerTest/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: 'PASS',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                    });
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+                this.loading=false
+                this.testBtn='开始测试'
+                this.get_apiManagers()
+            },error=>{
+                this.$message({
+                    message: error.response.data,
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                this.get_apiManagers()
+                this.loading=false
+                this.testBtn='开始测试'
+            })
         },
         // 获取数据列表
         get_apiManagers() {

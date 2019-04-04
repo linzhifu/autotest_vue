@@ -173,7 +173,6 @@ export default {
                         showClose: true,
                     })
                 }
-                this.get_testtypes()
                 this.loading=false
                 this.testBtn='开始测试'
                 this.get_testtypes()
