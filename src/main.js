@@ -8,8 +8,10 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import './assets/css/main.css'
 import './assets/icon/iconfont.css'
+import VCharts from 'v-charts'
 
 Vue.use(ElementUI)
+Vue.use(VCharts)
 
 Vue.config.productionTip = false
 // Vue.prototype.url = 'http://10.1.18.178:8000/'
