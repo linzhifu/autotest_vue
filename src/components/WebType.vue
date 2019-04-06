@@ -9,7 +9,7 @@
         <el-button type="primary" @click="new_webcase">添加分类</el-button>
         <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
         <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
-        <el-button type="primary" @click="webTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
+        <el-button type="primary" @click="webTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
     <!-- web列表 -->
@@ -29,6 +29,11 @@
         <el-table-column label="" align="center" prop="index" width="50px" sortable>
         </el-table-column>
         <el-table-column label="名称" align="center" prop="typename">
+            <template slot-scope="scope">
+                <a href="#" @click.prevent="go_webTest(scope.row.id)">
+                    <p>{{scope.row.typename}}</p>
+                </a>
+            </template>
         </el-table-column>
         <el-table-column label="描述" align="center" prop="typedes">
         </el-table-column>
@@ -41,11 +46,6 @@
         <el-table-column label="最近修改" align="center" prop="update_time">
             <template slot-scope="scope">
                 <p>{{scope.row.update_time|dateFormat}}</p>
-            </template>
-        </el-table-column>
-        <el-table-column label="测试案例" align="center">
-            <template slot-scope="scope">
-                <el-button type="primary" @click="go_webTest(scope.row.id)" size="mini">点击进入</el-button>
             </template>
         </el-table-column>
         <el-table-column align="center">

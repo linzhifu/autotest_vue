@@ -25,7 +25,7 @@
             </el-menu-item>
             <el-menu-item index="3">
                 <i class="el-icon-document"></i>
-                <span slot="title">测试结果</span>
+                <span slot="title">测试记录</span>
             </el-menu-item>
             </el-menu>
     </el-header>

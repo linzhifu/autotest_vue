@@ -20,7 +20,7 @@
             :value="item.value">
             </el-option>
         </el-select>
-        <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
+        <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
     <!-- web列表 -->
@@ -31,7 +31,12 @@
      empty-text="暂无项目"
      :header-cell-style="{background:'#ddd'}"
      highlight-current-row>
-        <el-table-column label="名称" align="center" prop="webname">
+        <el-table-column label="名称" align="center">
+            <template slot-scope="scope">
+                <a href="#" @click.prevent="go_webTest(scope.row)">
+                    <p>{{scope.row.webname}}</p>
+                </a>
+            </template>
         </el-table-column>
         <el-table-column label="描述" align="center" prop="webdes">
         </el-table-column>
@@ -48,11 +53,6 @@
         <el-table-column label="最近修改" align="center" prop="update_time">
             <template slot-scope="scope">
                 <p>{{scope.row.update_time|dateFormat}}</p>
-            </template>
-        </el-table-column>
-        <el-table-column label="测试案例" align="center">
-            <template slot-scope="scope">
-                <el-button type="primary" @click="go_webTest(scope.row)" size="mini">点击进入</el-button>
             </template>
         </el-table-column>
         <el-table-column align="center">

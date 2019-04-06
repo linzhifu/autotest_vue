@@ -15,15 +15,37 @@
      empty-text="暂无项目"
      :header-cell-style="{background:'#ddd'}"
      highlight-current-row>
-        <el-table-column label="项目名称" align="center" prop="proname">
+        <el-table-column label="项目名称" align="center" prop="proname" sortable>
         </el-table-column>
         <el-table-column label="项目描述" align="center" prop="prodes">
         </el-table-column>
-        <el-table-column label="测试中心" align="center">
+        <el-table-column label="后端" align="center">
             <template slot-scope="scope">
-                <el-button type="primary" @click="go_webTest(scope.row.id)" size="mini">前端</el-button>
-                <el-button type="primary" @click="go_apiTest(scope.row.id)" size="mini">后端</el-button>
-                <el-button type="primary" @click="projectTest(scope.row.id)" size="mini" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
+                <a href="#" @click.prevent="go_apiTest(scope.row)">
+                    <p v-if="scope.row.apiresult" style="color:green">PASS</p>
+                    <p v-else style="color:red">FAIL</p>
+                </a>
+            </template>
+        </el-table-column>
+        <el-table-column label="前端" align="center">
+            <template slot-scope="scope">
+                <a href="#" @click.prevent="go_webTest(scope.row)">
+                    <p v-if="scope.row.webresult" style="color:green">PASS</p>
+                    <p v-else style="color:red">FAIL</p>
+                </a>
+            </template>
+        </el-table-column>
+        <el-table-column label="测试结果" align="center">
+            <template slot-scope="scope">
+                <a href="#" @click.prevent="projectTest(scope.row.id)">
+                    <p v-if="scope.row.result" style="color:green" v-html="passText"></p>
+                    <p v-else style="color:red" v-html="failText"></p>
+                </a>
+            </template>
+        </el-table-column>
+        <el-table-column label="最近修改" align="center" prop="update_time" sortable>
+            <template slot-scope="scope">
+                <p>{{scope.row.update_time|dateFormat}}</p>
             </template>
         </el-table-column>
         <el-table-column align="center">
@@ -80,6 +102,8 @@ export default {
             token: this.storage.getItem('token'),
             testBtn:'开始测试',
             loading:false,
+            passText:'PASS',
+            failText:'FAIL',
             proname: '',
             prodes: '',
             projects:[],
@@ -99,8 +123,13 @@ export default {
 	methods: {
         // 项目测试
         projectTest(id) {
-            this.loading=true
-            this.testBtn='测试中...'
+            this.$message({
+                message: '测试开始',
+                type: 'success',
+                center: true,
+                showClose: true,
+            });
+            this.passText = this.failText = '<p class="el-icon-loading"></p>'
             var params_data = {
                 'userId':this.userId,
                 'token':this.token,
@@ -129,9 +158,9 @@ export default {
                         showClose: true,
                     })
                 }
-                this.loading=false
-                this.testBtn='开始测试'
-                this.get_webManagers()
+                this.passText='PASS'
+                this.failText='FAIL'
+                this.get_projects()
             },error=>{
                 this.$message({
                     message: error.response.data,
@@ -139,8 +168,8 @@ export default {
                     center: true,
                     showClose: true,
                 })
-                this.get_webManagers()
-                this.loading=false
+                this.passText='PASS'
+                this.failText='FAIL'
                 this.testBtn='开始测试'
             })
         },
@@ -406,14 +435,20 @@ export default {
             })
         },
         // 前端测试
-        go_webTest(projectId) {
+        go_webTest(project) {
             var url = '/home/webManager/'
-            this.$router.push({ path: url,query:{'projectId': projectId}})
+            var query = {
+                'projectId': project.id
+            }
+            this.$router.push({ path: url,query:query})
         },
         // 后端测试
-        go_apiTest(projectId) {
+        go_apiTest(project) {
             var url = '/home/apiManager/'
-            this.$router.push({ path: url, query:{'projectId': projectId}})
+            var query = {
+                'projectId': project.id
+            }
+            this.$router.push({ path: url, query:query})
         }
     },
     beforeCreate() {
@@ -421,6 +456,22 @@ export default {
     created() {
         this.get_projects()
     },
+    filters:{
+        dateFormat:function(time) {
+            var date=new Date(time);
+            var year=date.getFullYear();
+            /* 在日期格式中，月份是从0开始的，因此要加0
+            * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+            * */
+            var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+            var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+            var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+            var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+            var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+            // 拼接
+            return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+        }
+    }
 };
 </script>
 

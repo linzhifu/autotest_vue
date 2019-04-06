@@ -16,7 +16,7 @@
                 :value="item.value">
             </el-option>
         </el-select>
-        <el-button type="primary" @click="apiCaseTest" style="float: right;" :loading="loading" v-text="testBtn"></el-button>
+        <el-button type="primary" @click="apiCaseTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
     <!-- API列表 -->

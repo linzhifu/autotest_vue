@@ -2,7 +2,7 @@
 <div>
     <!-- 返回上一级 -->
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
-    <el-button type="primary" @click="webTest()" style="float: right;" :loading="loading" v-text="testBtn">开始测试</el-button>
+    <el-button type="primary" @click="webTest()" style="float: right;" :loading="loading">{{testBtn}}</el-button>
     <br><br><br>
     <el-collapse v-model="activeName" accordion>
         <el-collapse-item title="操作步骤" name="1">
