@@ -342,6 +342,7 @@ export default {
                         center: true,
                         showClose: true,
                     });
+                    this.get_apiManagers()
                 }
                 else {
                     this.$message({
@@ -359,7 +360,7 @@ export default {
                         showClose: true,
                     })
             })
-            this.get_apiManagers()
+            // this.get_apiManagers()
             this.apiname=''
             this.apides=''
             this.apiurl=''

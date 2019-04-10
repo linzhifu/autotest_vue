@@ -163,6 +163,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration:0,
                     });
                 }
                 else {
@@ -171,6 +172,7 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration:0,
                     })
                 }
                 this.get_testtypes()
@@ -183,6 +185,7 @@ export default {
                     type: 'error',
                     center: true,
                     showClose: true,
+                    duration:0,
                 })
                 this.get_testtypes()
                 this.loading=false

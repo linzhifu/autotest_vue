@@ -195,7 +195,7 @@ export default {
                 type:'',
                 checktext:'',
             },
-            activeName:'1'
+            activeName:''
         }
     },
     methods: {
@@ -226,6 +226,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration:0,
                     });
                 }
                 else {
@@ -234,6 +235,7 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration:0,
                     })
                 }
                 this.loading=false
@@ -244,6 +246,7 @@ export default {
                     type: 'error',
                     center: true,
                     showClose: true,
+                    duration:0,
                 })
                 this.loading=false
                 this.testBtn='开始测试'
