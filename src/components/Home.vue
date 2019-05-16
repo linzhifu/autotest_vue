@@ -21,7 +21,7 @@
             </el-menu-item>
             <el-menu-item index="/home/apiManager/">
                 <i class="el-icon-thirdduanxintongji-"></i>
-                <span slot="title">后端测试</span>
+                <span slot="title" disabled>后端测试</span>
             </el-menu-item>
             <el-menu-item index="/home/record/">
                 <i class="el-icon-document"></i>

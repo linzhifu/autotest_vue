@@ -19,14 +19,6 @@
         </el-table-column>
         <el-table-column label="项目描述" align="center" prop="prodes">
         </el-table-column>
-        <el-table-column label="后端" align="center">
-            <template slot-scope="scope">
-                <a href="#" @click.prevent="go_apiTest(scope.row)">
-                    <p v-if="scope.row.apiresult" style="color:green">PASS</p>
-                    <p v-else style="color:red">FAIL</p>
-                </a>
-            </template>
-        </el-table-column>
         <el-table-column label="前端" align="center">
             <template slot-scope="scope">
                 <a href="#" @click.prevent="go_webTest(scope.row)">
@@ -35,9 +27,17 @@
                 </a>
             </template>
         </el-table-column>
+        <el-table-column label="后端" align="center">
+            <template slot-scope="scope">
+                <a href="#" @click.prevent="go_apiTest(scope.row)">
+                    <p v-if="scope.row.apiresult" style="color:green">PASS</p>
+                    <p v-else style="color:red">FAIL</p>
+                </a>
+            </template>
+        </el-table-column>
         <el-table-column label="测试结果" align="center">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="projectTest(scope.row.id)">
+                <a href="#" @click.prevent="projectTest(scope.row)">
                     <p v-if="scope.row.result" style="color:green" v-html="passText"></p>
                     <p v-else style="color:red" v-html="failText"></p>
                 </a>
@@ -122,56 +122,67 @@ export default {
 	},
 	methods: {
         // 项目测试
-        projectTest(id) {
-            this.$message({
-                message: '测试开始',
-                type: 'success',
-                center: true,
-                showClose: true,
-            });
-            this.passText = this.failText = '<p class="el-icon-loading"></p>'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'projectId':id
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/projectTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
+        projectTest(row) {
+            this.$confirm('项目测试需要等待时间较长, 是否开始测试?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(() => {
                     this.$message({
-                        message: 'PASS',
+                        message: '测试开始',
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration:0,
                     });
-                }
-                else {
-                    this.$message({
-                        message: response.data.errmsg,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
+                    this.passText = this.failText = '<p class="el-icon-loading"></p>'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'projectId':row['id']
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/projectTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: row['proname'] + ' 测试 PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.passText='PASS'
+                        this.failText='FAIL'
+                        this.get_projects()
+                    },error=>{
+                        this.$message({
+                            message: error.response.data,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.passText='PASS'
+                        this.failText='FAIL'
+                        this.testBtn='开始测试'
                     })
-                }
-                this.passText='PASS'
-                this.failText='FAIL'
-                this.get_projects()
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                })
-                this.passText='PASS'
-                this.failText='FAIL'
-                this.testBtn='开始测试'
-            })
+                }).catch(() => {
+            });
         },
         // 加载数据
         get_projects() {
@@ -324,6 +335,8 @@ export default {
                         center: true,
                         showClose: true,
                     });
+                // 重新加载数据
+                this.get_projects()
                 }
                 else {
                     this.$message({
@@ -341,8 +354,6 @@ export default {
                         showClose: true,
                     })
             })
-            // 重新加载数据
-            this.get_projects()
             this.proname=''
             this.prodes=''
         },
@@ -438,7 +449,8 @@ export default {
         go_webTest(project) {
             var url = '/home/webManager/'
             var query = {
-                'projectId': project.id
+                'projectId': project.id,
+                'projectName':project.proname
             }
             this.$router.push({ path: url,query:query})
         },

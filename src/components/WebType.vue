@@ -4,6 +4,12 @@
     <a href="#" @click.prevent="go_back">
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
+    <div style="font-size:17px;margin-bottom:10px">
+            项目：{{this.$route.query.projectName}}
+    </div>
+    <div style="font-size:17px">
+            测试：{{this.$route.query.webName}}
+    </div><br>
     <!-- 添加测试分类 -->
     <div>
         <el-button type="primary" @click="new_webcase">添加分类</el-button>

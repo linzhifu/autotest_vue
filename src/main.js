@@ -14,7 +14,7 @@ Vue.use(ElementUI)
 Vue.use(VCharts)
 
 Vue.config.productionTip = false
-// Vue.prototype.url = 'http://10.1.18.178:8000/'
+// Vue.prototype.url = 'http://10.1.19.252/'
 Vue.prototype.url = 'http://127.0.0.1:8000/'
 // Vue.prototype.url = 'http://47.106.111.62/'
 Vue.prototype.axios = axios

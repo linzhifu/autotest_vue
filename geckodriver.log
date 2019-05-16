@@ -28,3 +28,534 @@
 1553613089705	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:60553
 1553613089707	Marionette	TRACE	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
 1553613089707	Marionette	TRACE	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:178: ... et@chrome://marionette/content/server.js:236:8\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:490:9\n"},null]
+1556005366731	geckodriver	INFO	geckodriver 0.20.1
+1556005366785	geckodriver	INFO	Listening on 127.0.0.1:58364
+1556005369836	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.0JPdNQL9IrEI"
+1556005371983	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1556005371984	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1556005371984	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1556005372187	Marionette	TRACE	Received observer notification profile-after-change
+1556005372378	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556005372456	Marionette	TRACE	Received observer notification command-line-startup
+1556005372456	Marionette	TRACE	Received observer notification nsPref:changed
+1556005372456	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1556005372562	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556005374809	Marionette	TRACE	Received observer notification sessionstore-windows-restored
+1556005374809	Marionette	TRACE	GFX sanity window detected, waiting until it has been closed...
+1556005375099	Marionette	TRACE	Received observer notification domwindowclosed
+1556005375099	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1556005375652	Marionette	TRACE	All scripts recorded.
+1556005375652	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1556005375653	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1556005375653	Marionette	DEBUG	Setting recommended pref browser.newtabpage.enabled to false
+1556005375655	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1556005375655	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1556005375656	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1556005375722	Marionette	INFO	Listening on port 58376
+1556005375722	Marionette	DEBUG	Remote service is active
+1556005376264	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:58402
+1556005376266	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1556005376267	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:179: ... et@chrome://marionette/content/server.js:235:8\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:493:9\n"},null]
+[Child 14524, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+1556005401088	Marionette	DEBUG	Closed connection 0
+[Parent 14492, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14804, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14804, Chrome_ChildThread] WARNIN[Parent 14492, Gecko_IOThread] WARNING: file z:/build/build/src/ipc/chromium/src/base/process_util_win.cc, line 166
+1556005401411	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1556005401411	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1556005401412	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1556005401412	Marionette	DEBUG	Resetting recommended pref browser.newtabpage.enabled
+1556005401412	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1556005401412	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1556005401413	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1556005401413	Marionette	INFO	Stopped listening on port 58376
+1556005401413	Marionette	DEBUG	Remote service is inactive
+[GPU 15316, Chrome_
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+ChildThread] WARNING: pipe error: 109: file z:/bu
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556005685550	geckodriver	INFO	geckodriver 0.20.1
+1556005685565	geckodriver	INFO	Listening on 127.0.0.1:58884
+1556005726578	geckodriver	INFO	geckodriver 0.20.1
+1556005726600	geckodriver	INFO	Listening on 127.0.0.1:58946
+error: Found argument '-e' which wasn't expected, or isn't valid in this context
+
+USAGE:
+    geckodriver.exe -v
+
+For more information try --help
+1556006073404	geckodriver	INFO	geckodriver 0.20.1
+1556006073418	geckodriver	INFO	Listening on 127.0.0.1:59340
+1556006076495	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.464Jp0m95ExG"
+1556006078413	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1556006078414	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1556006078414	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1556006078591	Marionette	TRACE	Received observer notification profile-after-change
+1556006078775	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006078816	Marionette	TRACE	Received observer notification command-line-startup
+1556006078816	Marionette	TRACE	Received observer notification nsPref:changed
+1556006078816	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1556006078895	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006081283	Marionette	TRACE	Received observer notification sessionstore-windows-restored
+1556006081284	Marionette	TRACE	GFX sanity window detected, waiting until it has been closed...
+1556006081808	Marionette	TRACE	Received observer notification domwindowclosed
+1556006081808	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1556006082062	Marionette	TRACE	All scripts recorded.
+1556006082062	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1556006082063	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1556006082063	Marionette	DEBUG	Setting recommended pref browser.newtabpage.enabled to false
+1556006082065	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1556006082065	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1556006082066	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1556006082139	Marionette	INFO	Listening on port 59351
+1556006082140	Marionette	DEBUG	Remote service is active
+1556006083488	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:59373
+1556006083642	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1556006083642	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:179: ... et@chrome://marionette/content/server.js:235:8\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:493:9\n"},null]
+[Parent 14452, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15968, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15948, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+1556006094125	Marionette	DEBUG	Closed connection 0
+[Parent 14452, Gecko_IOThread] WARNING: file z:/build/build/src/ipc/chromium/src/base/process_util_win.cc, line 166
+1556006094373	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1556006094373	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1556006094374	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1556006094374	Marionette	DEBUG	Resetting recommended pref browser.newtabpage.enabled
+1556006094374	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1556006094374	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1556006094374	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1556006094375	Marionette	INFO	Stopped listening on port 59351
+1556006094375	Marionette	DEBUG	Remote service is inactive
+[GPU 15664, Chrom
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+e_Chil1556006118960	geckodriver	INFO	geckodriver 0.20.1
+1556006118981	geckodriver	INFO	Listening on 127.0.0.1:59423
+1556006122039	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.DEzdgPeznI5Z"
+1556006123185	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1556006123186	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1556006123186	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1556006123353	Marionette	TRACE	Received observer notification profile-after-change
+1556006123444	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006123492	Marionette	TRACE	Received observer notification command-line-startup
+1556006123492	Marionette	TRACE	Received observer notification nsPref:changed
+1556006123492	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1556006123588	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006125794	Marionette	TRACE	Received observer notification sessionstore-windows-restored
+1556006125794	Marionette	TRACE	GFX sanity window detected, waiting until it has been closed...
+1556006126581	Marionette	TRACE	Received observer notification domwindowclosed
+1556006126582	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1556006126870	Marionette	TRACE	All scripts recorded.
+1556006126870	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1556006126871	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1556006126871	Marionette	DEBUG	Setting recommended pref browser.newtabpage.enabled to false
+1556006126873	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1556006126874	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1556006126875	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1556006126944	Marionette	INFO	Listening on port 59434
+1556006126944	Marionette	DEBUG	Remote service is active
+1556006127462	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:59462
+1556006127466	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1556006127467	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:179: ... et@chrome://marionette/content/server.js:235:8\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:493:9\n"},null]
+[Parent 15492, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16144, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16144, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15492, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 10460, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 101556006134976	Marionette	DEBUG	Closed connection 0
+[Parent 15492, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15668, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15668, Chrome_ChildThread] WARNING: pipe error: 109: file z:/1556006135311	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1556006135311	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1556006135311	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1556006135311	Marionette	DEBUG	Resetting recommended pref browser.newtabpage.enabled
+1556006135312	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1556006135312	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1556006135313	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1556006135313	Marionette	INFO	Stopped listening on port 59434
+1556006135314	Marionette	DEBUG	Remote service is inactive
+[GPU 16080, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/buil
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556006168695	geckodriver	INFO	geckodriver 0.20.1
+1556006168716	geckodriver	INFO	Listening on 127.0.0.1:59513
+1556006171820	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.ECJJvBYCCfRH"
+1556006172922	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1556006172923	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1556006172923	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1556006173131	Marionette	TRACE	Received observer notification profile-after-change
+1556006173255	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006173358	Marionette	TRACE	Received observer notification command-line-startup
+1556006173358	Marionette	TRACE	Received observer notification nsPref:changed
+1556006173358	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1556006173483	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006175836	Marionette	TRACE	Received observer notification sessionstore-windows-restored
+1556006175836	Marionette	TRACE	GFX sanity window detected, waiting until it has been closed...
+1556006176354	Marionette	TRACE	Received observer notification domwindowclosed
+1556006176354	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1556006176583	Marionette	TRACE	All scripts recorded.
+1556006176583	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1556006176584	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1556006176584	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1556006176585	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1556006176585	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1556006176645	Marionette	INFO	Listening on port 59525
+1556006176645	Marionette	DEBUG	Remote service is active
+1556006177223	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:59551
+1556006177225	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1556006177226	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:179: ... et@chrome://marionette/content/server.js:235:8\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:493:9\n"},null]
+[Child 16044, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16044, Chrome_ChildThread] WARNING: pipe e[Child 15604, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15604, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc1556006183989	Marionette	DEBUG	Closed connection 0
+[Parent 16116, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16232, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16232, Chrome_ChildThread] WARNING: pipe1556006184235	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1556006184235	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1556006184235	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1556006184236	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1556006184236	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1556006184236	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1556006184237	Marionette	INFO	Stopped listening on port 59525
+1556006184237	Marionette	DEBUG	Remote service is inactive
+[GPU 15648, Chrome_ChildThread] WARNIN
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1556006223025	geckodriver	INFO	geckodriver 0.20.1
+1556006223045	geckodriver	INFO	Listening on 127.0.0.1:59605
+1556006226126	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.scaT2TJkKZti"
+1556006227331	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1556006227331	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1556006227331	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1556006227526	Marionette	TRACE	Received observer notification profile-after-change
+1556006227640	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006227694	Marionette	TRACE	Received observer notification command-line-startup
+1556006227695	Marionette	TRACE	Received observer notification nsPref:changed
+1556006227695	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1556006227788	Marionette	TRACE	Received observer notification toplevel-window-ready
+1556006229975	Marionette	TRACE	Received observer notification sessionstore-windows-restored
+1556006229975	Marionette	TRACE	GFX sanity window detected, waiting until it has been closed...
+1556006230574	Marionette	TRACE	Received observer notification domwindowclosed
+1556006230574	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1556006230672	Marionette	TRACE	All scripts recorded.
+1556006230672	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1556006230673	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1556006230674	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1556006230674	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1556006230675	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1556006230783	Marionette	INFO	Listening on port 59620
+1556006230784	Marionette	DEBUG	Remote service is active
+1556006231520	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:59655
+1556006231522	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1556006231523	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:179: ... et@chrome://marionette/content/server.js:235:8\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:493:9\n"},null]
+[Parent 15852, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16332, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14080, Chrome_Chi[ldThChild 16332, Chrome_Cread] WARNING: pipe error: 109: file z:/build/build/src/iphildThread] c/chromium/src/chrome/WARNING: pipe error: 109: file z:/build/build/src/ipc/chromcommon/ipc_channiel_win.cc, line 332u
+m/src/chrome/common/ipc_channel_win.cc, line 332[Child 14080, Chrome_ChildThread] WARNING: p
+i1556006235177	Marionette	DEBUG	Closed connection 0
+[Parent 15852, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 13988, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 13988, Chrome_ChildThread] WARNING: p1556006235432	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1556006235432	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1556006235432	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1556006235432	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1556006235433	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1556006235433	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1556006235433	Marionette	INFO	Stopped listening on port 59620
+1556006235433	Marionette	DEBUG	Remote service is inactive
+[GPU 9180, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, 
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+lin1556006295095	geckodriver	INFO	geckodriver 0.20.1
+1556006295114	geckodriver	INFO	Listening on 127.0.0.1:59739
+1556006298175	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.iv0u8bF7JWPG"
+1556006301760	Marionette	INFO	Listening on port 59750
+1556006301976	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 12016, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 12016, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15608, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15248, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15248, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556006319879	geckodriver	INFO	geckodriver 0.20.1
+1556006319895	geckodriver	INFO	Listening on 127.0.0.1:59783
+1556006322973	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.KTqP5r020JnP"
+1556006326740	Marionette	INFO	Listening on port 59796
+1556006326907	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 15404, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15404, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 12016, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 12016, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 2576, Gecko_IOThread] WARNING: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/base/process_util_win.cc, line 166
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556006370177	geckodriver	INFO	geckodriver 0.20.1
+1556006370199	geckodriver	INFO	Listening on 127.0.0.1:59855
+1556006373269	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.Q3otJiRvq9yN"
+1556006376633	Marionette	INFO	Listening on port 59866
+1556006377005	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 15896, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15896, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+onette	WARN	TLS certificate errors will be ignored for this session
+[Child 14580, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 464, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 464, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+7642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14028, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15900, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15832, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15900, Gecko_IOThread] WARNING: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/base/process_util_win.cc, line 166
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16600, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16600, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 8652, Gecko_IOThread] WARNING: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/base/process_util_win.cc, line 166
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556006740747	geckodriver	INFO	geckodriver 0.20.1
+1556006740766	geckodriver	INFO	Listening on 127.0.0.1:60430
+1556006743870	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.aq6nuycjfnKc"
+1556006747677	Marionette	INFO	Listening on port 60441
+1556006748077	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 14412, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 11856, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15688, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332[Parent 11052, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16636, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16636, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 11052, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15432, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15432, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556006822488	geckodriver	INFO	geckodriver 0.20.1
+1556006822508	geckodriver	INFO	Listening on 127.0.0.1:60547
+1556006825555	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.wnsa6znnS17u"
+1556006829144	Marionette	INFO	Listening on port 60558
+1556006829319	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 16480, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14708, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14708, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 14788, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+rc/chrome/common/ipc_channel_win.cc, line 332
+[Child 16988, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16884, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16884, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 14420, Gecko_IOThread] WARNING: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/base/process_util_win.cc, line 166
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556006864830	geckodriver	INFO	geckodriver 0.20.1
+1556006864849	geckodriver	INFO	Listening on 127.0.0.1:60666
+1556006867881	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.cssGZSxFVkLv"
+1556006871194	Marionette	INFO	Listening on port 60677
+1556006871619	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 15420, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15420, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 13100, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332[Child 16824, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 17224, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15064, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15064, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 17224, Gecko_IOThread] WARNING: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/base/process_util_win.cc, line 166
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+hannel_win.cc, line 332
+[Child 15460, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15876, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 13632, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 13632, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+7642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: (msgtype=0x4B0006,name=PImageBridge::Msg_WillClose) Channel error: cannot send/recv
+
+1556007020724	geckodriver	INFO	geckodriver 0.20.1
+1556007020743	geckodriver	INFO	Listening on 127.0.0.1:61084
+1556007023835	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.YEj6MoUJgzGE"
+1556007028656	Marionette	INFO	Listening on port 61096
+1556007029427	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 16968, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16968, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15540, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15540, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 4420, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16868, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 14652, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007059627	geckodriver	INFO	geckodriver 0.20.1
+1556007059645	geckodriver	INFO	Listening on 127.0.0.1:61181
+1556007062684	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.zdM4qZ8ZWmdd"
+1556007066175	Marionette	INFO	Listening on port 61194
+1556007066478	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 16568, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 14180, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16652, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16652, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 13408, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007168409	geckodriver	INFO	geckodriver 0.20.1
+1556007168421	geckodriver	INFO	Listening on 127.0.0.1:61319
+1556007171500	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.CRywtCHtVW3H"
+1556007175096	Marionette	INFO	Listening on port 61329
+1556007175355	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 14272, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16496, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16496, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 14272, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 14408, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 16608, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007177933	geckodriver	INFO	geckodriver 0.20.1
+1556007177950	geckodriver	INFO	Listening on 127.0.0.1:61356
+1556007180983	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.SaMGNDzSntUJ"
+1556007184407	Marionette	INFO	Listening on port 61367
+1556007184719	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 15036, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15036, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007187116	geckodriver	INFO	geckodriver 0.20.1
+1556007187137	geckodriver	INFO	Listening on 127.0.0.1:61393
+1556007190169	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.vwdSuq369PqQ"
+1556007193839	Marionette	INFO	Listening on port 61403
+1556007193886	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 16800, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 17384, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 17384, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 16992, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007196789	geckodriver	INFO	geckodriver 0.20.1
+1556007196801	geckodriver	INFO	Listening on 127.0.0.1:61427
+1556007199839	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.osqKYY2MOp5T"
+1556007203299	Marionette	INFO	Listening on port 61438
+1556007203608	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 17360, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 17360, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15648, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15648, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 17404, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007205915	geckodriver	INFO	geckodriver 0.20.1
+1556007205933	geckodriver	INFO	Listening on 127.0.0.1:61461
+1556007208970	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.vYxWw66nWQkB"
+1556007214050	Marionette	INFO	Listening on port 61473
+1556007214584	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 13184, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 13184, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15888, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15888, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 15784, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007217094	geckodriver	INFO	geckodriver 0.20.1
+1556007217115	geckodriver	INFO	Listening on 127.0.0.1:61504
+1556007220148	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.VTs9MAcMLpJp"
+1556007223770	Marionette	INFO	Listening on port 61515
+1556007224002	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 1016, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 1016, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15096, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15096, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007226934	geckodriver	INFO	geckodriver 0.20.1
+1556007226947	geckodriver	INFO	Listening on 127.0.0.1:61542
+1556007229991	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.70UbhawHQPTW"
+1556007233622	Marionette	INFO	Listening on port 61553
+1556007233709	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 15992, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15992, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15740, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15740, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 15352, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007237430	geckodriver	INFO	geckodriver 0.20.1
+1556007237449	geckodriver	INFO	Listening on 127.0.0.1:61584
+1556007240490	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.T5DJQyEBDW4w"
+1556007246514	Marionette	INFO	Listening on port 61594
+1556007246692	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 16848, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 15112, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007250275	geckodriver	INFO	geckodriver 0.20.1
+1556007250292	geckodriver	INFO	Listening on 127.0.0.1:61626
+1556007253323	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.6FjWfXqcMuJ9"
+1556007257910	Marionette	INFO	Listening on port 61638
+1556007258651	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 15548, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16596, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15548, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15672, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15672, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 15628, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 15548, Gecko_IOThread] WARNING: pipe error: 232: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 493
+1556007261048	geckodriver	INFO	geckodriver 0.20.1
+1556007261067	geckodriver	INFO	Listening on 127.0.0.1:61668
+1556007264097	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.sGoGnQ0j4zXs"
+1556007268184	Marionette	INFO	Listening on port 61680
+1556007268537	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 11600, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15960, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 11600, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 11600, Gecko_IOThread] WARNING: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/base/process_util_win.cc, line 166
+[GPU 8464, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1556007316012	geckodriver	INFO	geckodriver 0.20.1
+1556007316026	geckodriver	INFO	Listening on 127.0.0.1:61771
+1556007319109	mozrunner::runner	INFO	Running command: "C:\\Users\\Administrator\\Desktop\\Tor Browser\\Browser\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.ToDjOGZ290F7"
+1556007322371	Marionette	INFO	Listening on port 61784
+1556007322821	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Child 15040, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 15040, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Parent 17008, Gecko_IOThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16920, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[Child 16920, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+[GPU 15116, Chrome_ChildThread] WARNING: pipe error: 109: file /var/tmp/build/firefox-57642f36905a/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 332
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1557817467913	geckodriver	INFO	geckodriver 0.20.1
+1557817467927	geckodriver	INFO	Listening on 127.0.0.1:55707
+1557817471019	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\Administrator\\AppData\\Local\\Temp\\rust_mozprofile.okKZFnC7Lxwy"
