@@ -15,7 +15,7 @@
                 <i class="el-icon-menu"></i>
                 <span slot="title">项目中心</span>
             </el-menu-item>
-            <el-menu-item index="/home/webManager/">
+            <el-menu-item index="/home/webManager/" disabled>
                 <i class="el-icon-thirdhoutaicaozuorizhi-"></i>
                 <span slot="title">前端测试</span>
             </el-menu-item>
@@ -25,7 +25,7 @@
             </el-menu-item>
             <el-menu-item index="/home/record/">
                 <i class="el-icon-document"></i>
-                <span slot="title">测试记录</span>
+                <span slot="title">测试LOG</span>
             </el-menu-item>
             </el-menu>
     </el-header>

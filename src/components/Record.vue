@@ -1,11 +1,21 @@
 <template>
-    <el-row>
-        <el-col :span="10"><ve-histogram :data="chartData"></ve-histogram></el-col>
-    </el-row>
+    <div>
+        <!-- <el-row>
+            <el-col :span="10"><ve-histogram :data="chartData"></ve-histogram></el-col>
+        </el-row> -->
+        <iframe id="myiframe" src="http://10.1.19.252:8081" height="720px" width="100%" scrolling="no" frameborder="0"></iframe>
+    </div>
 </template>
 
 <script>
 /* eslint-disable */
+function changeFrameHeight(){
+    var ifm= document.getElementById("myiframe");
+    ifm.height=document.documentElement.clientHeight;
+    }
+    window.onresize=function(){
+    changeFrameHeight();
+}
 export default {
     name: "Record",
     data() {

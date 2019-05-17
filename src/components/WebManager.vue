@@ -21,7 +21,7 @@
                 width="180"
                 align="center">
             </el-table-column>
-            <el-table-column label="测试项" align="">
+            <el-table-column label="测试项" align="" width="800">
                 <template slot-scope="scope">
                     <el-checkbox checked @change="checked=>selectAll(checked,scope.row)">全部</el-checkbox>
                     <span v-for="(option,index) in scope.row.options" :key=index>
@@ -149,7 +149,7 @@ export default {
     name:'WebManager',
     data() {
         return {
-            activeName: '1',
+            activeName: '',
             axios: this.axios,
             url: this.url,
             userId: this.storage.getItem('userId'),
