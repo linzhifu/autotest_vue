@@ -458,7 +458,8 @@ export default {
         go_apiTest(project) {
             var url = '/home/apiManager/'
             var query = {
-                'projectId': project.id
+                'projectId': project.id,
+                'projectName':project.proname
             }
             this.$router.push({ path: url, query:query})
         }

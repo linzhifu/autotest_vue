@@ -35,27 +35,27 @@ export default {
         }
     },
     methods: {
-        get_records() {
-            var params_data = {'userId':this.userId,'token':this.token, projectId: 52}
-            this.axios({
-                baseURL:this.url,
-                url:'api/v1/getRecord/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                this.chartData.rows=response.data.records
-            },error=>{
-                this.$message({
-                    message: '匿名用户，请先登录',
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                })
-            })
-        }
+        // get_records() {
+        //     var params_data = {'userId':this.userId,'token':this.token, projectId: 52}
+        //     this.axios({
+        //         baseURL:this.url,
+        //         url:'api/v1/getRecord/',
+        //         method:'get',
+        //         params:params_data,
+        //     }).then(response=>{
+        //         this.chartData.rows=response.data.records
+        //     },error=>{
+        //         this.$message({
+        //             message: '匿名用户，请先登录',
+        //             type: 'error',
+        //             center: true,
+        //             showClose: true,
+        //         })
+        //     })
+        // }
     },
     created() {
-        this.get_records()
+        // this.get_records()
     }
 };
 </script>

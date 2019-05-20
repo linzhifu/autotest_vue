@@ -1,9 +1,18 @@
 <template>
 <div>
     <!-- 返回上一级 -->
-    <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
-    <el-button type="primary" @click="webTest()" style="float: right;" :loading="loading">{{testBtn}}</el-button>
-    <br><br><br>
+    <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a><br><br>
+    <div style="font-size:17px;margin-bottom:10px">
+            项目：{{this.$route.query.projectName}}
+    </div>
+    <div style="font-size:17px;margin-bottom:10px">
+            测试：{{this.$route.query.webName}}
+    </div>
+    <div style="font-size:17px">
+            案例：{{this.$route.query.webCase}}
+    </div><br>
+    <el-button type="primary" @click="webTest()" style="" :loading="loading">{{testBtn}}</el-button>
+    <br><br>
     <el-collapse v-model="activeName" accordion>
         <el-collapse-item title="操作步骤" name="1">
             <!-- 添加web操作 -->
@@ -205,52 +214,65 @@ export default {
         },
         // 前端测试
         webTest() {
-            this.loading=true
-            this.testBtn='测试中...'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'testType':this.testType,
-                'url': this.weburl
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/webCaseTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
+            this.$confirm('1 请确认是否已打开浏览器服务端 </br>2 测试大约需几分钟请耐心等待 </br>3 即将开始 '+ this.$route.query.webCase + ' 测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
                     this.$message({
-                        message: 'PASS',
+                        message: '测试开始',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     });
-                }
-                else {
-                    this.$message({
-                        message: response.data.errmsg,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'testType':this.testType,
+                        'url': this.weburl
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/webCaseTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    },error=>{
+                        this.$message({
+                            message: error.response.data,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.loading=false
+                        this.testBtn='开始测试'
                     })
-                }
-                this.loading=false
-                this.testBtn='开始测试'
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
-                })
-                this.loading=false
-                this.testBtn='开始测试'
-            })
+                }).catch(() => {        
+            });
         },
         // 获取数据列表
         get_webCases() {

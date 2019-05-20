@@ -1,9 +1,14 @@
 <template>
 <div>
+    <div v-if="this.$route.query.projectId">
     <!-- 返回上一级 -->
-    <a v-if="this.$route.query.projectId" href="#" @click.prevent="go_back">
-        <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
-    </a>
+        <a href="#" @click.prevent="go_back">
+            <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
+        </a>
+        <span style="font-size:17px" v-if="this.$route.query.projectName">
+            项目：{{this.$route.query.projectName}}
+        </span><br><br>
+    </div>
     <!-- 添加API -->
     <div>
         <el-button type="primary" @click="new_webcase">添加模块</el-button>
@@ -451,7 +456,9 @@ export default {
             var query_data = {
                 'object_id':object.id, 
                 'content_type': object.contenttype,
-                'apiurl':object.apiurl
+                'apiurl':object.apiurl,
+                'projectName':object.proname,
+                'apiName':object.apiname
             }
             this.$router.push({ path: url,query:query_data})
         },

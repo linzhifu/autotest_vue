@@ -197,110 +197,135 @@ export default {
         },
         // web测试
         apiManagerTest() {
-            this.loading=true
-            this.testBtn='测试中...'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'projectId':this.projectId
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/webManagerTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: 'PASS',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
-                    });
-                }
-                else {
-                    this.$message({
-                        message: response.data.errmsg,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
-                    })
-                }
-                this.loading=false
-                this.testBtn='开始测试'
-                this.get_webManagers()
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
-                })
-                this.get_webManagers()
-                this.loading=false
-                this.testBtn='开始测试'
-            })
-        },
-        // 量产云平台单元测试
-        testMpcloudCase(row) {
-            this.loading=true
-            this.testBtn='测试中...'
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/webAutoTest/',
-                method:'patch',
-                data:row,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: row['role'] + ' 测试 ' +'PASS',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
-                    });
-                }
-                else {
-                    this.$message({
-                        message: row['role'] + ' 测试 ' +'FAIL',
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
-                    })
-                }
-                this.loading=false
-                this.testBtn='开始测试'
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
-                })
-                this.loading=false
-                this.testBtn='开始测试'
-            })
-        },
-        // 量产云平台整体测试
-        testMpcloud() {
-            this.$confirm('运行量产云平台所有角色的前端测试,测试时间较长, 是否继续?', '提示', {
+            this.$confirm('1 请确认是否已打开浏览器服务端 </br> 2 测试大约需几分钟请耐心等待 </br>3 即将开始全部自定义测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
-                type: 'warning'
+                type: 'warning',
+                dangerouslyUseHTMLString: true
                 }).then(() => {
                     this.$message({
                         message: '测试开始',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
+                    });
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'projectId':this.projectId
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/webManagerTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.loading=false
+                        this.testBtn='开始测试'
+                        this.get_webManagers()
+                    },error=>{
+                        this.$message({
+                            message: error.response.data,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.get_webManagers()
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    })
+                }).catch(() => {        
+            });
+        },
+        // 量产云平台单元测试
+        testMpcloudCase(row) {
+            this.$confirm('1 请确认是否已打开浏览器服务端 </br>2 测试大约需几分钟请耐心等待 </br>3 即将开始 '+ (row['role']) + ' 测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
+                    this.$message({
+                        message: '测试开始',
+                        type: 'success',
+                        center: true
+                    });
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/webAutoTest/',
+                        method:'patch',
+                        data:row,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    },error=>{
+                        this.$message({
+                            message: error.response.data,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    })
+                }).catch(() => {      
+            });
+        },
+        // 量产云平台整体测试
+        testMpcloud() {
+            this.$confirm('1 请确认是否已打开浏览器服务端 </br> 2 测试大约需30分钟请耐心等待 </br>3 即将开始全部角色测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
+                    this.$message({
+                        message: '测试开始',
+                        type: 'success',
+                        center: true
                     });
                     this.loading=true
                     this.testBtn='测试中...'

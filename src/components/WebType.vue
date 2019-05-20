@@ -36,7 +36,7 @@
         </el-table-column>
         <el-table-column label="名称" align="center" prop="typename">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="go_webTest(scope.row.id)">
+                <a href="#" @click.prevent="go_webTest(scope.row)">
                     <p>{{scope.row.typename}}</p>
                 </a>
             </template>
@@ -147,56 +147,69 @@ export default {
         },
         // web测试
         webTest() {
-            this.loading=true
-            this.testBtn='测试中...'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'object_id':this.object_id,
-                'content_type':this.content_type,
-                'url': this.weburl
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/webTypeTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
+            this.$confirm('1 请确认是否已打开浏览器服务端 </br>2 测试大约需几分钟请耐心等待 </br>3 即将开始 '+ this.$route.query.webName + ' 测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
                     this.$message({
-                        message: 'PASS',
+                        message: '测试开始',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     });
-                }
-                else {
-                    this.$message({
-                        message: response.data.errmsg,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'object_id':this.object_id,
+                        'content_type':this.content_type,
+                        'url': this.weburl
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/webTypeTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.get_testtypes()
+                        this.loading=false
+                        this.testBtn='开始测试'
+                        this.get_testtypes()
+                    },error=>{
+                        this.$message({
+                            message: error.response.data,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.get_testtypes()
+                        this.loading=false
+                        this.testBtn='开始测试'
                     })
-                }
-                this.get_testtypes()
-                this.loading=false
-                this.testBtn='开始测试'
-                this.get_testtypes()
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
-                })
-                this.get_testtypes()
-                this.loading=false
-                this.testBtn='开始测试'
-            })
+                }).catch(() => {        
+            });
         },
         // 获取数据
         get_testtypes() {
@@ -459,9 +472,16 @@ export default {
             })
         },
         // 进入前端测试案例
-        go_webTest(testType) {
+        go_webTest(row) {
             var url = '/home/webCase/'
-            this.$router.push({ path: url,query:{'testType': testType,'weburl':this.weburl}})
+            var query_data = {
+                'testType':row['id'],
+                'weburl':this.weburl,
+                'projectName':this.$route.query.projectName,
+                'webName':this.$route.query.webName,
+                'webCase':row['typename']
+            }
+            this.$router.push({ path: url,query:query_data})
         },
     },
     beforeCreate() {
