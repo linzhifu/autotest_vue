@@ -36,7 +36,7 @@
         </el-table-column>
         <el-table-column label="名称" align="center" prop="typename">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="go_apiTest(scope.row.id)">
+                <a href="#" @click.prevent="go_apiTest(scope.row)">
                     <p>{{scope.row.typename}}</p>
                 </a>
             </template>
@@ -147,52 +147,59 @@ export default {
         },
         // api测试
         apiTest() {
-            this.loading=true
-            this.testBtn='测试中...'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'object_id':this.object_id,
-                'content_type':this.content_type,
-                'url': this.apiurl
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/apiTypeTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: 'PASS',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
+            this.$confirm('即将开始 ' + this.$route.query.apiName + ' 模块测试，请耐心等待', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.loading=true
+                this.testBtn='测试中...'
+                var params_data = {
+                    'userId':this.userId,
+                    'token':this.token,
+                    'object_id':this.object_id,
+                    'content_type':this.content_type,
+                    'url': this.apiurl
                 }
-                else {
+                this.axios({
+                    baseURL:this.url,
+                    url:'/api/v1/apiTypeTest/',
+                    method:'get',
+                    params:params_data,
+                }).then(response=>{
+                    // 判断是否成功
+                    if (!response.data.errcode) {
+                        this.$message({
+                            message: this.$route.query.apiName + ' 模块测试 PASS',
+                            type: 'success',
+                            center: true,
+                            showClose: true,
+                        });
+                    }
+                    else {
+                        this.$message({
+                            message: response.data.errmsg,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                        })
+                    }
+                    this.loading=false
+                    this.testBtn='开始测试'
+                    this.get_testtypes()
+                },error=>{
                     this.$message({
-                        message: response.data.errmsg,
+                        message: '自动化测试平台异常，请检查网络',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
-                }
-                this.loading=false
-                this.testBtn='开始测试'
-                this.get_testtypes()
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
+                    this.get_testtypes()
+                    this.loading=false
+                    this.testBtn='开始测试'
                 })
-                this.get_testtypes()
-                this.loading=false
-                this.testBtn='开始测试'
-            })
+            }).catch(() => {
+            });
         },
         // 获取数据
         get_testtypes() {
@@ -455,9 +462,16 @@ export default {
             })
         },
         // 进入前端测试案例
-        go_apiTest(testType) {
+        go_apiTest(row) {
             var url = '/home/apiCase/'
-            this.$router.push({ path: url,query:{'testType': testType,'weburl':this.apiurl}})
+            var query_data = {
+                'testType': row['id'],
+                'apiurl':this.apiurl,
+                'projectName':this.$route.query.projectName,
+                'apiName':this.$route.query.apiName,
+                'apiCase':row['typename']
+            }
+            this.$router.push({ path: url,query:query_data})
         },
     },
     beforeCreate() {

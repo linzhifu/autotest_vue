@@ -198,7 +198,7 @@ export default {
                         this.get_testtypes()
                     },error=>{
                         this.$message({
-                            message: error.response.data,
+                            message: '自动化测试平台异常，请检查网络',
                             type: 'error',
                             center: true,
                             showClose: true,

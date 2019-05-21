@@ -1,8 +1,20 @@
 <template>
 <div>
     <!-- 返回上一级 -->
-    <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a>
-    <br><br>
+    <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a><br><br>
+    <div style="font-size:17px;margin-bottom:10px">
+            项目：{{this.$route.query.projectName}}
+    </div>
+    <div style="font-size:17px;margin-bottom:10px">
+            测试：{{this.$route.query.apiName}}
+    </div>
+    <div style="font-size:17px;margin-bottom:10px">
+            案例：{{this.$route.query.apiCase}}
+    </div>
+    <div style="font-size:17px" v-if="this.$route.query.projectName == '量产云平台'">
+            测试用户ID：{{testUser['data']['userid']}}
+    </div>
+    <br>
     <!-- 添加API -->
     <div>
         <el-button type="primary" @click="new_apicase">添加API</el-button>
@@ -33,74 +45,60 @@
                 <el-tabs type="border-card">
                     <!-- param -->
                     <el-tab-pane label="Params">
-                        <el-form label-width="100px">
-                            <el-form-item v-for="(value, key) in params[scope.row.id]" :key="key" :label="key">
-                                <el-input v-model="params[scope.row.id][key]" style="width:500px"></el-input>
+                        <el-table
+                         border
+                         :data="params[scope.row.id]"
+                         style="width: 100%"
+                         :header-cell-style="{background:'#F2F6FC'}">
+                            <el-table-column label="KEY">
+                                <template slot-scope="scope">
+                                    <el-input v-model="scope.row[0]"></el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="VALUE">
+                                <template slot-scope="scope">
+                                    <el-input v-model="scope.row[1]"></el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column width="80" align="center">
+                                <template slot-scope="scopeParam">
                                 <el-button
-                                 size="mini"
-                                 type="danger"
-                                 icon="el-icon-delete"
-                                 @click.prevent="removeLabel(params[scope.row.id],key)">
+                                    size="mini"
+                                    type="danger"
+                                    icon="el-icon-delete"
+                                    @click.prevent="removeParam(scopeParam,scope.row.id)">
                                 </el-button>
-                            </el-form-item>
-                        </el-form>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <br>
                         <el-button
                          size="mini"
                          type="primary"
-                         @click="addLabel(params[scope.row.id])" class="el-icon-plus">添加Param
+                         @click="addParam(params[scope.row.id])" class="el-icon-plus">添加Param
                         </el-button>
                         <el-button
                          size="mini"
                          type="primary"
-                         @click="edit_param(scope.row.id,'apiparam',params[scope.row.id])" class="el-icon-edit">提交修改
+                         @click="edit_param(scope.row.id,'apiparam',params[scope.row.id])" class="el-icon-edit">{{editParam}}
                         </el-button>
                     </el-tab-pane>
                     <!-- body -->
                     <el-tab-pane label="Body">
-                        <el-form label-width="100px">
-                            <el-form-item v-for="(value, key) in body[scope.row.id]" :key="key" :label="key">
-                                <el-input v-model="body[scope.row.id][key]" style="width:500px"></el-input>
-                                <el-button
-                                 size="mini"
-                                 type="danger"
-                                 icon="el-icon-delete"
-                                 @click.prevent="removeLabel(body[scope.row.id],key)">
-                                </el-button>
-                            </el-form-item>
-                        </el-form>
+                        <el-input  type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])"></el-input><br><br>
                         <el-button
                          size="mini"
                          type="primary"
-                         @click="addLabel(body[scope.row.id])" class="el-icon-plus">添加Param
-                        </el-button>
-                        <el-button
-                         size="mini"
-                         type="primary"
-                         @click="edit_param(scope.row.id,'apijson',body[scope.row.id])" class="el-icon-edit">提交修改
+                         @click="edit_body(scope.row.id,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
                         </el-button>
                     </el-tab-pane>
                     <!-- response -->
                     <el-tab-pane label="Response">
-                        <el-form label-width="100px">
-                            <el-form-item v-for="(value, key) in response[scope.row.id]" :key="key" :label="key">
-                                <el-input v-model="response[scope.row.id][key]" style="width:500px"></el-input>
-                                <el-button
-                                 size="mini"
-                                 type="danger"
-                                 icon="el-icon-delete"
-                                 @click.prevent="removeLabel(response[scope.row.id],key)">
-                                </el-button>
-                            </el-form-item>
-                        </el-form>
+                        <el-input  type="textarea" autosize v-model="response[scope.row.id]" @change="response_change(response[scope.row.id])"></el-input><br><br>
                         <el-button
                          size="mini"
                          type="primary"
-                         @click="addLabel(response[scope.row.id])" class="el-icon-plus">添加Param
-                        </el-button>
-                        <el-button
-                         size="mini"
-                         type="primary"
-                         @click="edit_param(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">提交修改
+                         @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
                         </el-button>
                     </el-tab-pane>
                 <el-tab-pane label="测试数据">
@@ -203,7 +201,10 @@ export default {
             axios: this.axios,
             url: this.url,
             userId: this.storage.getItem('userId'),
+            testUserId:'',
+            testToken:'',
             token: this.storage.getItem('token'),
+            testUser:'',
             testBtn:'开始测试',
             loading:false,
             apiname: '',
@@ -215,8 +216,11 @@ export default {
             pre:'',
             next:'',
             error:{},
+            editParam:'提交修改',
+            editBody:'提交修改',
+            editResponse:'提交修改',
             testType: this.$route.query.testType,
-            weburl: this.$route.query.weburl,
+            apiurl: this.$route.query.apiurl,
             isNextDisabled:false,
             isPreDisabled:false,
             dialogFormVisible:false,
@@ -255,22 +259,73 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
+        // 量产云平台测试用户登陆
+        testUserLogin() {
+            var loginUrl = '/api/v1/user/login'
+            var loginMethod = 'post'
+            var data = {
+                'email':'17388730192@163.com',
+                'pswmd5':'202cb962ac59075b964b07152d234b70',
+                'timestamp':Date.parse(new Date())
+            }
+            this.axios({
+                baseURL:this.apiurl,
+                url:loginUrl,
+                method:loginMethod,
+                data:data,
+            }).then(response=>{
+                this.testUser = response.data
+                if (response.data.errcode=='0') {
+                    this.testUserId = response.data.data['userid']
+                    this.testToken = response.data.data['token']
+                }
+                else {
+                    this.$message({
+                        message: '测试用户登陆 FAIL',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.testUser = error.response.data
+            })
+        },
         // API单元测试
         apiTest(row) {
-            if (this.body[row.id].hasOwnProperty('timestamp')) {
-                this.body[row.id]['timestamp'] = Date.parse(new Date())
+            if (!this.isJsonString(this.body[row.id])) {
+                this.$message.error('body数据不符合json格式');
+                return
+            }
+            if (!this.isJsonString(this.response[row.id])) {
+                this.$message.error('response数据不符合json格式');
+                return
+            }
+            var _value = {}
+            for (var i in this.params[row.id]) {
+                if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
+                    _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                }
+            }
+            var params = _value
+            var data = JSON.parse(this.body[row.id])
+            var res = JSON.parse(this.response[row.id])
+            if (data.hasOwnProperty('timestamp')) {
+                data['timestamp'] = Date.parse(new Date())
             }
             console.log(this.params[row.id])
             this.axios({
-                baseURL:this.weburl,
+                baseURL:this.apiurl,
                 url:row.apiurl,
                 method:row.apimethod,
-                params:this.params[row.id],
-                data:this.body[row.id],
+                params:params,
+                data:data,
             }).then(response=>{
                 console.log(response.data)
                 row.testdata = response.data
-                if (parseInt(response.data.errcode)==this.response[row.id].errcode) {
+                console.log(response.data.errcode)
+                console.log(res['errcode'])
+                if (response.data.errcode==parseInt(res['errcode'])) {
                      this.$message({
                         message: 'PASS',
                         type: 'success',
@@ -293,53 +348,65 @@ export default {
         },
         // 全部API测试
         apiCaseTest() {
-            this.loading=true
-            this.testBtn='测试中...'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'testType':this.testType,
-                'url': this.weburl
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/apiCaseTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: 'PASS',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
+            this.$confirm('即将开始 ' + this.$route.query.apiCase + ' api测试，请耐心等待', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.loading=true
+                this.testBtn='测试中...'
+                var params_data = {
+                    'userId':this.userId,
+                    'token':this.token,
+                    'testType':this.testType,
+                    'url': this.apiurl
                 }
-                else {
+                this.axios({
+                    baseURL:this.url,
+                    url:'/api/v1/apiCaseTest/',
+                    method:'get',
+                    params:params_data,
+                }).then(response=>{
+                    // 判断是否成功
+                    if (!response.data.errcode) {
+                        this.$message({
+                            message: this.$route.query.apiCase + ' 测试 PASS',
+                            type: 'success',
+                            center: true,
+                            showClose: true,
+                        });
+                    }
+                    else {
+                        this.$message({
+                            message: response.data.errmsg,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                        })
+                    }
+                    this.loading=false
+                    this.testBtn='开始测试'
+                    this.get_apiCases()
+                },error=>{
                     this.$message({
-                        message: response.data.errmsg,
+                        message: '自动化测试平台异常，请检查网络',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
-                }
-                this.loading=false
-                this.testBtn='开始测试'
-                this.get_apiCases()
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
+                    this.loading=false
+                    this.testBtn='开始测试'
                 })
-                this.loading=false
-                this.testBtn='开始测试'
-            })
+                }).catch(() => {     
+            });
         },
-        // 编辑参数——删除一项
-        removeLabel(object, key) {
+        // 添加param
+        addParam(object) {
+            object.push(['',''])
+            this.editParam = '提交修改*'
+        },
+        // 删除param
+        removeParam(object,id) {
             this.$confirm('提交修改后将永久删除, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
                 type: 'warning',
@@ -347,31 +414,77 @@ export default {
                 cancelButtonText: '取消',
             }).then(() => {
                 // 必须用这种全局方法，Vue才能监控数据变化
-                this.$delete(object,key)
+                this.$delete(this.params[id],object.$index)
+                this.editParam = '提交修改*'
             }).catch(() => {
             })
         },
-        //编辑参数-添加一项
-        addLabel(object) {
-            this.$prompt('请输入param名称', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-            }).then(({ value }) => {
-                this.$set(object,value,'')
-            })
-        },
-        //编辑-提交param
+        // 提交修改param
         edit_param(id,key,value) {
             var row = {
             }
             row['id'] = id
-            row[key] = JSON.stringify(value)
-            // console.log(row)
+            var _value = {}
+            for (var i in value) {
+                if (value[i][0] != '' && value[i][1] != ''){
+                    _value[value[i][0]] = value[i][1]
+                }
+            }
+            row[key] = JSON.stringify(_value)
             this.handleEdit(row)
+            this.editParam = '提交修改'
+        },
+        // body数据发生变化
+        body_change(value) {
+            this.editBody = '提交修改*'
+            if (!this.isJsonString(value)) {
+                this.$message({
+                    message: 'body数据不符合json格式',
+                    type: 'warning'
+                });
+            }
+        },
+        // 提交修改param
+        edit_body(id,key,value) {
+            var row = {
+            }
+            row['id'] = id
+            if (!this.isJsonString(value)) {
+                this.$message.error('body数据不符合json格式');
+                return
+            }
+            row[key] = value
+            this.handleEdit(row)
+            this.editBody = '提交修改'
+        },
+        // response数据发生变化
+        response_change(value) {
+            this.editResponse = '提交修改*'
+            if (!this.isJsonString(value)) {
+                this.$message({
+                    message: 'response数据不符合json格式',
+                    type: 'warning'
+                });
+            }
+        },
+        // 提交修改response
+        edit_response(id,key,value) {
+            var row = {
+            }
+            row['id'] = id
+            if (!this.isJsonString(value)) {
+                this.$message.error('response数据不符合json格式');
+                return
+            }
+            row[key] = value
+            this.handleEdit(row)
+            this.editResponse = '提交修改'
         },
         // 获取数据列表
         get_apiCases() {
-            var params,body,response_obj
+            var params = []
+            var response_obj
+            var body
             var params_data = {
                 'userId':this.userId,
                 'token':this.token,
@@ -387,10 +500,13 @@ export default {
                 for (var i=0;i<response.data.results.length;i++){
                     // 获取param
                     if (response.data.results[i].apiparam) {
-                        params = JSON.parse(response.data.results[i].apiparam)
+                        var _params = JSON.parse(response.data.results[i].apiparam)
+                        for (var key in _params){
+                            params.push([key,_params[key]])
+                        }
                     }
                     else {
-                        params={}
+                        params=[]
                     }
 
                     // 获取body
@@ -410,8 +526,8 @@ export default {
                     }
                     // 必须用这种全局方法，Vue才能监控数据变化
                     this.$set(this.params,response.data.results[i].id,params)
-                    this.$set(this.body,response.data.results[i].id,body)
-                    this.$set(this.response,response.data.results[i].id,response_obj)
+                    this.$set(this.body,response.data.results[i].id,JSON.stringify(body,null,4))
+                    this.$set(this.response,response.data.results[i].id,JSON.stringify(response_obj,null,4))
                 }
                 // 判断是否有上一页
                 this.pre=response.data.previous
@@ -724,12 +840,24 @@ export default {
                     })
             })
         },
+        isJsonString(str) {
+            try {
+                if (typeof JSON.parse(str) == "object") {
+                    return true;
+                }
+            } catch(e) {
+            }
+            return false;
+        },
     },
     beforeCreate() {
     },
     created() {
         // 获取数据列表
         this.get_apiCases()
+        if (this.$route.query.projectName == '量产云平台') {
+            this.testUserLogin()
+        }
     },
     filters:{
         dateFormat:function(time) {

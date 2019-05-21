@@ -245,7 +245,7 @@ export default {
                         this.get_webManagers()
                     },error=>{
                         this.$message({
-                            message: error.response.data,
+                            message: '自动化测试平台异常，请检查网络',
                             type: 'error',
                             center: true,
                             showClose: true,
@@ -302,7 +302,7 @@ export default {
                         this.testBtn='开始测试'
                     },error=>{
                         this.$message({
-                            message: error.response.data,
+                            message: '自动化测试平台异常，请检查网络',
                             type: 'error',
                             center: true,
                             showClose: true,
@@ -358,7 +358,7 @@ export default {
                         this.testBtn='开始测试'
                     },error=>{
                         this.$message({
-                            message: error.response.data,
+                            message: '自动化测试平台异常，请检查网络',
                             type: 'error',
                             center: true,
                             showClose: true,

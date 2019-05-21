@@ -146,50 +146,57 @@ export default {
         },
         // api测试
         apiManagerTest() {
-            this.loading=true
-            this.testBtn='测试中...'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'projectId':this.projectId
-            }
-            this.axios({
-                baseURL:this.url,
-                url:'/api/v1/apiManagerTest/',
-                method:'get',
-                params:params_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: 'PASS',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
+            this.$confirm('即将开始 ' + this.$route.query.projectName + ' 后端测试，请耐心等待', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.loading=true
+                this.testBtn='测试中...'
+                var params_data = {
+                    'userId':this.userId,
+                    'token':this.token,
+                    'projectId':this.projectId
                 }
-                else {
+                this.axios({
+                    baseURL:this.url,
+                    url:'/api/v1/apiManagerTest/',
+                    method:'get',
+                    params:params_data,
+                }).then(response=>{
+                    // 判断是否成功
+                    if (!response.data.errcode) {
+                        this.$message({
+                            message: this.$route.query.projectName + ' 后端测试 PASS',
+                            type: 'success',
+                            center: true,
+                            showClose: true,
+                        });
+                    }
+                    else {
+                        this.$message({
+                            message: response.data.errmsg,
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                        })
+                    }
+                    this.loading=false
+                    this.testBtn='开始测试'
+                    this.get_apiManagers()
+                },error=>{
                     this.$message({
-                        message: response.data.errmsg,
+                        message: '自动化测试平台异常，请检查网络',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
-                }
-                this.loading=false
-                this.testBtn='开始测试'
-                this.get_apiManagers()
-            },error=>{
-                this.$message({
-                    message: error.response.data,
-                    type: 'error',
-                    center: true,
-                    showClose: true,
+                    this.get_apiManagers()
+                    this.loading=false
+                    this.testBtn='开始测试'
                 })
-                this.get_apiManagers()
-                this.loading=false
-                this.testBtn='开始测试'
-            })
+            }).catch(() => {        
+            });
         },
         // 获取数据列表
         get_apiManagers() {
