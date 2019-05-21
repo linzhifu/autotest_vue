@@ -152,6 +152,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
+                this.$message({
+                    message: '测试开始',
+                    type: 'success',
+                    center: true
+                });
                 this.loading=true
                 this.testBtn='测试中...'
                 var params_data = {
