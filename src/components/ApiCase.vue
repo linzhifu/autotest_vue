@@ -12,7 +12,7 @@
             案例：{{this.$route.query.apiCase}}
     </div>
     <div style="font-size:17px" v-if="this.$route.query.projectName == '量产云平台'">
-            测试用户ID：{{testUser['data']['userid']}}
+            测试用户ID：{{testUserId}}
     </div>
     <br>
     <!-- 添加API -->
@@ -85,11 +85,14 @@
                     </el-tab-pane>
                     <!-- body -->
                     <el-tab-pane label="Body">
+                        <el-select  v-model="scope.row.contentType" style="width:300px">
+                            <el-option v-for="item in ['application/x-www-form-urlencoded','application/json']" :key="item" :value="item"></el-option>
+                        </el-select><br><br>
                         <el-input  type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])"></el-input><br><br>
                         <el-button
                          size="mini"
                          type="primary"
-                         @click="edit_body(scope.row.id,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
+                         @click="edit_body(scope.row,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
                         </el-button>
                     </el-tab-pane>
                     <!-- response -->
@@ -220,7 +223,7 @@ export default {
             editBody:'提交修改',
             editResponse:'提交修改',
             testType: this.$route.query.testType,
-            apiurl: this.$route.query.apiurl,
+            baseurl: this.$route.query.apiurl,
             isNextDisabled:false,
             isPreDisabled:false,
             dialogFormVisible:false,
@@ -269,7 +272,7 @@ export default {
                 'timestamp':Date.parse(new Date())
             }
             this.axios({
-                baseURL:this.apiurl,
+                baseURL:this.baseurl,
                 url:loginUrl,
                 method:loginMethod,
                 data:data,
@@ -308,6 +311,7 @@ export default {
                 }
             }
             var params = _value
+            var headers = {'Content-Type': row.contentType}
             var data = JSON.parse(this.body[row.id])
             var res = JSON.parse(this.response[row.id])
             if (data.hasOwnProperty('timestamp')) {
@@ -315,17 +319,18 @@ export default {
             }
             console.log(this.params[row.id])
             this.axios({
-                baseURL:this.apiurl,
+                baseURL:this.baseurl,
                 url:row.apiurl,
                 method:row.apimethod,
                 params:params,
                 data:data,
+                headers:headers
             }).then(response=>{
                 console.log(response.data)
                 row.testdata = response.data
                 console.log(response.data.errcode)
                 console.log(res['errcode'])
-                if (response.data.errcode==parseInt(res['errcode'])) {
+                if (response.data.errcode==res['errcode']) {
                      this.$message({
                         message: 'PASS',
                         type: 'success',
@@ -364,7 +369,7 @@ export default {
                     'userId':this.userId,
                     'token':this.token,
                     'testType':this.testType,
-                    'url': this.apiurl
+                    'url': this.baseurl
                 }
                 this.axios({
                     baseURL:this.url,
@@ -450,15 +455,16 @@ export default {
             }
         },
         // 提交修改param
-        edit_body(id,key,value) {
+        edit_body(object,key,value) {
             var row = {
             }
-            row['id'] = id
+            row['id'] = object['id']
             if (!this.isJsonString(value)) {
                 this.$message.error('body数据不符合json格式');
                 return
             }
             row[key] = value
+            row['contentType'] = object['contentType']
             this.handleEdit(row)
             this.editBody = '提交修改'
         },
