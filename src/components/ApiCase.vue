@@ -104,15 +104,51 @@
                          @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
                         </el-button>
                     </el-tab-pane>
-                <el-tab-pane label="测试数据">
-                    <el-button
-                        size="mini"
-                        type="primary"
-                        @click.prevent="apiTest(scope.row)">测试
-                    </el-button>
-                    <br>
-                    <pre style="font-size:14px" v-text="scope.row.testdata"></pre>
-                </el-tab-pane>
+                    <el-tab-pane label="权限管理">
+                        <el-checkbox v-model="scope.row.isAdmin" @change="auth_change()">管理员</el-checkbox>
+                        <el-checkbox v-model="scope.row.isAuth" @change="auth_change()">授权</el-checkbox>
+                        <br><br>
+                        <div>操作者信息：</div><br>
+                        <el-form inline>
+                            <el-form-item>
+                                <el-select v-model="scope.row.operatorType" clearable placeholder="请选择type(必填)" class="select-type" :disabled="!scope.row.isAuth" @change="auth_change()">
+                                    <el-option v-for="item in ['user','role','team']" :key="item" :label="item" :value="item"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-input placeholder="请输入id(必填)" v-model="scope.row.operatorId" class="input-item" clearable :disabled="!scope.row.isAuth"  @change="auth_change()"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div class="operator">资源信息：</div><br>
+                        <el-form inline>
+                            <el-form-item>
+                                <el-input placeholder="请输入type(必填)" v-model="scope.row.objectType" class="select-type" clearable :disabled="!scope.row.isAuth" @change="auth_change()"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-input placeholder="请输入id(必填)" v-model="scope.row.objectId" class="input-item" clearable :disabled="!scope.row.isAuth" @change="auth_change()"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div class="operator">操作信息：</div><br>
+                        <el-form inline>
+                            <el-form-item>
+                                <el-input placeholder="请输入内容(必填)" v-model="scope.row.actions" class="select-type" clearable :disabled="!scope.row.isAuth" @change="auth_change()"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <el-button
+                         size="mini"
+                         type="primary"
+                         @click="edit_auth(scope.row)" class="el-icon-edit">{{editAuth}}
+                        </el-button>
+                    </el-tab-pane>
+                    <el-tab-pane label="测试数据">
+                        <el-button
+                            size="mini"
+                            type="primary"
+                            @click.prevent="apiTest(scope.row)">测试
+                        </el-button>
+                        <br>
+                        <pre style="font-size:14px" v-text="scope.row.testdata"></pre>
+                    </el-tab-pane>
                 </el-tabs>
             </template>
         </el-table-column>
@@ -222,6 +258,7 @@ export default {
             editParam:'提交修改',
             editBody:'提交修改',
             editResponse:'提交修改',
+            editAuth: '提交修改',
             testType: this.$route.query.testType,
             baseurl: this.$route.query.apiurl,
             isNextDisabled:false,
@@ -518,6 +555,25 @@ export default {
             row[key] = value
             this.handleEdit(row, false)
             this.editResponse = '提交修改'
+        },
+        // auth数据发生变化
+        auth_change() {
+            this.editAuth = '提交修改*'
+        },
+        // 提交修改auth
+        edit_auth(object) {
+            var row = {
+            }
+            row['id'] = object.id
+            row['isAdmin'] = object.isAdmin
+            row['isAuth'] = object.isAuth
+            row['operatorType'] = object.operatorType
+            row['operatorId'] = object.operatorId
+            row['objectType'] = object.objectType
+            row['objectId'] = object.objectId
+            row['actions'] = object.actions
+            this.handleEdit(row, false)
+            this.editAuth = '提交修改'
         },
         // 获取数据列表
         get_apiCases() {
