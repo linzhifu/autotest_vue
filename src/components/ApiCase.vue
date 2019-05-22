@@ -314,10 +314,11 @@ export default {
             var headers = {'Content-Type': row.contentType}
             var data = JSON.parse(this.body[row.id])
             var res = JSON.parse(this.response[row.id])
+            var resu = '测试 PASS'
+            var message = row['apiname'] + '' + resu
             if (data.hasOwnProperty('timestamp')) {
                 data['timestamp'] = Date.parse(new Date())
             }
-            console.log(this.params[row.id])
             this.axios({
                 baseURL:this.baseurl,
                 url:row.apiurl,
@@ -326,13 +327,34 @@ export default {
                 data:data,
                 headers:headers
             }).then(response=>{
-                console.log(response.data)
                 row.testdata = response.data
-                console.log(response.data.errcode)
-                console.log(res['errcode'])
                 if (response.data.errcode==res['errcode']) {
-                     this.$message({
-                        message: 'PASS',
+                    if ('data' in res) {
+                        for (var i in res['data']) {
+                            if (res['data'][i] != response.data['data'][i]) {
+                                this.$message({
+                                    message: row['apiname'] + ' data不一致',
+                                    type: 'error',
+                                    center: true,
+                                    showClose: true,
+                                })
+                                return
+                            }
+                        }
+                    }
+                    if ('errmsg' in res) {
+                        if (res['errmsg'] != response.data['errmsg']) {
+                            this.$message({
+                                message: row['apiname'] + ' errmsg不一致',
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                            })
+                            return
+                        }
+                    }
+                    this.$message({
+                        message: row['apiname'] + ' 测试 PASS',
                         type: 'success',
                         center: true,
                         showClose: true,
@@ -340,7 +362,7 @@ export default {
                 }
                 else {
                     this.$message({
-                        message: 'FAIL',
+                        message: row['apiname'] + ' errcode不一致',
                         type: 'error',
                         center: true,
                         showClose: true,
@@ -349,6 +371,12 @@ export default {
             },error=>{
                 console.log(error.response.data)
                 row.testdata=error.response.data
+                this.$message({
+                    message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
             })
         },
         // 全部API测试
@@ -441,7 +469,7 @@ export default {
                 }
             }
             row[key] = JSON.stringify(_value)
-            this.handleEdit(row)
+            this.handleEdit(row, false)
             this.editParam = '提交修改'
         },
         // body数据发生变化
@@ -465,7 +493,7 @@ export default {
             }
             row[key] = value
             row['contentType'] = object['contentType']
-            this.handleEdit(row)
+            this.handleEdit(row, false)
             this.editBody = '提交修改'
         },
         // response数据发生变化
@@ -488,7 +516,7 @@ export default {
                 return
             }
             row[key] = value
-            this.handleEdit(row)
+            this.handleEdit(row, false)
             this.editResponse = '提交修改'
         },
         // 获取数据列表
@@ -577,7 +605,7 @@ export default {
             this.editObj['index']=row.index
         },
         // 编辑修改数据
-        handleEdit(row) {
+        handleEdit(row, update=true) {
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -595,7 +623,9 @@ export default {
                         center: true,
                         showClose: true,
                     });
-                    this.get_apiCases()
+                    if (update) {
+                        this.get_apiCases()
+                    }
                 }
                 else {
                     this.$message({
