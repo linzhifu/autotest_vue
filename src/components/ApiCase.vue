@@ -11,6 +11,9 @@
     <div style="font-size:17px;margin-bottom:10px">
             案例：{{this.$route.query.apiCase}}
     </div>
+    <div style="font-size:17px;margin-bottom:10px" v-if="this.$route.query.projectName == '量产云平台'">
+            管理员ID：{{adminId}}
+    </div>
     <div style="font-size:17px" v-if="this.$route.query.projectName == '量产云平台'">
             测试用户ID：{{testUserId}}
     </div>
@@ -241,7 +244,9 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             testUserId:'',
+            adminId:'',
             testToken:'',
+            adminToken:'',
             token: this.storage.getItem('token'),
             testUser:'',
             testBtn:'开始测试',
@@ -331,6 +336,190 @@ export default {
                 this.testUser = error.response.data
             })
         },
+        // 量产云平台管理员登陆
+        adminLogin() {
+            var loginUrl = '/api/v1/user/login'
+            var loginMethod = 'post'
+            var data = {
+                'email':'linzhifu221@163.com',
+                'pswmd5':'c313b271b06b2b50ad9a3e93e8744029',
+                'timestamp':Date.parse(new Date())
+            }
+            this.axios({
+                baseURL:this.baseurl,
+                url:loginUrl,
+                method:loginMethod,
+                data:data,
+            }).then(response=>{
+                this.testUser = response.data
+                if (response.data.errcode=='0') {
+                    this.adminId = response.data.data['userid']
+                    this.adminToken = response.data.data['token']
+                }
+                else {
+                    this.$message({
+                        message: '管理员登陆 FAIL',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.testUser = error.response.data
+            })
+        },
+        // 设置管理员权限
+        setAdmin(row) {
+            var parmas = {
+                'userid':this.adminId,
+                'token': this.adminToken
+            }
+            var data = {
+                roleid:1,
+                userid:this.testUserId
+            }
+            this.axios({
+                baseURL:this.baseurl,
+                url:'/api/v1/role/user',
+                method:'post',
+                params:params,
+                data:data,
+            }).then((res)=>{
+                if(res.data.errcode==0){
+                    return true
+                } else {
+                    return false
+                }
+            }).catch((error)=>{
+                return false
+            })
+        },
+        // 添加权限
+        addAuth(row) {
+            if(row.operatorType =='' || row.operatorId =='' ||  row.objectType =='' || row.objectId =='' || row.actions ==''){
+                this.warning0('请确保必填项都已填写！');
+                return 
+            }
+            var params = {
+                'userid': this.adminId,
+                'token': this.adminToken
+            }
+            var data = {
+                "operator":{
+                    "type":row.operatorType,
+                    "id":Number(row.objectType)
+                },
+                "object":{
+                    "type":row.objectType,
+                    "id":Number(row.objectId)
+                },
+                "actions":row.actions.split(',')
+            }
+            this.axios({
+                baseURL:this.baseurl,
+                url:'/api/v1/role/permission',
+                method:'post',
+                params:params,
+                data:data,
+            }).then((res)=>{
+                if(res.data.errcode==0){
+                    return true
+                } else {
+                    return false
+                }
+            }).catch((error)=>{
+                return false
+            })
+        },
+        addAllAuth(row) {
+            // 判断是否需要删除管理员权限
+            if (row.isAdmin) {
+                this.setAdmin(row)
+            }
+            // 不需要设置为管理员，判断是否删除添加权限
+            else {
+                if (row.isAuth) {
+                    this.addAuth(row)
+                }
+            }
+            return
+        },
+        // 删除管理员权限
+        deleteAdmin(row) {
+            var parmas = {
+                'userid':this.adminId,
+                'token': this.adminToken
+            }
+            var data = {
+                roleid:1,
+                userid:this.testUserId
+            }
+            this.axios({
+                baseURL:this.baseurl,
+                url:'/api/v1/role/user',
+                method:'delete',
+                params:params,
+                data:data,
+            }).then((res)=>{
+                if(res.data.errcode==0){
+                    return true
+                } else {
+                    return false
+                }
+            }).catch((error)=>{
+                return false
+            })
+        },
+        // 删除权限
+        deleteAuth(row) {
+            if(row.operatorType =='' || row.operatorId =='' ||  row.objectType =='' || row.objectId =='' || row.actions ==''){
+                this.warning0('请确保必填项都已填写！');
+                return 
+            }
+            var params = {
+                'userid': this.adminId,
+                'token': this.adminToken
+            }
+            var data = {
+                "operator":{
+                    "type":row.operatorType,
+                    "id":Number(row.objectType)
+                },
+                "object":{
+                    "type":row.objectType,
+                    "id":Number(row.objectId)
+                },
+                "actions":row.actions.split(',')
+            }
+            this.axios({
+                baseURL:this.baseurl,
+                url:'/api/v1/role/permission',
+                method:'delete',
+                params:params,
+                data:data,
+            }).then((res)=>{
+                if(res.data.errcode==0){
+                    return true
+                } else {
+                    return false
+                }
+            }).catch((error)=>{
+                return false
+            })
+        },
+        deleteAllAuth(row) {
+            // 判断是否需要删除管理员权限
+            if (row.isAdmin) {
+                this.deleteAdmin(row)
+            }
+            // 不需要设置为管理员，判断是否删除添加权限
+            else {
+                if (row.isAuth) {
+                    this.deleteAuth(row)
+                }
+            }
+            return
+        },
         // API单元测试
         apiTest(row) {
             if (!this.isJsonString(this.body[row.id])) {
@@ -356,6 +545,14 @@ export default {
             if (data.hasOwnProperty('timestamp')) {
                 data['timestamp'] = Date.parse(new Date())
             }
+            if (!this.addAllAuth(row)) {
+                this.$message({
+                    message: row['apiname'] + ' 授权失败',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+            }
             this.axios({
                 baseURL:this.baseurl,
                 url:row.apiurl,
@@ -375,6 +572,14 @@ export default {
                                     center: true,
                                     showClose: true,
                                 })
+                                if (!this.deleteAllAuth(row)) {
+                                    this.$message({
+                                        message: row['apiname'] + ' 删除权限失败',
+                                        type: 'error',
+                                        center: true,
+                                        showClose: true,
+                                    })
+                                }
                                 return
                             }
                         }
@@ -387,6 +592,14 @@ export default {
                                 center: true,
                                 showClose: true,
                             })
+                            if (!this.deleteAllAuth(row)) {
+                                this.$message({
+                                    message: row['apiname'] + ' 删除权限失败',
+                                    type: 'error',
+                                    center: true,
+                                    showClose: true,
+                                })
+                            }
                             return
                         }
                     }
@@ -396,6 +609,14 @@ export default {
                         center: true,
                         showClose: true,
                     });
+                    if (!this.deleteAllAuth(row)) {
+                        this.$message({
+                            message: row['apiname'] + ' 删除权限失败',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                        })
+                    }
                 }
                 else {
                     this.$message({
@@ -404,6 +625,14 @@ export default {
                         center: true,
                         showClose: true,
                     })
+                    if (!this.deleteAllAuth(row)) {
+                        this.$message({
+                            message: row['apiname'] + ' 删除权限失败',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                        })
+                    }
                 }
             },error=>{
                 console.log(error.response.data)
@@ -414,6 +643,14 @@ export default {
                     center: true,
                     showClose: true,
                 })
+                if (!this.deleteAllAuth(row)) {
+                    this.$message({
+                        message: row['apiname'] + ' 删除权限失败',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
             })
         },
         // 全部API测试
@@ -557,7 +794,7 @@ export default {
             this.editResponse = '提交修改'
         },
         // auth数据发生变化
-        auth_change() {
+        auth_change(row) {
             this.editAuth = '提交修改*'
         },
         // 提交修改auth
@@ -954,6 +1191,7 @@ export default {
         this.get_apiCases()
         if (this.$route.query.projectName == '量产云平台') {
             this.testUserLogin()
+            this.adminLogin()
         }
     },
     filters:{
