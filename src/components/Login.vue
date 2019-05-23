@@ -98,13 +98,16 @@ export default {
                         message: response.data.errmsg,
                         type: 'error',
                         center: true,
+                        duration:0,
                     })
                 }
             },error=>{
                 this.$message({
-                    message: error.response.data,
+                    message: '自动化测试平台异常，请检查网络',
                     type: 'error',
                     center: true,
+                    showClose: true,
+                    duration:0,
                 })
             })
         },
@@ -124,7 +127,7 @@ export default {
                     this.$message({
                         message: '发送成功',
                         type: 'success',
-                        center: true,
+                        center: true
                     });
                     // this.is_ok = true;
                     var time = 60;
@@ -148,13 +151,16 @@ export default {
                         message: response.data.errmsg,
                         type: 'error',
                         center: true,
+                        duration:0,
                     })
                 }
             },error=>{
                 this.$message({
-                    message: error.response.data,
+                    message: '自动化测试平台异常，请检查网络',
                     type: 'error',
                     center: true,
+                    showClose: true,
+                    duration:0,
                 })
             })
         },

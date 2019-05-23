@@ -461,6 +461,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration:0,
                     });
                     this.get_webManagers()
                 }
@@ -470,15 +471,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration:0,
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration:0,
+                })
             })
         },
         // 删除数据
@@ -503,6 +506,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration:0,
                         });
                         this.get_webManagers()
                     }
@@ -512,15 +516,17 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration:0,
                         })
                     }
                 },error=>{
                     this.$message({
-                            message: error.response.data,
-                            type: 'error',
-                            center: true,
-                            showClose: true,
-                        })
+                        message: '自动化测试平台异常，请检查网络',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration:0,
+                    })
                 })
             }).catch(() => {
             })
@@ -550,6 +556,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration:0,
                     });
                     this.get_webManagers()
                 }
@@ -559,15 +566,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration:0,
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration:0,
+                })
             })
             this.webname=''
             this.webdes=''
