@@ -117,6 +117,10 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testUserId:this.storage.getItem('testUserId'),
+            testUserToken:this.storage.getItem('testUserToken'),
+            adminUserId:this.storage.getItem('adminUserId'),
+            adminUserToken:this.storage.getItem('adminUserToken'),
             testBtn:'开始测试',
             loading:false,
             typename: '',
@@ -166,11 +170,23 @@ export default {
                     'content_type':this.content_type,
                     'url': this.apiurl
                 }
+                var data = {}
+                if (this.$route.query.projectName == '量产云平台') {
+                    var data = {
+                        testUserInfo:{
+                            testUserId:this.testUserId,
+                            testUserToken:this.testUserToken,
+                            adminUserId:this.adminUserId,
+                            adminUserToken:this.adminUserToken,
+                        }
+                    }
+                }
                 this.axios({
                     baseURL:this.url,
                     url:'/api/v1/apiTypeTest/',
-                    method:'get',
+                    method:'post',
                     params:params_data,
+                    data:data
                 }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
@@ -179,6 +195,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration: 0
                         });
                     }
                     else {
@@ -187,6 +204,7 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                     }
                     this.loading=false
@@ -198,6 +216,7 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     this.get_testtypes()
                     this.loading=false
@@ -275,6 +294,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration: 0
                     });
                     this.get_testtypes()
                 }
@@ -284,15 +304,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
             })
         },
         // 删除数据
@@ -317,6 +339,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration: 0
                         });
                         this.get_testtypes()
                     }
@@ -326,15 +349,17 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                     }
                 },error=>{
                     this.$message({
-                            message: error.response.data,
-                            type: 'error',
-                            center: true,
-                            showClose: true,
-                        })
+                        message: '自动化测试平台异常，请检查网络',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    })
                 })
             }).catch(() => {
             })
@@ -364,6 +389,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration: 0
                     });
                     this.get_testtypes()
                 }
@@ -373,15 +399,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
             })
             this.typename=''
             this.typedes=''

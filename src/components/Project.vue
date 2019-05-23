@@ -459,7 +459,11 @@ export default {
             var url = '/home/apiManager/'
             var query = {
                 'projectId': project.id,
-                'projectName':project.proname
+                'projectName':project.proname,
+                'adminUser':project.adminUser,
+                'adminPsw':project.adminPsw,
+                'testUser':project.testUser,
+                'testPsw':project.testPsw,
             }
             this.$router.push({ path: url, query:query})
         }

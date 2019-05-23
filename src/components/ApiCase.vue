@@ -3,16 +3,10 @@
     <!-- 返回上一级 -->
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a><br><br>
     <div style="font-size:17px;margin-bottom:10px">
-            项目：{{this.$route.query.projectName}}
-    </div>
-    <div style="font-size:17px;margin-bottom:10px">
-            测试：{{this.$route.query.apiName}}
-    </div>
-    <div style="font-size:17px;margin-bottom:10px">
-            案例：{{this.$route.query.apiCase}}
+            测试案例：{{this.$route.query.projectName}} - {{this.$route.query.apiName}} - {{this.$route.query.apiCase}}
     </div>
     <div style="font-size:17px;margin-bottom:10px" v-if="this.$route.query.projectName == '量产云平台'">
-            管理员ID：{{adminId}}
+            管理员ID：{{adminUserId}}
     </div>
     <div style="font-size:17px" v-if="this.$route.query.projectName == '量产云平台'">
             测试用户ID：{{testUserId}}
@@ -107,7 +101,7 @@
                          @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
                         </el-button>
                     </el-tab-pane>
-                    <el-tab-pane label="权限管理">
+                    <el-tab-pane label="权限管理" v-if="projectName == '量产云平台'">
                         <el-checkbox v-model="scope.row.isAdmin" @change="scope.row.isAuth = !scope.row.isAdmin;auth_change()">管理员</el-checkbox>
                         <el-checkbox v-model="scope.row.isAuth" @change="scope.row.isAdmin = !scope.row.isAuth;auth_change()">授权</el-checkbox>
                         <br><br>
@@ -240,14 +234,15 @@ export default {
     name:'ApiCase',
     data() {
         return {
+            projectName:this.$route.query.projectName,
             axios: this.axios,
             url: this.url,
             userId: this.storage.getItem('userId'),
-            testUserId:'',
-            adminId:'',
-            testToken:'',
-            adminToken:'',
             token: this.storage.getItem('token'),
+            testUserId:this.storage.getItem('testUserId'),
+            testUserToken:this.storage.getItem('testUserToken'),
+            adminUserId:this.storage.getItem('adminUserId'),
+            adminUserToken:this.storage.getItem('adminUserToken'),
             testUser:'',
             testBtn:'开始测试',
             loading:false,
@@ -326,14 +321,22 @@ export default {
                 }
                 else {
                     this.$message({
-                        message: '测试用户登陆 FAIL',
+                        message: '测试用户登陆 FAIL-errcode 不一致',
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
-                this.testUser = error.response.data
+                this.$message({
+                    message: '测试用户登陆 FAIL-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
+                return
             })
         },
         // 量产云平台管理员登陆
@@ -353,30 +356,38 @@ export default {
             }).then(response=>{
                 this.testUser = response.data
                 if (response.data.errcode=='0') {
-                    this.adminId = response.data.data['userid']
-                    this.adminToken = response.data.data['token']
+                    this.adminUserId = response.data.data['userid']
+                    this.adminUserToken = response.data.data['token']
                 }
                 else {
                     this.$message({
-                        message: '管理员登陆 FAIL',
+                        message: '管理员登陆 FAIL-errocde 不一致',
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
-                this.testUser = error.response.data
+                this.$message({
+                    message: '管理员登陆 FAIL-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
+                return
             })
         },
         // 删除管理员权限
         deleteAdmin(row) {
             var params = {
-                'userid':this.adminId,
-                'token': this.adminToken
+                'userid':this.adminUserId,
+                'token': this.adminUserToken
             }
             var data = {
                 roleid:1,
-                userid:this.testUserId
+                userid:Number(this.testUserId)
             }
             this.axios({
                 baseURL:this.baseurl,
@@ -393,15 +404,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     return
                 }
             }).catch((error)=>{
                 this.$message({
-                    message: '删除管理员权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    message: row['apiname'] + ' 删除管理员权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                     type: 'error',
                     center: true,
                     showClose: true,
+                    duration: 0
                 })
                 return
             })
@@ -416,13 +429,13 @@ export default {
                 return 
             }
             var params = {
-                'userid': this.adminId,
-                'token': this.adminToken
+                'userid': this.adminUserId,
+                'token': this.adminUserToken
             }
             var data = {
                 "operator":{
                     "type":row.operatorType,
-                    "id":Number(row.objectType)
+                    "id":Number(row.objectId)
                 },
                 "object":{
                     "type":row.objectType,
@@ -445,15 +458,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     return
                 }
             }).catch((error)=>{
                 this.$message({
-                    message: '删除权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    message: row['apiname'] + ' 删除权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                     type: 'error',
                     center: true,
                     showClose: true,
+                    duration: 0
                 })
                 return
             })
@@ -471,12 +486,12 @@ export default {
             // 设置管理员权限
             if (row.isAdmin) {
                 let params = {
-                    'userid':this.adminId,
-                    'token': this.adminToken
+                    'userid':this.adminUserId,
+                    'token': this.adminUserToken
                 }
                 let data = {
                     roleid:1,
-                    userid:this.testUserId
+                    userid:Number(this.testUserId)
                 }
                 this.axios({
                     baseURL:this.baseurl,
@@ -496,8 +511,6 @@ export default {
                         var headers = {'Content-Type': row.contentType}
                         var data = JSON.parse(this.body[row.id])
                         var res = JSON.parse(this.response[row.id])
-                        var resu = '测试 PASS'
-                        var message = row['apiname'] + '' + resu
                         if (data.hasOwnProperty('timestamp')) {
                             data['timestamp'] = Date.parse(new Date())
                         }
@@ -519,6 +532,7 @@ export default {
                                                 type: 'error',
                                                 center: true,
                                                 showClose: true,
+                                                duration: 0
                                             })
                                             // 删除权限
                                             this.deleteAdmin(row)
@@ -533,6 +547,7 @@ export default {
                                             type: 'error',
                                             center: true,
                                             showClose: true,
+                                            duration: 0
                                         })
                                         // 删除权限
                                         this.deleteAdmin(row)
@@ -544,6 +559,7 @@ export default {
                                     type: 'success',
                                     center: true,
                                     showClose: true,
+                                    duration: 0
                                 })
                                 // 删除权限
                                 this.deleteAdmin(row)
@@ -555,6 +571,7 @@ export default {
                                     type: 'error',
                                     center: true,
                                     showClose: true,
+                                    duration: 0
                                 })
                                 // 删除权限
                                 this.deleteAdmin(row)
@@ -564,10 +581,11 @@ export default {
                             console.log(error.response.data)
                             row.testdata=error.response.data
                             this.$message({
-                                message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                                message: '自动化测试平台服务器异常',
                                 type: 'error',
                                 center: true,
                                 showClose: true,
+                                duration: 0
                             })
                             // 删除权限
                             this.deleteAdmin(row)
@@ -579,15 +597,17 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                         return
                     }
                 }).catch((error)=>{
                     this.$message({
-                        message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                        message: row['apiname'] + ' 授予管理员权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     return
                 })
@@ -602,8 +622,8 @@ export default {
                     return 
                 }
                 let params = {
-                    'userid': this.adminId,
-                    'token': this.adminToken
+                    'userid': this.adminUserId,
+                    'token': this.adminUserToken
                 }
                 let data = {
                     "operator":{
@@ -631,11 +651,13 @@ export default {
                             }
                         }
                         var params = _value
+                        if (params.hasOwnProperty('userid') && params.hasOwnProperty('token')) {
+                            params['userid'] = this.testUserId
+                            params['token'] = this.testUserToken
+                        }
                         var headers = {'Content-Type': row.contentType}
                         var data = JSON.parse(this.body[row.id])
                         var res = JSON.parse(this.response[row.id])
-                        var resu = '测试 PASS'
-                        var message = row['apiname'] + '' + resu
                         if (data.hasOwnProperty('timestamp')) {
                             data['timestamp'] = Date.parse(new Date())
                         }
@@ -657,6 +679,7 @@ export default {
                                                 type: 'error',
                                                 center: true,
                                                 showClose: true,
+                                                duration: 0
                                             })
                                             // 删除权限
                                             this.deleteAuth(row)
@@ -671,6 +694,7 @@ export default {
                                             type: 'error',
                                             center: true,
                                             showClose: true,
+                                            duration: 0
                                         })
                                         // 删除权限
                                         this.deleteAuth(row)
@@ -682,6 +706,7 @@ export default {
                                     type: 'success',
                                     center: true,
                                     showClose: true,
+                                    duration: 0
                                 })
                                 // 删除权限
                                 this.deleteAuth(row)
@@ -693,6 +718,7 @@ export default {
                                     type: 'error',
                                     center: true,
                                     showClose: true,
+                                    duration: 0
                                 })
                                 // 删除权限
                                 this.deleteAuth(row)
@@ -702,10 +728,11 @@ export default {
                             console.log(error.response.data)
                             row.testdata=error.response.data
                             this.$message({
-                                message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                                message: '自动化测试平台服务器异常',
                                 type: 'error',
                                 center: true,
                                 showClose: true,
+                                duration: 0
                             })
                             // 删除权限
                             this.deleteAuth(row)
@@ -717,15 +744,17 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                         return
                     }
                 }).catch((error)=>{
                     this.$message({
-                        message: '授予权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                        message: row['apiname'] + ' 授予权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     return
                 })
@@ -751,11 +780,23 @@ export default {
                     'testType':this.testType,
                     'url': this.baseurl
                 }
+                var data = {}
+                if (this.$route.query.projectName == '量产云平台') {
+                    var data = {
+                        testUserInfo:{
+                            testUserId:this.testUserId,
+                            testUserToken:this.testUserToken,
+                            adminUserId:this.adminUserId,
+                            adminUserToken:this.adminUserToken,
+                        }
+                    }
+                }
                 this.axios({
                     baseURL:this.url,
                     url:'/api/v1/apiCaseTest/',
-                    method:'get',
+                    method:'post',
                     params:params_data,
+                    data:data
                 }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
@@ -764,6 +805,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration: 0
                         });
                     }
                     else {
@@ -772,6 +814,7 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                     }
                     this.loading=false
@@ -783,6 +826,7 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     this.loading=false
                     this.testBtn='开始测试'
@@ -993,6 +1037,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration: 0
                     });
                     if (update) {
                         this.get_apiCases()
@@ -1004,14 +1049,16 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration:0,
                 })
             })
         },
@@ -1037,6 +1084,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration: 0
                         });
                         this.get_apiCases()
                     }
@@ -1046,15 +1094,17 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                     }
                 },error=>{
                     this.$message({
-                            message: error.response.data,
-                            type: 'error',
-                            center: true,
-                            showClose: true,
-                        })
+                        message: '自动化测试平台异常，请检查网络',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration:0,
+                    })
                 })
             }).catch(() => {
             })
@@ -1083,6 +1133,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration: 0
                     });
                     this.get_apiCases()
                 }
@@ -1092,15 +1143,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration:0,
+                })
             })
             this.apiname=''
             this.apiurl=''
@@ -1245,11 +1298,12 @@ export default {
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration:0,
+                })
             })
         },
         isJsonString(str) {
@@ -1268,8 +1322,8 @@ export default {
         // 获取数据列表
         this.get_apiCases()
         if (this.$route.query.projectName == '量产云平台') {
-            this.testUserLogin()
-            this.adminLogin()
+            // this.testUserLogin()
+            // this.adminLogin()
         }
     },
     filters:{

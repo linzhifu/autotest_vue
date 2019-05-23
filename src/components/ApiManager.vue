@@ -23,6 +23,9 @@
             :value="item.value">
             </el-option>
         </el-select>
+        <el-tooltip class="item" effect="dark" content="设置API测试用户账号" placement="top-start">
+            <el-button icon="el-icon-edit" type="primary" style="float: right;margin-left:10px" @click="testUserFormVisible = true" v-if="this.$route.query.projectName == '量产云平台'"></el-button>
+        </el-tooltip>
         <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
@@ -102,11 +105,37 @@
             <el-button type="primary" @click="handleEdit(editObj)">确 定</el-button>
         </div>
     </el-dialog>
+    <!-- 设置测试用户 -->
+    <el-dialog width="500px" :visible.sync="testUserFormVisible">
+        <div class="operator">管理员账户:</div><br>
+        <el-form inline>
+            <el-form-item>
+                <el-input v-model="adminUser" autocomplete="off" placeholder="请输入邮箱"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-input v-model="adminPsw" autocomplete="off" placeholder="请输入密码"></el-input>
+            </el-form-item>
+        </el-form>
+        <div class="operator">测试账户:</div><br>
+        <el-form inline>
+            <el-form-item>
+                <el-input v-model="testUser" autocomplete="off" placeholder="请输入邮箱"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-input v-model="testPsw" autocomplete="off" placeholder="请输入密码"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="testUserFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="add_testUser()">确 定</el-button>
+        </div>
+    </el-dialog>
 </div>
 </template>
 
 <script>
 /* eslint-disable */
+import md5 from 'js-md5'
 var user;
 export default {
     name:'ApiManager',
@@ -116,8 +145,17 @@ export default {
             url: this.url,
             userId: this.storage.getItem('userId'),
             token: this.storage.getItem('token'),
+            testUserId:this.storage.getItem('testUserId'),
+            testUserToken:this.storage.getItem('testUserToken'),
+            adminUserId:this.storage.getItem('adminUserId'),
+            adminUserToken:this.storage.getItem('adminUserToken'),
+            baseurl:'',
             testBtn:'开始测试',
             loading:false,
+            adminUser:this.$route.query.adminUser,
+            adminPsw:this.$route.query.adminPsw,
+            testUser:this.$route.query.testUser,
+            testPsw:this.$route.query.testPsw,
             apiname: '',
             apides: '',
             apiurl:'',
@@ -131,6 +169,7 @@ export default {
             isNextDisabled:false,
             isPreDisabled:false,
             dialogFormVisible:false,
+            testUserFormVisible:false,
             editObj:{
                 id:'',
                 apiname:'',
@@ -143,6 +182,216 @@ export default {
         // 返回上一级
         go_back() {
             this.$router.back(-1)
+        },
+        // 获取测试用户信息
+        get_testUser() {
+            // 获取测试用户token
+            var loginUrl = '/api/v1/user/login'
+            var loginMethod = 'post'
+            // 管理员用户
+            var adminUserData = {
+                'email':this.adminUser,
+                'pswmd5':md5(this.adminPsw),
+                'timestamp':Date.parse(new Date())
+            }
+            // 测试用户
+            var testUserData = {
+                'email':this.testUser,
+                'pswmd5':md5(this.testPsw),
+                'timestamp':Date.parse(new Date())
+            }
+            // 获取管理员token
+            this.axios({
+                baseURL:this.baseurl,
+                url:loginUrl,
+                method:loginMethod,
+                data:adminUserData,
+            }).then(response=>{
+                if (response.data.errcode=='0') {
+                    this.storage.setItem('adminUserId',response.data.data['userid'])
+                    this.storage.setItem('adminUserToken',response.data.data['token'])
+                    this.adminUserId=response.data.data['userid']
+                    this.adminUserToken=response.data.data['token']
+                    // 获取测试用户token
+                    this.axios({
+                        baseURL:this.baseurl,
+                        url:loginUrl,
+                        method:loginMethod,
+                        data:testUserData,
+                    }).then(response=>{
+                        if (response.data.errcode=='0') {
+                            this.storage.setItem('testUserId',response.data.data['userid'])
+                            this.storage.setItem('testUserToken',response.data.data['token'])
+                            this.testUserId=this.storage.getItem('testUserId'),
+                            this.testUserToken=this.storage.getItem('testUserToken')
+                        }
+                        else {
+                            this.$message({
+                                message: '测试用户账户密码异常，请重新设置',
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration: 0
+                            })
+                            this.testUserFormVisible = true
+                        }
+                    },error=>{
+                        this.$message({
+                            message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration: 0
+                        })
+                        return
+                    })
+                }
+                else {
+                    this.$message({
+                        message: '管理员账户密码异常，请重新设置',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    })
+                    this.testUserFormVisible = true
+                }
+            },error=>{
+                this.$message({
+                    message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
+                return
+            })
+        },
+        // 设置测试用户
+        setTestUser() {
+            var params_data = {'userId':this.userId,'token':this.token}
+            var row = {
+                adminUser:this.adminUser,
+                adminPsw:this.adminPsw,
+                testUser:this.testUser,
+                testPsw:this.testPsw,
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/project/'+this.projectId+'/',
+                method:'patch',
+                params:params_data,
+                data:row,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '测试用户设置成功',
+                        type: 'success',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    });
+                    this.testUserFormVisible = false
+                }
+                else {
+                    this.$message({
+                        message: "测试用户设置失败",
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
+            })
+        },
+        add_testUser() {
+            // 获取测试用户token
+            var loginUrl = '/api/v1/user/login'
+            var loginMethod = 'post'
+            // 管理员用户
+            var adminUserData = {
+                'email':this.adminUser,
+                'pswmd5':md5(this.adminPsw),
+                'timestamp':Date.parse(new Date())
+            }
+            // 测试用户
+            var testUserData = {
+                'email':this.testUser,
+                'pswmd5':md5(this.testPsw),
+                'timestamp':Date.parse(new Date())
+            }
+            // 获取管理员token
+            this.axios({
+                baseURL:this.baseurl,
+                url:loginUrl,
+                method:loginMethod,
+                data:adminUserData,
+            }).then(response=>{
+                if (response.data.errcode=='0') {
+                    this.storage.setItem('adminUserId',response.data.data['userid'])
+                    this.storage.setItem('adminUserToken',response.data.data['token'])
+                    // 获取测试用户token
+                    this.axios({
+                        baseURL:this.baseurl,
+                        url:loginUrl,
+                        method:loginMethod,
+                        data:testUserData,
+                    }).then(response=>{
+                        if (response.data.errcode=='0') {
+                            this.storage.setItem('testUserId',response.data.data['userid'])
+                            this.storage.setItem('testUserToken',response.data.data['token'])
+                            this.setTestUser()
+                        }
+                        else {
+                            this.$message({
+                                message: '测试用户账户密码异常，请重新设置',
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration: 0
+                            })
+                            this.testUserFormVisible = true
+                        }
+                    },error=>{
+                        this.$message({
+                            message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration: 0
+                        })
+                        return
+                    })
+                }
+                else {
+                    this.$message({
+                        message: '管理员账户密码异常，请重新设置',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    })
+                    this.testUserFormVisible = true
+                }
+            },error=>{
+                this.$message({
+                    message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
+                return
+            })
         },
         // api测试
         apiManagerTest() {
@@ -163,11 +412,24 @@ export default {
                     'token':this.token,
                     'projectId':this.projectId
                 }
+                var data = {}
+                if (this.$route.query.projectName == '量产云平台') {
+                    var data = {
+                        testUserInfo:{
+                            testUserId:this.testUserId,
+                            testUserToken:this.testUserToken,
+                            adminUserId:this.adminUserId,
+                            adminUserToken:this.adminUserToken,
+                        }
+                    }
+                }
+                
                 this.axios({
                     baseURL:this.url,
                     url:'/api/v1/apiManagerTest/',
-                    method:'get',
+                    method:'post',
                     params:params_data,
+                    data:data
                 }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
@@ -176,6 +438,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration: 0
                         });
                     }
                     else {
@@ -184,6 +447,7 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                     }
                     this.loading=false
@@ -195,6 +459,7 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                     this.get_apiManagers()
                     this.loading=false
@@ -217,6 +482,7 @@ export default {
                 params:params_data,
             }).then(response=>{
                 this.apiManagers=response.data.results
+                this.baseurl = response.data.results[0].apiurl
                 // 判断是否有上一页
                 this.pre=response.data.previous
                 if (!this.pre) {
@@ -232,6 +498,20 @@ export default {
                 }
                 else {
                     this.isNextDisabled=false
+                }
+                if (this.$route.query.projectName == '量产云平台') {
+                    if (!this.$route.query.adminUser || !this.$route.query.adminPsw || !this.$route.query.testUser || !this.$route.query.testPsw) {
+                        this.testUserFormVisible = true
+                        this.$message({
+                            message: "API测试用户不能为空",
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration: 0
+                        })
+                        return
+                    }
+                    this.get_testUser()
                 }
             },error=>{
                 this.$message({
@@ -270,6 +550,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration: 0
                     });
                     this.get_apiManagers()
                 }
@@ -279,15 +560,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
             })
         },
         // 删除数据
@@ -312,6 +595,7 @@ export default {
                             type: 'success',
                             center: true,
                             showClose: true,
+                            duration: 0
                         });
                         this.get_apiManagers()
                     }
@@ -321,15 +605,17 @@ export default {
                             type: 'error',
                             center: true,
                             showClose: true,
+                            duration: 0
                         })
                     }
                 },error=>{
-                    this.$message({
-                            message: error.response.data,
-                            type: 'error',
-                            center: true,
-                            showClose: true,
-                        })
+                   this.$message({
+                        message: '自动化测试平台异常，请检查网络',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    })
                 })
             }).catch(() => {
             })
@@ -358,6 +644,7 @@ export default {
                         type: 'success',
                         center: true,
                         showClose: true,
+                        duration: 0
                     });
                     this.get_apiManagers()
                 }
@@ -367,15 +654,17 @@ export default {
                         type: 'error',
                         center: true,
                         showClose: true,
+                        duration: 0
                     })
                 }
             },error=>{
                 this.$message({
-                        message: error.response.data,
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                    duration: 0
+                })
             })
             // this.get_apiManagers()
             this.apiname=''
@@ -546,6 +835,8 @@ export default {
         if (!this.$route.query.projectId) {
             this.get_projects()
         }
+    },
+    beforeMount() {
     },
     filters:{
         dateFormat:function(time) {
