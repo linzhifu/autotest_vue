@@ -108,8 +108,8 @@
                         </el-button>
                     </el-tab-pane>
                     <el-tab-pane label="权限管理">
-                        <el-checkbox v-model="scope.row.isAdmin" @change="auth_change()">管理员</el-checkbox>
-                        <el-checkbox v-model="scope.row.isAuth" @change="auth_change()">授权</el-checkbox>
+                        <el-checkbox v-model="scope.row.isAdmin" @change="scope.row.isAuth = !scope.row.isAdmin;auth_change()">管理员</el-checkbox>
+                        <el-checkbox v-model="scope.row.isAuth" @change="scope.row.isAdmin = !scope.row.isAuth;auth_change()">授权</el-checkbox>
                         <br><br>
                         <div>操作者信息：</div><br>
                         <el-form inline>
@@ -368,85 +368,9 @@ export default {
                 this.testUser = error.response.data
             })
         },
-        // 设置管理员权限
-        setAdmin(row) {
-            var parmas = {
-                'userid':this.adminId,
-                'token': this.adminToken
-            }
-            var data = {
-                roleid:1,
-                userid:this.testUserId
-            }
-            this.axios({
-                baseURL:this.baseurl,
-                url:'/api/v1/role/user',
-                method:'post',
-                params:params,
-                data:data,
-            }).then((res)=>{
-                if(res.data.errcode==0){
-                    return true
-                } else {
-                    return false
-                }
-            }).catch((error)=>{
-                return false
-            })
-        },
-        // 添加权限
-        addAuth(row) {
-            if(row.operatorType =='' || row.operatorId =='' ||  row.objectType =='' || row.objectId =='' || row.actions ==''){
-                this.warning0('请确保必填项都已填写！');
-                return 
-            }
-            var params = {
-                'userid': this.adminId,
-                'token': this.adminToken
-            }
-            var data = {
-                "operator":{
-                    "type":row.operatorType,
-                    "id":Number(row.objectType)
-                },
-                "object":{
-                    "type":row.objectType,
-                    "id":Number(row.objectId)
-                },
-                "actions":row.actions.split(',')
-            }
-            this.axios({
-                baseURL:this.baseurl,
-                url:'/api/v1/role/permission',
-                method:'post',
-                params:params,
-                data:data,
-            }).then((res)=>{
-                if(res.data.errcode==0){
-                    return true
-                } else {
-                    return false
-                }
-            }).catch((error)=>{
-                return false
-            })
-        },
-        addAllAuth(row) {
-            // 判断是否需要删除管理员权限
-            if (row.isAdmin) {
-                this.setAdmin(row)
-            }
-            // 不需要设置为管理员，判断是否删除添加权限
-            else {
-                if (row.isAuth) {
-                    this.addAuth(row)
-                }
-            }
-            return
-        },
         // 删除管理员权限
         deleteAdmin(row) {
-            var parmas = {
+            var params = {
                 'userid':this.adminId,
                 'token': this.adminToken
             }
@@ -462,18 +386,33 @@ export default {
                 data:data,
             }).then((res)=>{
                 if(res.data.errcode==0){
-                    return true
+                    return
                 } else {
-                    return false
+                    this.$message({
+                        message: row['apiname'] + ' 删除管理员权限失败-errcode不一致',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                    return
                 }
             }).catch((error)=>{
-                return false
+                this.$message({
+                    message: '删除管理员权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                return
             })
         },
         // 删除权限
         deleteAuth(row) {
             if(row.operatorType =='' || row.operatorId =='' ||  row.objectType =='' || row.objectId =='' || row.actions ==''){
-                this.warning0('请确保必填项都已填写！');
+                this.$message({
+                    message: '请确保必填项都已填写',
+                    type: 'warning'
+                });
                 return 
             }
             var params = {
@@ -499,26 +438,25 @@ export default {
                 data:data,
             }).then((res)=>{
                 if(res.data.errcode==0){
-                    return true
+                    return
                 } else {
-                    return false
+                    this.$message({
+                        message: row['apiname'] + ' 删除权限失败-errcode不一致',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                    return
                 }
             }).catch((error)=>{
-                return false
+                this.$message({
+                    message: '删除权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                    type: 'error',
+                    center: true,
+                    showClose: true,
+                })
+                return
             })
-        },
-        deleteAllAuth(row) {
-            // 判断是否需要删除管理员权限
-            if (row.isAdmin) {
-                this.deleteAdmin(row)
-            }
-            // 不需要设置为管理员，判断是否删除添加权限
-            else {
-                if (row.isAuth) {
-                    this.deleteAuth(row)
-                }
-            }
-            return
         },
         // API单元测试
         apiTest(row) {
@@ -530,128 +468,268 @@ export default {
                 this.$message.error('response数据不符合json格式');
                 return
             }
-            var _value = {}
-            for (var i in this.params[row.id]) {
-                if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
-                    _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+            // 设置管理员权限
+            if (row.isAdmin) {
+                let params = {
+                    'userid':this.adminId,
+                    'token': this.adminToken
                 }
-            }
-            var params = _value
-            var headers = {'Content-Type': row.contentType}
-            var data = JSON.parse(this.body[row.id])
-            var res = JSON.parse(this.response[row.id])
-            var resu = '测试 PASS'
-            var message = row['apiname'] + '' + resu
-            if (data.hasOwnProperty('timestamp')) {
-                data['timestamp'] = Date.parse(new Date())
-            }
-            if (!this.addAllAuth(row)) {
-                this.$message({
-                    message: row['apiname'] + ' 授权失败',
-                    type: 'error',
-                    center: true,
-                    showClose: true,
-                })
-            }
-            this.axios({
-                baseURL:this.baseurl,
-                url:row.apiurl,
-                method:row.apimethod,
-                params:params,
-                data:data,
-                headers:headers
-            }).then(response=>{
-                row.testdata = response.data
-                if (response.data.errcode==res['errcode']) {
-                    if ('data' in res) {
-                        for (var i in res['data']) {
-                            if (res['data'][i] != response.data['data'][i]) {
+                let data = {
+                    roleid:1,
+                    userid:this.testUserId
+                }
+                this.axios({
+                    baseURL:this.baseurl,
+                    url:'/api/v1/role/user',
+                    method:'post',
+                    params:params,
+                    data:data,
+                }).then((res)=>{
+                    if(res.data.errcode==0){
+                        var _value = {}
+                        for (var i in this.params[row.id]) {
+                            if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
+                                _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                            }
+                        }
+                        var params = _value
+                        var headers = {'Content-Type': row.contentType}
+                        var data = JSON.parse(this.body[row.id])
+                        var res = JSON.parse(this.response[row.id])
+                        var resu = '测试 PASS'
+                        var message = row['apiname'] + '' + resu
+                        if (data.hasOwnProperty('timestamp')) {
+                            data['timestamp'] = Date.parse(new Date())
+                        }
+                        this.axios({
+                            baseURL:this.baseurl,
+                            url:row.apiurl,
+                            method:row.apimethod,
+                            params:params,
+                            data:data,
+                            headers:headers
+                        }).then(response=>{
+                            row.testdata = response.data
+                            if (response.data.errcode==res['errcode']) {
+                                if ('data' in res) {
+                                    for (var i in res['data']) {
+                                        if (res['data'][i] != response.data['data'][i]) {
+                                            this.$message({
+                                                message: row['apiname'] + ' data不一致',
+                                                type: 'error',
+                                                center: true,
+                                                showClose: true,
+                                            })
+                                            // 删除权限
+                                            this.deleteAdmin(row)
+                                            return
+                                        }
+                                    }
+                                }
+                                if ('errmsg' in res) {
+                                    if (res['errmsg'] != response.data['errmsg']) {
+                                        this.$message({
+                                            message: row['apiname'] + ' errmsg不一致',
+                                            type: 'error',
+                                            center: true,
+                                            showClose: true,
+                                        })
+                                        // 删除权限
+                                        this.deleteAdmin(row)
+                                        return
+                                    }
+                                }
                                 this.$message({
-                                    message: row['apiname'] + ' data不一致',
+                                    message: row['apiname'] + ' 测试 PASS',
+                                    type: 'success',
+                                    center: true,
+                                    showClose: true,
+                                })
+                                // 删除权限
+                                this.deleteAdmin(row)
+                                return
+                            }
+                            else {
+                                this.$message({
+                                    message: row['apiname'] + ' errcode不一致',
                                     type: 'error',
                                     center: true,
                                     showClose: true,
                                 })
-                                if (!this.deleteAllAuth(row)) {
-                                    this.$message({
-                                        message: row['apiname'] + ' 删除权限失败',
-                                        type: 'error',
-                                        center: true,
-                                        showClose: true,
-                                    })
-                                }
+                                // 删除权限
+                                this.deleteAdmin(row)
                                 return
                             }
-                        }
-                    }
-                    if ('errmsg' in res) {
-                        if (res['errmsg'] != response.data['errmsg']) {
+                        },error=>{
+                            console.log(error.response.data)
+                            row.testdata=error.response.data
                             this.$message({
-                                message: row['apiname'] + ' errmsg不一致',
+                                message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                                 type: 'error',
                                 center: true,
                                 showClose: true,
                             })
-                            if (!this.deleteAllAuth(row)) {
+                            // 删除权限
+                            this.deleteAdmin(row)
+                            return
+                        })
+                    } else {
+                        this.$message({
+                            message: row['apiname'] + ' 授予管理员权限失败',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                        })
+                        return
+                    }
+                }).catch((error)=>{
+                    this.$message({
+                        message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                    return
+                })
+            }
+            // 添加权限
+            if (row.isAuth) {
+                if(row.operatorType =='' || row.operatorId =='' ||  row.objectType =='' || row.objectId =='' || row.actions ==''){
+                    this.$message({
+                        message: '请确保必填项都已填写',
+                        type: 'warning'
+                    });
+                    return 
+                }
+                let params = {
+                    'userid': this.adminId,
+                    'token': this.adminToken
+                }
+                let data = {
+                    "operator":{
+                        "type":row.operatorType,
+                        "id":Number(row.operatorId)
+                    },
+                    "object":{
+                        "type":row.objectType,
+                        "id":Number(row.objectId)
+                    },
+                    "actions":row.actions.split(',')
+                }
+                this.axios({
+                    baseURL:this.baseurl,
+                    url:'/api/v1/role/permission',
+                    method:'post',
+                    params:params,
+                    data:data,
+                }).then((res)=>{
+                    if(res.data.errcode==0){
+                        var _value = {}
+                        for (var i in this.params[row.id]) {
+                            if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
+                                _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                            }
+                        }
+                        var params = _value
+                        var headers = {'Content-Type': row.contentType}
+                        var data = JSON.parse(this.body[row.id])
+                        var res = JSON.parse(this.response[row.id])
+                        var resu = '测试 PASS'
+                        var message = row['apiname'] + '' + resu
+                        if (data.hasOwnProperty('timestamp')) {
+                            data['timestamp'] = Date.parse(new Date())
+                        }
+                        this.axios({
+                            baseURL:this.baseurl,
+                            url:row.apiurl,
+                            method:row.apimethod,
+                            params:params,
+                            data:data,
+                            headers:headers
+                        }).then(response=>{
+                            row.testdata = response.data
+                            if (response.data.errcode==res['errcode']) {
+                                if ('data' in res) {
+                                    for (var i in res['data']) {
+                                        if (res['data'][i] != response.data['data'][i]) {
+                                            this.$message({
+                                                message: row['apiname'] + ' data不一致',
+                                                type: 'error',
+                                                center: true,
+                                                showClose: true,
+                                            })
+                                            // 删除权限
+                                            this.deleteAuth(row)
+                                            return
+                                        }
+                                    }
+                                }
+                                if ('errmsg' in res) {
+                                    if (res['errmsg'] != response.data['errmsg']) {
+                                        this.$message({
+                                            message: row['apiname'] + ' errmsg不一致',
+                                            type: 'error',
+                                            center: true,
+                                            showClose: true,
+                                        })
+                                        // 删除权限
+                                        this.deleteAuth(row)
+                                        return
+                                    }
+                                }
                                 this.$message({
-                                    message: row['apiname'] + ' 删除权限失败',
+                                    message: row['apiname'] + ' 测试 PASS',
+                                    type: 'success',
+                                    center: true,
+                                    showClose: true,
+                                })
+                                // 删除权限
+                                this.deleteAuth(row)
+                                return
+                            }
+                            else {
+                                this.$message({
+                                    message: row['apiname'] + ' errcode不一致',
                                     type: 'error',
                                     center: true,
                                     showClose: true,
                                 })
+                                // 删除权限
+                                this.deleteAuth(row)
+                                return
                             }
+                        },error=>{
+                            console.log(error.response.data)
+                            row.testdata=error.response.data
+                            this.$message({
+                                message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                            })
+                            // 删除权限
+                            this.deleteAuth(row)
                             return
-                        }
-                    }
-                    this.$message({
-                        message: row['apiname'] + ' 测试 PASS',
-                        type: 'success',
-                        center: true,
-                        showClose: true,
-                    });
-                    if (!this.deleteAllAuth(row)) {
+                        })
+                    } else {
                         this.$message({
-                            message: row['apiname'] + ' 删除权限失败',
+                            message: row['apiname'] + ' 授予权限失败',
                             type: 'error',
                             center: true,
                             showClose: true,
                         })
+                        return
                     }
-                }
-                else {
+                }).catch((error)=>{
                     this.$message({
-                        message: row['apiname'] + ' errcode不一致',
+                        message: '授予权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                         type: 'error',
                         center: true,
                         showClose: true,
                     })
-                    if (!this.deleteAllAuth(row)) {
-                        this.$message({
-                            message: row['apiname'] + ' 删除权限失败',
-                            type: 'error',
-                            center: true,
-                            showClose: true,
-                        })
-                    }
-                }
-            },error=>{
-                console.log(error.response.data)
-                row.testdata=error.response.data
-                this.$message({
-                    message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
-                    type: 'error',
-                    center: true,
-                    showClose: true,
+                    return
                 })
-                if (!this.deleteAllAuth(row)) {
-                    this.$message({
-                        message: row['apiname'] + ' 删除权限失败',
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                    })
-                }
-            })
+            }
         },
         // 全部API测试
         apiCaseTest() {
