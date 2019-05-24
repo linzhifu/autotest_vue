@@ -3,7 +3,7 @@
         <!-- <el-row>
             <el-col :span="10"><ve-histogram :data="chartData"></ve-histogram></el-col>
         </el-row> -->
-        <iframe id="myiframe" src="http://10.1.19.252:8081" height="720px" width="100%" scrolling="no" frameborder="0"></iframe>
+        <iframe id="myiframe" src="http://172.16.9.88:8081" height="720px" width="100%" scrolling="no" frameborder="0"></iframe>
     </div>
 </template>
 

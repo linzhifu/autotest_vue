@@ -613,7 +613,7 @@ export default {
                 })
             }
             // 添加权限
-            if (row.isAuth) {
+            else if (row.isAuth) {
                 if(row.operatorType =='' || row.operatorId =='' ||  row.objectType =='' || row.objectId =='' || row.actions ==''){
                     this.$message({
                         message: '请确保必填项都已填写',
@@ -751,6 +751,84 @@ export default {
                 }).catch((error)=>{
                     this.$message({
                         message: row['apiname'] + ' 授予权限失败-服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                        duration: 0
+                    })
+                    return
+                })
+            }
+            else {
+                var _value = {}
+                for (var i in this.params[row.id]) {
+                    if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
+                        _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                    }
+                }
+                var params = _value
+                var headers = {'Content-Type': row.contentType}
+                var data = JSON.parse(this.body[row.id])
+                var res = JSON.parse(this.response[row.id])
+                if (data.hasOwnProperty('timestamp')) {
+                    data['timestamp'] = Date.parse(new Date())
+                }
+                this.axios({
+                    baseURL:this.baseurl,
+                    url:row.apiurl,
+                    method:row.apimethod,
+                    params:params,
+                    data:data,
+                    headers:headers
+                }).then(response=>{
+                    row.testdata = response.data
+                    if (response.data.errcode==res['errcode']) {
+                        if ('data' in res) {
+                            for (var i in res['data']) {
+                                if (res['data'][i] != response.data['data'][i]) {
+                                    this.$message({
+                                        message: row['apiname'] + ' data不一致',
+                                        type: 'error',
+                                        center: true,
+                                        showClose: true,
+                                        duration: 0
+                                    })
+                                }
+                            }
+                        }
+                        if ('errmsg' in res) {
+                            if (res['errmsg'] != response.data['errmsg']) {
+                                this.$message({
+                                    message: row['apiname'] + ' errmsg不一致',
+                                    type: 'error',
+                                    center: true,
+                                    showClose: true,
+                                    duration: 0
+                                })
+                            }
+                        }
+                        this.$message({
+                            message: row['apiname'] + ' 测试 PASS',
+                            type: 'success',
+                            center: true,
+                            showClose: true,
+                            duration: 0
+                        })
+                    }
+                    else {
+                        this.$message({
+                            message: row['apiname'] + ' errcode不一致',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration: 0
+                        })
+                    }
+                },error=>{
+                    console.log(error.response.data)
+                    row.testdata=error.response.data
+                    this.$message({
+                        message: '自动化测试平台服务器异常',
                         type: 'error',
                         center: true,
                         showClose: true,
