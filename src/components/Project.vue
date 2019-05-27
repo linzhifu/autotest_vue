@@ -361,9 +361,7 @@ export default {
                     this.$message({
                         message: '修改成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     });
                     this.get_projects()
                 }
@@ -371,18 +369,14 @@ export default {
                     this.$message({
                         message: "修改失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
+                    center: true
                 })
             })
         },
@@ -406,18 +400,14 @@ export default {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            center: true,
-                            showClose: true,
-                            duration:0,
+                            center: true
                         });
                     }
                     else {
                         this.$message({
                             message: "删除失败",
                             type: 'error',
-                            center: true,
-                            showClose: true,
-                            duration:0,
+                            center: true
                         })
                     }
                     this.get_projects()
@@ -425,9 +415,7 @@ export default {
                     this.$message({
                         message: '自动化测试平台异常，请检查网络',
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 })
             }).catch(action=>{
@@ -454,9 +442,7 @@ export default {
                     this.$message({
                         message: '新建成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     });
                 // 重新加载数据
                 this.get_projects()
@@ -465,18 +451,14 @@ export default {
                     this.$message({
                         message: "新建失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
+                    center: true
                 })
             })
             this.proname=''

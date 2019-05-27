@@ -29,6 +29,7 @@ export default {
     data(){
         return {
             url: this.url,
+            imageUrl:"../assets/img/login-img.png",
             axios: this.axios,
             username: '',
             email: '',
@@ -97,17 +98,14 @@ export default {
                     this.$message({
                         message: response.data.errmsg,
                         type: 'error',
-                        center: true,
-                        duration:0,
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
+                    center: true
                 })
             })
         },
@@ -117,6 +115,8 @@ export default {
                     return
                 }
             var params_data = {'email':this.email}
+            this.captcha_button = '发送中...'
+            // this.is_ok = true;
             this.axios({
                 baseURL:this.url,
                 url:'api/v1/captcha/',
@@ -129,7 +129,6 @@ export default {
                         type: 'success',
                         center: true
                     });
-                    // this.is_ok = true;
                     var time = 60;
                     this.captcha_button = time+'s';
                     // 设置定时器30s
@@ -150,18 +149,19 @@ export default {
                     this.$message({
                         message: response.data.errmsg,
                         type: 'error',
-                        center: true,
-                        duration:0,
+                        center: true
                     })
+                    // 恢复按键    
+                    this.is_ok = false;
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
+                    center: true
                 })
+                // 恢复按键    
+                this.is_ok = false;
             })
         },
         // 验证邮箱格式

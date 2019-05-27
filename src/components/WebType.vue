@@ -278,9 +278,7 @@ export default {
                     this.$message({
                         message: '修改成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     });
                     this.get_testtypes()
                 }
@@ -288,18 +286,14 @@ export default {
                     this.$message({
                         message: "修改失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
+                    center: true
                 })
             })
         },
@@ -323,9 +317,7 @@ export default {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            center: true,
-                            showClose: true,
-                            duration:0,
+                            center: true
                         });
                         this.get_testtypes()
                     }
@@ -333,18 +325,14 @@ export default {
                         this.$message({
                             message: "删除失败",
                             type: 'error',
-                            center: true,
-                            showClose: true,
-                            duration:0,
+                            center: true
                         })
                     }
                 },error=>{
                     this.$message({
                         message: '自动化测试平台异常，请检查网络',
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 })
             }).catch(() => {
@@ -373,9 +361,7 @@ export default {
                     this.$message({
                         message: '添加成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     });
                     this.get_testtypes()
                 }
@@ -383,18 +369,14 @@ export default {
                     this.$message({
                         message: "添加失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration:0,
+                    center: true
                 })
             })
             this.typename=''

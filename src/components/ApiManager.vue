@@ -288,9 +288,7 @@ export default {
                     this.$message({
                         message: '测试用户设置成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     });
                     this.testUserFormVisible = false
                 }
@@ -298,18 +296,14 @@ export default {
                     this.$message({
                         message: "测试用户设置失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration: 0
+                    center: true
                 })
             })
         },
@@ -355,9 +349,7 @@ export default {
                             this.$message({
                                 message: '测试用户账户密码异常，请重新设置',
                                 type: 'error',
-                                center: true,
-                                showClose: true,
-                                duration: 0
+                                center: true
                             })
                             this.testUserFormVisible = true
                         }
@@ -365,9 +357,7 @@ export default {
                         this.$message({
                             message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                             type: 'error',
-                            center: true,
-                            showClose: true,
-                            duration: 0
+                            center: true
                         })
                         return
                     })
@@ -376,9 +366,7 @@ export default {
                     this.$message({
                         message: '管理员账户密码异常，请重新设置',
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     })
                     this.testUserFormVisible = true
                 }
@@ -386,9 +374,7 @@ export default {
                 this.$message({
                     message: '服务器错误，请检查 ' + this.baseurl + ' 服务器是否正常',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration: 0
+                    center: true
                 })
                 return
             })
@@ -548,9 +534,7 @@ export default {
                     this.$message({
                         message: '修改成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     });
                     this.get_apiManagers()
                 }
@@ -558,18 +542,14 @@ export default {
                     this.$message({
                         message: "修改失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration: 0
+                    center: true
                 })
             })
         },
@@ -593,9 +573,7 @@ export default {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            center: true,
-                            showClose: true,
-                            duration: 0
+                            center: true
                         });
                         this.get_apiManagers()
                     }
@@ -603,18 +581,14 @@ export default {
                         this.$message({
                             message: "删除失败",
                             type: 'error',
-                            center: true,
-                            showClose: true,
-                            duration: 0
+                            center: true
                         })
                     }
                 },error=>{
                    this.$message({
                         message: '自动化测试平台异常，请检查网络',
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     })
                 })
             }).catch(() => {
@@ -642,9 +616,7 @@ export default {
                     this.$message({
                         message: '添加成功',
                         type: 'success',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     });
                     this.get_apiManagers()
                 }
@@ -652,18 +624,14 @@ export default {
                     this.$message({
                         message: "新建失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        center: true
                     })
                 }
             },error=>{
                 this.$message({
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
-                    center: true,
-                    showClose: true,
-                    duration: 0
+                    center: true
                 })
             })
             // this.get_apiManagers()
@@ -803,8 +771,7 @@ export default {
                     this.$message({
                         message: "加载失败",
                         type: 'error',
-                        center: true,
-                        showClose: true,
+                        center: true
                     })
                 }
             },error=>{
