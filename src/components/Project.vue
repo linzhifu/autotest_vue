@@ -54,13 +54,20 @@
             </template>
             <template slot-scope="scope">
                 <el-button
-                size="mini"
-                type="primary"
-                @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
+                    size="mini"
+                    type="primary"
+                    @click="open_edit(scope.row)" class="el-icon-edit">
+                </el-button>
                 <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
+                    size="mini"
+                    type="primary"
+                    @click="go_report(scope.row)" icon="el-icon-document">
+                </el-button>
+                <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
+                </el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -571,6 +578,13 @@ export default {
                 'adminPsw':project.adminPsw,
                 'testUser':project.testUser,
                 'testPsw':project.testPsw,
+            }
+            this.$router.push({ path: url, query:query})
+        },
+        go_report(row) {
+            var url = '/home/report/'
+            var query = {
+                projectName:row.proname
             }
             this.$router.push({ path: url, query:query})
         }

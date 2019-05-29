@@ -15,13 +15,17 @@
                 <i class="el-icon-menu"></i>
                 <span slot="title">项目中心</span>
             </el-menu-item>
-            <el-menu-item index="/home/webManager/" disabled>
+            <!-- <el-menu-item index="/home/webManager/" disabled>
                 <i class="el-icon-thirdhoutaicaozuorizhi-"></i>
                 <span slot="title">前端测试</span>
-            </el-menu-item>
-            <el-menu-item index="/home/apiManager/" disabled>
+            </el-menu-item> -->
+            <!-- <el-menu-item index="/home/apiManager/" disabled>
                 <i class="el-icon-thirdduanxintongji-"></i>
                 <span slot="title">后端测试</span>
+            </el-menu-item> -->
+            <el-menu-item index="/home/report/">
+                <i class="el-icon-document"></i>
+                <span slot="title">测试报告</span>
             </el-menu-item>
             <el-menu-item index="/home/record/">
                 <i class="el-icon-document"></i>

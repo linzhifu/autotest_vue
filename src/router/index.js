@@ -11,6 +11,7 @@ import WebCase from '@/components/WebCase'
 import WebType from '@/components/WebType'
 import ApiType from '@/components/ApiType'
 import Record from '@/components/Record'
+import Report from '@/components/Report'
 
 Vue.use(Router)
 
@@ -58,16 +59,20 @@ export default new Router({
           component: WebCase
         },
         {
-          path: 'webType/:webManagerId?',
+          path: 'webType/',
           component: WebType
         },
         {
-          path: 'apiType/:webManagerId?',
+          path: 'apiType/',
           component: ApiType
         },
         {
-          path: 'record/:webManagerId?',
+          path: 'record/',
           component: Record
+        },
+        {
+          path: 'report/',
+          component: Report
         }
       ]
     }
