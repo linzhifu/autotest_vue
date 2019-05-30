@@ -12,6 +12,7 @@ import WebType from '@/components/WebType'
 import ApiType from '@/components/ApiType'
 import Record from '@/components/Record'
 import Report from '@/components/Report'
+import Mpcloud from '@/components/template/Mpcloud'
 
 Vue.use(Router)
 
@@ -71,8 +72,12 @@ export default new Router({
           component: Record
         },
         {
-          path: 'report/',
+          path: 'report',
           component: Report
+        },
+        {
+          path: 'mpcloud/',
+          component: Mpcloud
         }
       ]
     }

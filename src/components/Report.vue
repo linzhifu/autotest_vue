@@ -147,6 +147,25 @@ export default {
                 })
                 return
             }
+            for (var i=0;i<this.project_options.length;i++) {
+                console.log(this.project_options[i])
+                if (this.project_options[i]['value']==this.projectId) {
+                    // 量产云平台报告
+                    if (this.project_options[i]['label']=='量产云平台') {
+                        var url = '/home/mpcloud'
+                        var query = {
+                            projectId:this.projectId,
+                            projectName:this.project_options[i]['label']
+                        }
+                        this.$router.push({ path: url, query:query})
+                        return
+                    }
+                }
+            }
+            
+            return
+
+
             var body_data = {
                     'project': this.projectId,
                     'user': this.userId,
