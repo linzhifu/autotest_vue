@@ -8,3 +8,22 @@ body {
 a {
     text-decoration: none
 }
+div.el-collapse-item__header.is-active {
+    color: #3a8ee6;
+    font-size: 18px;
+    /* border-bottom-color: #eee; */
+}
+.funtest {
+    margin-left: 20px;
+}
+.funtest .el-collapse-item__header.is-active {
+    color: #3a8ee6;
+    font-size: 16px;
+    /* border-bottom-color: #eee; */
+}
+.pass input{
+    color: green;
+}
+.fail input{
+    color: red;
+}
