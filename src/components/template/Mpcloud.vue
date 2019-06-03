@@ -5,7 +5,8 @@
             <a href="#" @click.prevent="go_back">
                 <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
             </a>
-            项目：{{this.$route.query.projectName}}
+            <div>项目：{{this.$route.query.projectName}}</div><br>
+            <el-button type="primary" @click="new_report">提交</el-button>
         </div><br>
         <!-- 测试报告 -->
         <div>
@@ -15,32 +16,32 @@
                     <el-form label-position="right" label-width="150px" :model="mpcloudReport">
                         <el-form-item label="量产云平台">
                             <el-col :span="4">
-                                <el-input v-model="mpcloudReport.webVer" placeholder="如:V1.0 (必填)" width="100"></el-input>
+                                <el-input v-model="mpcloudReport.version['量产云平台']" placeholder="如:V1.0 (必填)" width="100"></el-input>
                             </el-col>
                         </el-form-item>
                         <el-form-item label="电流板">
                             <el-col :span="4">
-                                <el-input v-model="mpcloudReport.currentBoardVer" placeholder="如:V1.0.1_190112 (必填)"></el-input>
+                                <el-input v-model="mpcloudReport.version['电流板']" placeholder="如:V1.0.1_190112 (必填)"></el-input>
                             </el-col>
                         </el-form-item>
                         <el-form-item label="MPTool">
                             <el-col :span="4">
-                                <el-input v-model="mpcloudReport.mptoolVer" placeholder="如:V1.2.0.4 (必填)"></el-input>
+                                <el-input v-model="mpcloudReport.version['MPTool']" placeholder="如:V1.2.0.4 (必填)"></el-input>
                             </el-col>
                         </el-form-item>
                         <el-form-item label="离线Key授权工具">
                             <el-col :span="4">
-                                <el-input v-model="mpcloudReport.offLineKeyToolVer" placeholder="如:V1.1.3.0 (必填)"></el-input>
+                                <el-input v-model="mpcloudReport.version['离线Key授权工具']" placeholder="如:V1.1.3.0 (必填)"></el-input>
                             </el-col>
                         </el-form-item>
                         <el-form-item label="syncAgent">
                             <el-col :span="4">
-                                <el-input v-model="mpcloudReport.syncAgentVer" placeholder="如:V0.0.11 (必填)"></el-input>
+                                <el-input v-model="mpcloudReport.version['syncAgent']" placeholder="如:V0.0.11 (必填)"></el-input>
                             </el-col>
                         </el-form-item>
                         <el-form-item label="TransferStation">
                             <el-col :span="4">
-                                <el-input v-model="mpcloudReport.transferStationVer" placeholder="如:V0.0.01 (必填)"></el-input>
+                                <el-input v-model="mpcloudReport.version['transferStation']" placeholder="如:V0.0.01 (必填)"></el-input>
                             </el-col>
                         </el-form-item>
                     </el-form>
@@ -714,13 +715,21 @@ export default {
     name:'Mpcloud',
     data() {
         return {
+            axios: this.axios,
+            url: this.url,
+            userId: this.storage.getItem('userId'),
+            token: this.storage.getItem('token'),
+            projectId: this.$route.query.projectId,
+            projectName:this.$route.query.projectName,
             mpcloudReport: {
-                webVer:'',
-                currentBoardVer:'',
-                mptoolVer:'',
-                offLineKeyToolVer:'',
-                syncAgentVer:'',
-                transferStationVer:'',
+                version:{
+                    '量产云平台':'',
+                    '电流板':'',
+                    'MPTool':'',
+                    '离线Key授权工具':'',
+                    'syncAgent':'',
+                    'transferStation':''
+                },
                 releaseNote:'',
                 product_pm:[
                     {
@@ -732,8 +741,8 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
-                        note:''   
+                        result:'NT',
+                        note:''
                     },{
                         testInfo:'我的群组',
                         step:[
@@ -745,7 +754,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'添加项目',
@@ -755,7 +764,7 @@ export default {
                             '添加后前往添加项目角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''  
                     },{
                         testInfo:'产品列表',
@@ -769,7 +778,7 @@ export default {
                             '删除新建项目',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -780,7 +789,7 @@ export default {
                             '关联量产工具',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -794,7 +803,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -807,7 +816,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -819,7 +828,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -830,7 +839,7 @@ export default {
                             '关联量产工具',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -844,7 +853,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -857,7 +866,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -868,7 +877,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -879,7 +888,7 @@ export default {
                             '下载测试软件',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'添加样品',
@@ -888,7 +897,7 @@ export default {
                             '添加样品和样品记录',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -902,7 +911,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -915,7 +924,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -926,7 +935,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -937,7 +946,7 @@ export default {
                             '下载测试软件',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'添加样品',
@@ -946,7 +955,7 @@ export default {
                             '添加样品和样品记录',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -960,7 +969,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -973,7 +982,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -984,7 +993,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -995,7 +1004,7 @@ export default {
                             '下载测试软件',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'添加样品',
@@ -1004,7 +1013,7 @@ export default {
                             '添加样品和样品记录',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1018,7 +1027,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1031,7 +1040,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -1042,7 +1051,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -1053,7 +1062,7 @@ export default {
                             '下载测试软件',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'添加样品',
@@ -1062,7 +1071,7 @@ export default {
                             '添加样品和样品记录',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1076,7 +1085,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1089,7 +1098,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -1100,7 +1109,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'创建订单',
@@ -1110,7 +1119,7 @@ export default {
                             '核对新订单列表',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -1121,7 +1130,7 @@ export default {
                             '进行在线和离线授权',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1135,7 +1144,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1148,7 +1157,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -1159,7 +1168,7 @@ export default {
                             '核对产品角色和成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'创建订单',
@@ -1169,7 +1178,7 @@ export default {
                             '核对新订单列表',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -1180,7 +1189,7 @@ export default {
                             '进行在线和离线授权',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1194,7 +1203,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1207,7 +1216,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'订单列表',
@@ -1218,7 +1227,7 @@ export default {
                             '下载测试软件',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1232,7 +1241,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1245,7 +1254,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'订单列表',
@@ -1256,7 +1265,7 @@ export default {
                             '下载测试软件',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1270,7 +1279,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1283,7 +1292,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -1294,7 +1303,7 @@ export default {
                             '核对产品项目成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -1304,7 +1313,7 @@ export default {
                             '核对订单列表',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1318,7 +1327,7 @@ export default {
                             '核对修改好的个人资料',
                             '测试5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'我的群组',
@@ -1331,7 +1340,7 @@ export default {
                             '删除新建群组',
                             '测试次数为5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'产品列表',
@@ -1342,7 +1351,7 @@ export default {
                             '核对产品项目成员',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'订单列表',
@@ -1352,7 +1361,7 @@ export default {
                             '核对订单列表',
                             '测试次数5次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1366,7 +1375,7 @@ export default {
                             '如果3步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
                             '测试10次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'多台测试PC',
@@ -1375,7 +1384,7 @@ export default {
                             '每台测试PC测试步骤同单台测试PC的步骤',
                             '测试次数为200次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'测试完立即关闭MPTool',
@@ -1387,7 +1396,7 @@ export default {
                             '如果4步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
                             '测试次数2次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''  
                     },{
                         testInfo:'断网测试',
@@ -1399,7 +1408,7 @@ export default {
                             '如果4步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
                             '测试次数2次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1413,7 +1422,7 @@ export default {
                             '如果3步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
                             '测试10次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'多台测试PC',
@@ -1422,7 +1431,7 @@ export default {
                             '每台测试PC测试步骤同单台测试PC的步骤',
                             '测试次数为200次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''  
                     },{
                         testInfo:'测试完立即关闭MPTool',
@@ -1434,7 +1443,7 @@ export default {
                             '如果4步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
                             '测试次数2次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''   
                     },{
                         testInfo:'断网测试',
@@ -1446,7 +1455,7 @@ export default {
                             '如果4步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
                             '测试次数2次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''  
                     }
                 ],
@@ -1459,7 +1468,7 @@ export default {
                             '测试完后2分钟左右在云平台生产记录查询页面是否可以查到与测试相同的条目',
                             '测试10次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'多台测试PC',
@@ -1468,7 +1477,7 @@ export default {
                             '每台测试PC测试步骤同单台测试PC的步骤',
                             '测试次数为200次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'测试完立即关闭MPTool',
@@ -1479,7 +1488,7 @@ export default {
                             '测试完后2分钟左右在云平台生产记录查询页面是否可以查到与测试相同的条目',
                             '测试次数2次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'断网测试',
@@ -1490,7 +1499,7 @@ export default {
                             '测试完后连接测试PC网络，2分钟左右在云平台生产记录查询页面是否可以查到与测试相同的条目',
                             '测试次数2次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:'' 
                     }
                 ],
@@ -1501,7 +1510,7 @@ export default {
                             '填入云平台帐号密码点击登陆',
                             '无错误弹框出现，并可以在订单栏看到订单'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'查找设备(离线Key授权工具使用)',
@@ -1510,7 +1519,7 @@ export default {
                             '等待USB设备上盘点击查找设备',
                             '在设备盘符处出现Ukey在windows系统中的盘符'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'查看订单权限(离线Key授权工具使用)',
@@ -1518,7 +1527,7 @@ export default {
                             '用两个用户登陆，其中一个在云平台可以查看到一个订单；另一个在云平台可以看到三个订单',
                             '在授权工具上登陆这两个帐号，看看显示的订单数是否能云平台上相同'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'授权(离线Key授权工具使用)',
@@ -1528,7 +1537,7 @@ export default {
                             '使用Ukey到Mptool使用，查看离线剩余授权数是否和申请的一致',
                             '从云平台查看剩余离线授权总数是否与等于总离线授权总数和步骤3申请数量之差'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'正常使用',
@@ -1540,7 +1549,7 @@ export default {
                             '查看测试是否正常进行，Mptool下端离线授权数量是否减了1个',
                             '测试10次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'Ukey没授权数量',
@@ -1552,7 +1561,7 @@ export default {
                             '查看测试是否有弹出提示框“授权不足或验证失败”',
                             '测试1次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'Ukey授权订单和MPTool配置订单不一致',
@@ -1564,7 +1573,7 @@ export default {
                             '查看测试是否有弹出提示框“授权不足或验证失败',
                             '测试1次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     },{
                         testInfo:'离线在线授权切换',
@@ -1579,7 +1588,7 @@ export default {
                             '再次断开网络依次测试',
                             '轮流测试6次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1593,7 +1602,7 @@ export default {
                             '查看测试是否正常进行，Mptool下端在线授权数量是否有减少1个',
                             '测试10次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                         
                     },{
@@ -1604,7 +1613,7 @@ export default {
                             '观察Mptool下端在线授权数量是否有所减少',
                             '测试次数为200次'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1618,7 +1627,7 @@ export default {
                             '跑完测试订单授权数约：900000',
                             '测试时间约11小时'
                         ],
-                        result:'',
+                        result:'NT',
                         note:''
                     }
                 ],
@@ -1897,6 +1906,130 @@ export default {
                     })
                 }).catch(() => {      
             });
+        },
+        // 删除测试报告记录
+        handleDelete(id) {
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/report/'+id+'/',
+                method:'delete',
+                params:params_data,
+            })
+        },
+        // 新建测试报告
+        new_report() {
+            for (var i in this.mpcloudReport.version) {
+                if (!this.mpcloudReport.version[i]) {
+                    this.$message({
+                        message: i + ' 版本不能为空',
+                        type: 'error',
+                        center: true
+                    })
+                    return
+                }
+            }
+            if (!this.mpcloudReport.releaseNote) {
+                this.$message({
+                        message: 'Release Note 不能为空',
+                        type: 'error',
+                        center: true
+                    })
+                return
+            }
+            var body_data = {
+                    'project': this.projectId,
+                    'user': this.userId,
+                    'version':JSON.stringify(this.mpcloudReport.version),
+                    'releaseNote':this.mpcloudReport.releaseNote,
+                }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/report/',
+                method:'post',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    // this.$message({
+                    //     message: '创建成功',
+                    //     type: 'success',
+                    //     center: true
+                    // });
+                    var reportId = response.data.data.id
+                    var update_time = response.data.data.update_time
+                    var fileName = this.dateLogFormat(update_time)
+                    var body_data = {
+                        'mpcloudReport': this.mpcloudReport,
+                        'fileName':fileName
+                    }
+                    var params_data = {'userId':this.userId,'token':this.token}
+
+                    this.axios({
+                        baseURL:this.url,
+                        url:'api/v1/mpcloudExcel/',
+                        method:'post',
+                        params:params_data,
+                        data:body_data,
+                    }).then(response=>{
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: '创建成功',
+                                type: 'success',
+                                center: true
+                            });
+                            var url = '/home/report/'
+                            var query = {
+                                projectName:this.projectName
+                            }
+                            this.$router.push({ path: url, query:query})
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true
+                            })
+                            this.handleDelete(reportId)
+                        }
+                    },error=>{
+                        this.$message({
+                            message: '自动化测试平台异常，请检查网络',
+                            type: 'error',
+                            center: true
+                        })
+                        this.handleDelete(reportId)
+                    })
+                }
+                else {
+                    this.$message({
+                        message: response.data.errmsg,
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
+        },
+        dateLogFormat(time) {
+            var date=new Date(time);
+            var year=date.getFullYear();
+            /* 在日期格式中，月份是从0开始的，因此要加0
+            * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+            * */
+            var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+            var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+            var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+            var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+            var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+            return year+month+day+hours+minutes+seconds+'.xlsx';
         }
     }
 }

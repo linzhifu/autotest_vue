@@ -28,6 +28,18 @@
                 :header-cell-style="{background:'#ddd'}"
                 highlight-current-row
                 style="width: 100%">
+                <el-table-column type="expand">
+                    <template slot-scope="scope">
+                        <h4>测试软件版本信息：</h4>
+                        <span v-for="(val,key) in JSON.parse(scope.row.version)" :key="key">
+                            {{key}}：{{val}}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                        <h4>Release Note：</h4>
+                        <pre> {{scope.row.releaseNote}}</pre>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     align="center"
                     prop="proname"
@@ -162,47 +174,6 @@ export default {
                     }
                 }
             }
-            
-            return
-
-
-            var body_data = {
-                    'project': this.projectId,
-                    'user': this.userId,
-                }
-            var params_data = {'userId':this.userId,'token':this.token}
-            this.axios({
-                baseURL:this.url,
-                url:'api/v1/report/',
-                method:'post',
-                params:params_data,
-                data:body_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: '新建成功',
-                        type: 'success',
-                        center: true
-                    });
-                // 重新加载数据
-                this.get_reports()
-                }
-                else {
-                    this.$message({
-                        message: "新建失败",
-                        type: 'error',
-                        center: true
-                    })
-                }
-            },error=>{
-                this.$message({
-                    message: '自动化测试平台异常，请检查网络',
-                    type: 'error',
-                    center: true
-                })
-            })
-            this.projectId=''
         },
         // 上一页
         get_pre() {
@@ -313,11 +284,41 @@ export default {
                 }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success',
-                            center: true
-                        });
+                        // this.$message({
+                        //     message: '删除成功',
+                        //     type: 'success',
+                        //     center: true
+                        // });
+                        var fileName = this.dateLogFormat(row.update_time)
+                        this.axios({
+                            baseURL:this.url,
+                            url:'api/v1/mpcloudExcel/?fileName='+fileName,
+                            method:'delete',
+                            params:params_data,
+                        }).then(response=>{
+                            // 判断是否成功
+                            if (!response.data.errcode) {
+                                this.$message({
+                                    message: '删除成功',
+                                    type: 'success',
+                                    center: true
+                                });
+                            }
+                            else {
+                                this.$message({
+                                    message: "删除失败",
+                                    type: 'error',
+                                    center: true
+                                })
+                            }
+                        },error=>{
+                            this.$message({
+                                message: '自动化测试平台异常，请检查网络',
+                                type: 'error',
+                                center: true
+                            })
+                        })
+                        this.get_reports()
                     }
                     else {
                         this.$message({
@@ -326,7 +327,6 @@ export default {
                             center: true
                         })
                     }
-                    this.get_reports()
                 },error=>{
                     this.$message({
                         message: '自动化测试平台异常，请检查网络',
@@ -391,6 +391,19 @@ export default {
                 this.$router.push('/')
             })
         },
+        dateLogFormat(time) {
+            var date=new Date(time);
+            var year=date.getFullYear();
+            /* 在日期格式中，月份是从0开始的，因此要加0
+            * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+            * */
+            var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+            var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+            var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+            var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+            var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+            return year+month+day+hours+minutes+seconds+'.xlsx';
+        }
     },
     created() {
         this.get_reports()
