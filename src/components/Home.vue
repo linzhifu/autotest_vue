@@ -27,7 +27,7 @@
                 <i class="el-icon-document"></i>
                 <span slot="title">测试报告</span>
             </el-menu-item>
-            <el-menu-item index="/home/record/">
+            <el-menu-item index="/home/log/">
                 <i class="el-icon-document"></i>
                 <span slot="title">测试LOG</span>
             </el-menu-item>

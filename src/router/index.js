@@ -10,7 +10,7 @@ import ApiCase from '@/components/ApiCase'
 import WebCase from '@/components/WebCase'
 import WebType from '@/components/WebType'
 import ApiType from '@/components/ApiType'
-import Record from '@/components/Record'
+import Log from '@/components/Log'
 import Report from '@/components/Report'
 import Mpcloud from '@/components/template/Mpcloud'
 
@@ -68,8 +68,8 @@ export default new Router({
           component: ApiType
         },
         {
-          path: 'record/',
-          component: Record
+          path: 'log/',
+          component: Log
         },
         {
           path: 'report',
