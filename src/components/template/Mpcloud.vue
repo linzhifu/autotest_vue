@@ -702,6 +702,13 @@
                                 </el-table-column>
                             </el-table>
                         </el-collapse-item>
+                        <el-collapse-item title="测试结果汇总" name="4">
+                            <el-input
+                                type="textarea"
+                                v-model="mpcloudReport.result"
+                                placeholder="必填（如：此次测试通过，该版本符合量产要求）">
+                            </el-input>
+                        </el-collapse-item>
                     </el-collapse>
                 </el-tab-pane>
             </el-tabs>
@@ -1376,53 +1383,6 @@ export default {
                             '测试10次'
                         ],
                         result:'NT',
-                        note:''   
-                    },{
-                        testInfo:'多台测试PC',
-                        step:[
-                            '4台PC，每台4个测试架',
-                            '每台测试PC测试步骤同单台测试PC的步骤',
-                            '测试次数为200次'
-                        ],
-                        result:'NT',
-                        note:''   
-                    },{
-                        testInfo:'测试完立即关闭MPTool',
-                        step:[
-                            '从MPS订单的软件列表上下载MPTool到测试PC上',
-                            '按测试架开始测试',
-                            '测试完后立即关闭MPTool',
-                            '等待5分钟左右在云平台后台日志存放目录查找是否有AGENT_<测试PC网卡MAC号>目录，且该目录下有.txt日志文件',
-                            '如果4步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
-                            '测试次数2次'
-                        ],
-                        result:'NT',
-                        note:''  
-                    },{
-                        testInfo:'断网测试',
-                        step:[
-                            '从MPS订单的软件列表上下载MPTool到测试PC上',
-                            '断掉测试PC  WIFI',
-                            '按测试架开始测试',
-                            '测试完后连接测试PC网络，2分钟左右在云平台生产记录查询页面是否可以查到与测试相同的条目',
-                            '如果4步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
-                            '测试次数2次'
-                        ],
-                        result:'NT',
-                        note:''
-                    }
-                ],
-                collectLogFile: [
-                    {
-                        testInfo:'单台测试PC',
-                        step:[
-                            '从MPS订单的软件列表上下载MPTool到测试PC上',
-                            '按测试架开始测试',
-                            '测试完后5分钟左右在云平台后台日志存放目录查找是否有AGENT_<测试PC网卡MAC号>目录，且该目录下有.txt日志文件',
-                            '如果3步骤正常，则对比服务器的.txt是否和测试PC上的.txt完全一致',
-                            '测试10次'
-                        ],
-                        result:'NT',
                         note:''
                     },{
                         testInfo:'多台测试PC',
@@ -1614,7 +1574,11 @@ export default {
                             '测试次数为200次'
                         ],
                         result:'NT',
-                        note:''
+                        note:'多台测试时，MPTool下端显示的剩余授权数量不是完全\
+                            准确的，这是由于工具请求完授权显示数量在那里\
+                            ，而另一台电脑去请求授权了，这个时候第一台电\
+                            脑应该还没有进行下一次授权，所以没刷新，这个\
+                            问题不好影响生产'
                     }
                 ],
                 pressureTest: [
@@ -1631,6 +1595,7 @@ export default {
                         note:''
                     }
                 ],
+                result:''
             },
             activeName: 'first',
             activeTestName:'0',
@@ -1937,11 +1902,20 @@ export default {
                     })
                 return
             }
+            if (!this.mpcloudReport.result) {
+                this.$message({
+                        message: '测试结果汇总不能为空',
+                        type: 'error',
+                        center: true
+                    })
+                return
+            }
             var body_data = {
                     'project': this.projectId,
                     'user': this.userId,
                     'version':JSON.stringify(this.mpcloudReport.version),
                     'releaseNote':this.mpcloudReport.releaseNote,
+                    'allInfo':JSON.stringify(this.mpcloudReport)
                 }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
