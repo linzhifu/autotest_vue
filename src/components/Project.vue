@@ -54,6 +54,7 @@
             </template>
             <template slot-scope="scope">
                 <el-button
+                    v-if='scope.row.user==userId || userId==1'
                     size="mini"
                     type="primary"
                     @click="open_edit(scope.row)" class="el-icon-edit">
@@ -64,6 +65,7 @@
                     @click="go_report(scope.row)" icon="el-icon-document">
                 </el-button>
                 <el-button
+                    v-if='scope.row.user==userId || userId==1'
                     size="mini"
                     type="danger"
                     @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">

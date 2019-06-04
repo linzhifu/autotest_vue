@@ -30,23 +30,23 @@
     </div>
     <!-- API列表 -->
     <el-table
-     border
-     stripe
-     :data="apiCases.filter(data => !search || data.apiname.toLowerCase().includes(search.toLowerCase()) || data.apiurl.toLowerCase().includes(search.toLowerCase()))"
-     empty-text="暂无项目"
-     :default-sort = "{prop: 'index', order: 'ascending'}"
-     :header-cell-style="{background:'#ddd'}"
-     highlight-current-row>
+        border
+        stripe
+        :data="apiCases.filter(data => !search || data.apiname.toLowerCase().includes(search.toLowerCase()) || data.apiurl.toLowerCase().includes(search.toLowerCase()))"
+        empty-text="暂无项目"
+        :default-sort = "{prop: 'index', order: 'ascending'}"
+        :header-cell-style="{background:'#ddd'}"
+        highlight-current-row>
         <el-table-column type="expand">
             <template slot-scope="scope">
                 <el-tabs type="border-card">
                     <!-- param -->
                     <el-tab-pane label="Params">
                         <el-table
-                         border
-                         :data="params[scope.row.id]"
-                         style="width: 100%"
-                         :header-cell-style="{background:'#F2F6FC'}">
+                            border
+                            :data="params[scope.row.id]"
+                            style="width: 100%"
+                            :header-cell-style="{background:'#F2F6FC'}">
                             <el-table-column label="KEY">
                                 <template slot-scope="scope">
                                     <el-input v-model="scope.row[0]"></el-input>
@@ -70,14 +70,15 @@
                         </el-table>
                         <br>
                         <el-button
-                         size="mini"
-                         type="primary"
-                         @click="addParam(params[scope.row.id])" class="el-icon-plus">添加Param
+                            size="mini"
+                            type="primary"
+                            @click="addParam(params[scope.row.id])" class="el-icon-plus">添加Param
                         </el-button>
                         <el-button
-                         size="mini"
-                         type="primary"
-                         @click="edit_param(scope.row.id,'apiparam',params[scope.row.id])" class="el-icon-edit">{{editParam}}
+                            v-if='scope.row.user==userId || userId==1'
+                            size="mini"
+                            type="primary"
+                            @click="edit_param(scope.row.id,'apiparam',params[scope.row.id])" class="el-icon-edit">{{editParam}}
                         </el-button>
                     </el-tab-pane>
                     <!-- body -->
@@ -87,18 +88,20 @@
                         </el-select><br><br>
                         <el-input  type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])"></el-input><br><br>
                         <el-button
-                         size="mini"
-                         type="primary"
-                         @click="edit_body(scope.row,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
+                            v-if='scope.row.user==userId || userId==1'
+                            size="mini"
+                            type="primary"
+                            @click="edit_body(scope.row,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
                         </el-button>
                     </el-tab-pane>
                     <!-- response -->
                     <el-tab-pane label="Response">
                         <el-input  type="textarea" autosize v-model="response[scope.row.id]" @change="response_change(response[scope.row.id])"></el-input><br><br>
                         <el-button
-                         size="mini"
-                         type="primary"
-                         @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
+                            v-if='scope.row.user==userId || userId==1'
+                            size="mini"
+                            type="primary"
+                            @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
                         </el-button>
                     </el-tab-pane>
                     <el-tab-pane label="权限管理" v-if="projectName == '量产云平台'">
@@ -132,9 +135,10 @@
                             </el-form-item>
                         </el-form>
                         <el-button
-                         size="mini"
-                         type="primary"
-                         @click="edit_auth(scope.row)" class="el-icon-edit">{{editAuth}}
+                            v-if='scope.row.user==userId || userId==1'
+                            size="mini"
+                            type="primary"
+                            @click="edit_auth(scope.row)" class="el-icon-edit">{{editAuth}}
                         </el-button>
                     </el-tab-pane>
                     <el-tab-pane label="测试数据">
@@ -173,14 +177,17 @@
                 <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
             </template>
             <template slot-scope="scope">
+                <span v-if='!(scope.row.user==userId) && !(userId==1)'>暂无权限操作</span>
                 <el-button
-                size="mini"
-                type="primary"
-                @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
+                    v-if='scope.row.user==userId || userId==1'
+                    size="mini"
+                    type="primary"
+                    @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
                 <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
+                    v-if='scope.row.user==userId || userId==1'
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
             </template>
         </el-table-column>
     </el-table>

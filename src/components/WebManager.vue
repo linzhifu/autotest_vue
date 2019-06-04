@@ -98,11 +98,14 @@
                         <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索"/>
                     </template>
                     <template slot-scope="scope">
+                        <span v-if='!(scope.row.user==userId) && !(userId==1)'>暂无权限操作</span>
                         <el-button
+                        v-if='scope.row.user==userId || userId==1'
                         size="mini"
                         type="primary"
                         @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
                         <el-button
+                        v-if='scope.row.user==userId || userId==1'
                         size="mini"
                         type="danger"
                         @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>

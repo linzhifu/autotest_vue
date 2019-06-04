@@ -72,6 +72,7 @@
                         </el-button>
                         </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <el-button
+                            v-if='scope.row.user==userId || userId==1'
                             size="mini"
                             type="danger"
                             @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">

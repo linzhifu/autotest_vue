@@ -1981,9 +1981,7 @@ export default {
                                 center: true
                             });
                             var url = '/home/report/'
-                            var query = {
-                                projectName:this.projectName
-                            }
+                            var query = {}
                             this.$router.push({ path: url, query:query})
                         }
                         else {
