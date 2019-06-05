@@ -38,6 +38,8 @@
                         </span>
                         <h4>Release Note：</h4>
                         <pre>{{scope.row.releaseNote}}</pre>
+                        <h4>测试结果汇总：</h4>
+                        <pre>{{scope.row.result}}</pre>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -278,7 +280,18 @@ export default {
         },
         // 打开编辑
         open_edit(row) {
-            console.log(row)
+            // console.log(row)
+            // 量产云平台报告
+            if (row.proname=='量产云平台') {
+                var url = '/home/mpcloud'
+                var query = {
+                    projectId:row.project,
+                    projectName:row.proname,
+                    allInfo:JSON.parse(row.allInfo)
+                }
+                this.$router.push({ path: url, query:query})
+                return
+            }
         },
         // 删除数据
         handleDelete(index, row) {

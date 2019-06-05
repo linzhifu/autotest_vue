@@ -88,8 +88,6 @@ export default {
                         message: '修改成功',
                         type: 'success',
                         center: true,
-                        showClose: true,
-                        duration:0,
                     });
                     this.username = this.username_new
                     this.username_new = ''
@@ -99,8 +97,6 @@ export default {
                         message: "修改失败",
                         type: 'error',
                         center: true,
-                        showClose: true,
-                        duration:0,
                     })
                 }
             },error=>{
@@ -108,8 +104,6 @@ export default {
                     message: '自动化测试平台异常，请检查网络',
                     type: 'error',
                     center: true,
-                    showClose: true,
-                    duration:0,
                 })
             })
         },
@@ -130,27 +124,21 @@ export default {
                         this.$message({
                             message: '修改成功',
                             type: 'success',
-                            center: true,
-                            showClose: true,
-                            duration:0,
+                            center: true
                         });
                     }
                     else {
                         this.$message({
                             message: "修改失败",
                             type: 'error',
-                            center: true,
-                            showClose: true,
-                            duration:0,
+                            center: true
                         })
                     }
                 },error=>{
                     this.$message({
                         message: '自动化测试平台异常，请检查网络',
                         type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration:0,
+                        center: true
                     })
                 })
             }
@@ -158,8 +146,7 @@ export default {
                 this.$message({
                         message: "两次密码不一致，请重新输入",
                         type: 'error',
-                        center: true,
-                        showClose: true,
+                        center: true
                 })
             }
             this.password_1 = this.password_2 = ''

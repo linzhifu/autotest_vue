@@ -1916,6 +1916,7 @@ export default {
                     'user': this.userId,
                     'version':JSON.stringify(this.mpcloudReport.version),
                     'releaseNote':this.mpcloudReport.releaseNote,
+                    'result':this.mpcloudReport.result,
                     'allInfo':JSON.stringify(this.mpcloudReport)
                 }
             var params_data = {'userId':this.userId,'token':this.token}
@@ -2003,6 +2004,11 @@ export default {
             var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
             var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
             return year+month+day+hours+minutes+seconds+'.xlsx';
+        }
+    },
+    created() {
+        if (this.$route.query.allInfo) {
+            this.mpcloudReport = this.$route.query.allInfo
         }
     }
 }
