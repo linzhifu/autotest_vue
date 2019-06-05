@@ -21,26 +21,32 @@
         </el-table-column>
         <el-table-column label="前端" align="center">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="go_webTest(scope.row)">
-                    <p v-if="scope.row.webresult" style="color:green">PASS</p>
-                    <p v-else style="color:red">FAIL</p>
-                </a>
+                <el-tooltip class="item" effect="dark" content="点击加入前端测试" placement="top">
+                    <a href="#" @click.prevent="go_webTest(scope.row)">
+                        <p v-if="scope.row.webresult" style="color:green">PASS</p>
+                        <p v-else style="color:red">FAIL</p>
+                    </a>
+                </el-tooltip>
             </template>
         </el-table-column>
         <el-table-column label="后端" align="center">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="go_apiTest(scope.row)">
-                    <p v-if="scope.row.apiresult" style="color:green">PASS</p>
-                    <p v-else style="color:red">FAIL</p>
-                </a>
+                <el-tooltip class="item" effect="dark" content="点击加入后端测试" placement="top">
+                    <a href="#" @click.prevent="go_apiTest(scope.row)">
+                        <p v-if="scope.row.apiresult" style="color:green">PASS</p>
+                        <p v-else style="color:red">FAIL</p>
+                    </a>
+                </el-tooltip>
             </template>
         </el-table-column>
         <el-table-column label="测试结果" align="center">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="projectTest(scope.row)">
-                    <p v-if="scope.row.result" style="color:green" v-html="passText"></p>
-                    <p v-else style="color:red" v-html="failText"></p>
-                </a>
+                <el-tooltip class="item" effect="dark" content="点击开始项目测试(前端+后端)" placement="top">
+                    <a href="#" @click.prevent="projectTest(scope.row)">
+                        <p v-if="scope.row.result" style="color:green" v-html="passText"></p>
+                        <p v-else style="color:red" v-html="failText"></p>
+                    </a>
+                </el-tooltip>
             </template>
         </el-table-column>
         <el-table-column label="最近修改" align="center" prop="update_time" sortable>
@@ -53,23 +59,29 @@
                 <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
             </template>
             <template slot-scope="scope">
-                <el-button
-                    v-if='scope.row.user==userId || userId==1'
-                    size="mini"
-                    type="primary"
-                    @click="open_edit(scope.row)" class="el-icon-edit">
-                </el-button>
-                <el-button
-                    size="mini"
-                    type="primary"
-                    @click="go_report(scope.row)" icon="el-icon-document">
-                </el-button>
-                <el-button
-                    v-if='scope.row.user==userId || userId==1'
-                    size="mini"
-                    type="danger"
-                    @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
-                </el-button>
+                <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
+                    <el-button
+                        v-if='scope.row.user==userId || userId==1'
+                        size="mini"
+                        type="primary"
+                        @click="open_edit(scope.row)" class="el-icon-edit">
+                    </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="测试报告" placement="top">
+                    <el-button
+                        size="mini"
+                        type="primary"
+                        @click="go_report(scope.row)" icon="el-icon-document">
+                    </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                    <el-button
+                        v-if='scope.row.user==userId || userId==1'
+                        size="mini"
+                        type="danger"
+                        @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
+                    </el-button>
+                </el-tooltip>
             </template>
         </el-table-column>
     </el-table>

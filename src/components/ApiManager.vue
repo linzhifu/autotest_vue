@@ -39,9 +39,11 @@
      highlight-current-row>
         <el-table-column label="名称" align="center">
             <template slot-scope="scope">
-                <a href="#" @click.prevent="go_apiTest(scope.row)">
-                    <p>{{scope.row.apiname}}</p>
-                </a>
+                <el-tooltip class="item" effect="dark" :content="'点击进入 '+scope.row.apiname+' 模块'"  placement="top">
+                    <a href="#" @click.prevent="go_apiTest(scope.row)">
+                        <p>{{scope.row.apiname}}</p>
+                    </a>
+                </el-tooltip>
             </template>
         </el-table-column>
         <el-table-column label="描述" align="center" prop="apides">
@@ -67,16 +69,22 @@
             </template>
             <template slot-scope="scope">
                 <span v-if='!(scope.row.user==userId) && !(userId==1)'>暂无权限操作</span>
-                <el-button
-                    v-if='scope.row.user==userId || userId==1'
-                    size="mini"
-                    type="primary"
-                    @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
-                <el-button
-                    v-if='scope.row.user==userId || userId==1'
-                    size="mini"
-                    type="danger"
-                    @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
+                <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
+                    <el-button
+                        v-if='scope.row.user==userId || userId==1'
+                        size="mini"
+                        type="primary"
+                        @click="open_edit(scope.row)" class="el-icon-edit">
+                    </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                    <el-button
+                        v-if='scope.row.user==userId || userId==1'
+                        size="mini"
+                        type="danger"
+                        @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
+                    </el-button>
+                </el-tooltip>
             </template>
         </el-table-column>
     </el-table>

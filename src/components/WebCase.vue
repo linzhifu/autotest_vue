@@ -51,16 +51,22 @@
                     </template>
                     <template slot-scope="scope">
                         <span v-if='!(scope.row.user==userId) && !(userId==1)'>暂无权限操作</span>
-                        <el-button
-                            v-if='scope.row.user==userId || userId==1'
-                            size="mini"
-                            type="primary"
-                            @click="open_edit(scope.row)" class="el-icon-edit"></el-button>
-                        <el-button
-                            v-if='scope.row.user==userId || userId==1'
-                            size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete"></el-button>
+                        <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
+                            <el-button
+                                v-if='scope.row.user==userId || userId==1'
+                                size="mini"
+                                type="primary"
+                                @click="open_edit(scope.row)" class="el-icon-edit">
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                            <el-button
+                                v-if='scope.row.user==userId || userId==1'
+                                size="mini"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
+                            </el-button>
+                        </el-tooltip>
                     </template>
                 </el-table-column>
             </el-table>
@@ -80,13 +86,13 @@
         </div>
         <!-- 验证数据列表 -->
         <el-table
-         border
-         stripe
-         :data="checkWebCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
-         empty-text="暂无项目"
-         :default-sort = "{prop: 'index', order: 'ascending'}"
-         :header-cell-style="{background:'#ddd'}"
-         highlight-current-row>
+            border
+            stripe
+            :data="checkWebCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+            empty-text="暂无项目"
+            :default-sort = "{prop: 'index', order: 'ascending'}"
+            :header-cell-style="{background:'#ddd'}"
+            highlight-current-row>
             <el-table-column label="" align="center" prop="index" width="50px" sortable>
             </el-table-column>
             <el-table-column label="验证" align="center" prop="webname">
@@ -110,16 +116,22 @@
                 </template>
                 <template slot-scope="scope">
                     <span v-if='!(scope.row.user==userId) && !(userId==1)'>暂无权限操作</span>
-                    <el-button
-                        v-if='scope.row.user==userId || userId==1'
-                        size="mini"
-                        type="primary"
-                        @click="open_edit(scope.row,'check')" class="el-icon-edit"></el-button>
-                    <el-button
-                        v-if='scope.row.user==userId || userId==1'
-                        size="mini"
-                        type="danger"
-                        @click="handleDelete(scope.$index, scope.row, 'check')" icon="el-icon-delete"></el-button>
+                    <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
+                        <el-button
+                            v-if='scope.row.user==userId || userId==1'
+                            size="mini"
+                            type="primary"
+                            @click="open_edit(scope.row,'check')" class="el-icon-edit">
+                        </el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                        <el-button
+                            v-if='scope.row.user==userId || userId==1'
+                            size="mini"
+                            type="danger"
+                            @click="handleDelete(scope.$index, scope.row, 'check')" icon="el-icon-delete">
+                            </el-button>
+                    </el-tooltip>
                 </template>
             </el-table-column>
         </el-table>
