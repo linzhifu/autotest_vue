@@ -523,6 +523,14 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row) {
+            if (!row.apiname || !row.apides || !row.apiurl) {
+                this.$message({
+                    message: "名称、描述、URL不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -599,13 +607,21 @@ export default {
         },
         // 添加数据
         new_webcase() {
+            if (!this.apiname || !this.apides || !this.apiurl) {
+                this.$message({
+                    message: "名称、描述、URL不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             var body_data = {
-                    'apiname': this.apiname,
-                    'apides': this.apides,
-                    'apiurl':this.apiurl,
-                    'user': this.userId,
-                    'project': this.projectId
-                }
+                'apiname': this.apiname,
+                'apides': this.apides,
+                'apiurl':this.apiurl,
+                'user': this.userId,
+                'project': this.projectId
+            }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,

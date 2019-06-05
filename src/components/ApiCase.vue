@@ -25,7 +25,7 @@
                 :value="item.value">
             </el-option>
         </el-select>
-        <el-button type="primary" @click="apiCaseTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
+        <el-button type="primary" @click="apiCaseTest" style="float: right;" :loading="allTestLoading">{{allTestBtn}}</el-button>
         <br><br>
     </div>
     <!-- API列表 -->
@@ -145,7 +145,8 @@
                         <el-button
                             size="mini"
                             type="primary"
-                            @click.prevent="apiTest(scope.row)">测试
+                            :loading="loading"
+                            @click.prevent="apiTest(scope.row)">{{testBtn}}
                         </el-button>
                         <br>
                         <pre style="font-size:14px" v-text="scope.row.testdata"></pre>
@@ -253,6 +254,8 @@ export default {
             testUser:'',
             testBtn:'开始测试',
             loading:false,
+            allTestBtn:'开始测试',
+            allTestLoading:false,
             apiname: '',
             apiurl:'',
             apiparams:{},
@@ -490,6 +493,8 @@ export default {
                 this.$message.error('response数据不符合json格式');
                 return
             }
+            this.loading=true
+            this.testBtn='测试中...'
             // 设置管理员权限
             if (row.isAdmin) {
                 let params = {
@@ -541,6 +546,8 @@ export default {
                                             })
                                             // 删除权限
                                             this.deleteAdmin(row)
+                                            this.loading=false
+                                            this.testBtn='开始测试'
                                             return
                                         }
                                     }
@@ -554,6 +561,8 @@ export default {
                                         })
                                         // 删除权限
                                         this.deleteAdmin(row)
+                                        this.loading=false
+                                        this.testBtn='开始测试'
                                         return
                                     }
                                 }
@@ -564,6 +573,8 @@ export default {
                                 })
                                 // 删除权限
                                 this.deleteAdmin(row)
+                                this.loading=false
+                                this.testBtn='开始测试'
                                 return
                             }
                             else {
@@ -574,6 +585,8 @@ export default {
                                 })
                                 // 删除权限
                                 this.deleteAdmin(row)
+                                this.loading=false
+                                this.testBtn='开始测试'
                                 return
                             }
                         },error=>{
@@ -586,6 +599,8 @@ export default {
                             })
                             // 删除权限
                             this.deleteAdmin(row)
+                            this.loading=false
+                            this.testBtn='开始测试'
                             return
                         })
                     } else {
@@ -594,6 +609,8 @@ export default {
                             type: 'error',
                             center: true
                         })
+                        this.loading=false
+                        this.testBtn='开始测试'
                         return
                     }
                 },error=>{
@@ -602,6 +619,8 @@ export default {
                         type: 'error',
                         center: true
                     })
+                    this.loading=false
+                    this.testBtn='开始测试'
                     return
                 })
             }
@@ -612,6 +631,8 @@ export default {
                         message: '请确保必填项都已填写',
                         type: 'warning'
                     });
+                    this.loading=false
+                    this.testBtn='开始测试'
                     return 
                 }
                 let params = {
@@ -674,6 +695,8 @@ export default {
                                             })
                                             // 删除权限
                                             this.deleteAuth(row)
+                                            this.loading=false
+                                            this.testBtn='开始测试'
                                             return
                                         }
                                     }
@@ -687,6 +710,8 @@ export default {
                                         })
                                         // 删除权限
                                         this.deleteAuth(row)
+                                        this.loading=false
+                                        this.testBtn='开始测试'
                                         return
                                     }
                                 }
@@ -697,6 +722,8 @@ export default {
                                 })
                                 // 删除权限
                                 this.deleteAuth(row)
+                                this.loading=false
+                                this.testBtn='开始测试'
                                 return
                             }
                             else {
@@ -707,6 +734,8 @@ export default {
                                 })
                                 // 删除权限
                                 this.deleteAuth(row)
+                                this.loading=false
+                                this.testBtn='开始测试'
                                 return
                             }
                         },error=>{
@@ -719,6 +748,8 @@ export default {
                             })
                             // 删除权限
                             this.deleteAuth(row)
+                            this.loading=false
+                            this.testBtn='开始测试'
                             return
                         })
                     } else {
@@ -727,6 +758,8 @@ export default {
                             type: 'error',
                             center: true
                         })
+                        this.loading=false
+                        this.testBtn='开始测试'
                         return
                     }
                 },error=>{
@@ -735,6 +768,8 @@ export default {
                         type: 'error',
                         center: true
                     })
+                    this.loading=false
+                    this.testBtn='开始测试'
                     return
                 })
             }
@@ -770,6 +805,9 @@ export default {
                                         type: 'error',
                                         center: true
                                     })
+                                    this.loading=false
+                                    this.testBtn='开始测试'
+                                    return
                                 }
                             }
                         }
@@ -780,6 +818,9 @@ export default {
                                     type: 'error',
                                     center: true
                                 })
+                                this.loading=false
+                                this.testBtn='开始测试'
+                                return
                             }
                         }
                         this.$message({
@@ -787,6 +828,9 @@ export default {
                             type: 'success',
                             center: true
                         })
+                        this.loading=false
+                        this.testBtn='开始测试'
+                        return
                     }
                     else {
                         this.$message({
@@ -794,6 +838,9 @@ export default {
                             type: 'error',
                             center: true
                         })
+                        this.loading=false
+                        this.testBtn='开始测试'
+                        return
                     }
                 },error=>{
                     console.log(error.response.data)
@@ -803,6 +850,8 @@ export default {
                         type: 'error',
                         center: true
                     })
+                    this.loading=false
+                    this.testBtn='开始测试'
                     return
                 })
             }
@@ -819,8 +868,8 @@ export default {
                     type: 'success',
                     center: true
                 });
-                this.loading=true
-                this.testBtn='测试中...'
+                this.allTestLoading=true
+                this.allTestBtn='测试中...'
                 var params_data = {
                     'userId':this.userId,
                     'token':this.token,
@@ -864,8 +913,8 @@ export default {
                             duration: 0
                         })
                     }
-                    this.loading=false
-                    this.testBtn='开始测试'
+                    this.allTestLoading=false
+                    this.allTestBtn='开始测试'
                     this.get_apiCases()
                 },error=>{
                     this.$message({
@@ -875,8 +924,8 @@ export default {
                         showClose: true,
                         duration: 0
                     })
-                    this.loading=false
-                    this.testBtn='开始测试'
+                    this.allTestLoading=false
+                    this.allTestBtn='开始测试'
                 })
                 }).catch(() => {     
             });
@@ -1068,6 +1117,14 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row, update=true) {
+            if (!row.apiname || !row.apiurl || !row.apimethod) {
+                this.$message({
+                    message: "名称、URL和请求方法不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -1146,13 +1203,21 @@ export default {
         },
         // 添加数据
         new_apicase() {
+            if (!this.apiname || !this.apiurl || !this.editObj.apimethod) {
+                this.$message({
+                    message: "名称、URL和请求方法不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             var body_data = {
-                    'apiname': this.apiname,
-                    'apiurl': this.apiurl,
-                    'apimethod':this.editObj.apimethod,
-                    'testType': this.testType,
-                    'user':this.userId
-                }
+                'apiname': this.apiname,
+                'apiurl': this.apiurl,
+                'apimethod':this.editObj.apimethod,
+                'testType': this.testType,
+                'user':this.userId
+            }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,

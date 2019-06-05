@@ -376,6 +376,22 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row) {
+            if (!row.webname && row.type!='check') {
+                this.$message({
+                    message: "步骤名称不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            if (!row.webname && row.type=='check') {
+                this.$message({
+                    message: "验证名称不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
             var url = 'api/v1/webCase/'+row.id+'/'
@@ -463,6 +479,22 @@ export default {
         },
         // 添加数据
         new_webcase(type) {
+            if (!this.webname && type!='check') {
+                this.$message({
+                    message: "步骤名称不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            if (!this.webname && type=='check') {
+                this.$message({
+                    message: "验证名称不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             var body_data = {
                 'webname': this.webname,
                 'testType': this.testType,

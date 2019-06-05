@@ -37,7 +37,7 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
                         <h4>Release Note：</h4>
-                        <pre> {{scope.row.releaseNote}}</pre>
+                        <pre>{{scope.row.releaseNote}}</pre>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -263,10 +263,6 @@ export default {
                     })
                 this.$router.push('/')
             })
-        },
-        // 下载
-        download(row) {
-            alert(row.proname)
         },
         // 删除数据
         handleDelete(index, row) {

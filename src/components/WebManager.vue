@@ -448,6 +448,14 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row) {
+            if (!row.webname || !row.webdes || !row.weburl) {
+                this.$message({
+                    message: "名称、描述和URL不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -525,13 +533,21 @@ export default {
         },
         // 添加数据
         new_webcase() {
+            if (!this.webname || !this.webdes || !this.weburl) {
+                this.$message({
+                    message: "名称、描述和URL不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             var body_data = {
-                    'webname': this.webname,
-                    'webdes': this.webdes,
-                    'weburl': this.weburl,
-                    'user': this.userId,
-                    'project': this.projectId
-                }
+                'webname': this.webname,
+                'webdes': this.webdes,
+                'weburl': this.weburl,
+                'user': this.userId,
+                'project': this.projectId
+            }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,

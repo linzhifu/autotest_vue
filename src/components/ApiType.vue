@@ -281,6 +281,14 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row) {
+            if (!row.typename || !row.typedes) {
+                this.$message({
+                    message: "名称和描述不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -358,13 +366,21 @@ export default {
         },
         // 添加数据
         new_webcase() {
+            if (!this.typename || !this.typedes) {
+                this.$message({
+                    message: "名称和描述不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             var body_data = {
-                    'typename': this.typename,
-                    'typedes': this.typedes,
-                    'object_id': this.object_id,
-                    'content_type': this.content_type,
-                    'user': this.userId
-                }
+                'typename': this.typename,
+                'typedes': this.typedes,
+                'object_id': this.object_id,
+                'content_type': this.content_type,
+                'user': this.userId
+            }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
                 baseURL:this.url,

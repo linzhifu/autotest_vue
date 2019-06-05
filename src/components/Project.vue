@@ -355,6 +355,14 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row) {
+            if (!row.proname || !row.prodes) {
+                this.$message({
+                    message: "项目名称和描述不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             // 关闭编辑框
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
@@ -433,6 +441,14 @@ export default {
         },
         // 添加数据
         new_product() {
+            if (!this.proname || !this.prodes) {
+                this.$message({
+                    message: "项目名称和描述不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
             var body_data = {
                     'proname': this.proname,
                     'prodes': this.prodes,
