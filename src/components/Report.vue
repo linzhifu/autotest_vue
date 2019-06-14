@@ -68,7 +68,7 @@
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
                             <el-button
-                                v-if='scope.row.user==userId || userId==1'
+                                v-if='scope.row.user==userId || userId==2'
                                 size="mini"
                                 type="primary"
                                 @click="open_edit(scope.row)" class="el-icon-edit">
@@ -85,7 +85,7 @@
                         </el-tooltip>
                         <el-tooltip class="item" effect="dark" content="删除" placement="top">
                             <el-button
-                                v-if='scope.row.user==userId || userId==1'
+                                v-if='scope.row.user==userId || userId==2'
                                 size="mini"
                                 type="danger"
                                 @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">

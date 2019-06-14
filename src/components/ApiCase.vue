@@ -75,7 +75,7 @@
                             @click="addParam(params[scope.row.id])" class="el-icon-plus">添加Param
                         </el-button>
                         <el-button
-                            v-if='scope.row.user==userId || userId==1'
+                            v-if='scope.row.user==userId || userId==2'
                             size="mini"
                             type="primary"
                             @click="edit_param(scope.row.id,'apiparam',params[scope.row.id])" class="el-icon-edit">{{editParam}}
@@ -88,7 +88,7 @@
                         </el-select><br><br>
                         <el-input  type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])"></el-input><br><br>
                         <el-button
-                            v-if='scope.row.user==userId || userId==1'
+                            v-if='scope.row.user==userId || userId==2'
                             size="mini"
                             type="primary"
                             @click="edit_body(scope.row,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
@@ -98,7 +98,7 @@
                     <el-tab-pane label="Response">
                         <el-input  type="textarea" autosize v-model="response[scope.row.id]" @change="response_change(response[scope.row.id])"></el-input><br><br>
                         <el-button
-                            v-if='scope.row.user==userId || userId==1'
+                            v-if='scope.row.user==userId || userId==2'
                             size="mini"
                             type="primary"
                             @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
@@ -135,7 +135,7 @@
                             </el-form-item>
                         </el-form>
                         <el-button
-                            v-if='scope.row.user==userId || userId==1'
+                            v-if='scope.row.user==userId || userId==2'
                             size="mini"
                             type="primary"
                             @click="edit_auth(scope.row)" class="el-icon-edit">{{editAuth}}
@@ -178,10 +178,10 @@
                 <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
             </template>
             <template slot-scope="scope">
-                <span v-if='!(scope.row.user==userId) && !(userId==1)'>暂无权限操作</span>
+                <span v-if='!(scope.row.user==userId) && !(userId==2)'>暂无权限操作</span>
                 <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
                     <el-button
-                        v-if='scope.row.user==userId || userId==1'
+                        v-if='scope.row.user==userId || userId==2'
                         size="mini"
                         type="primary"
                         @click="open_edit(scope.row)" class="el-icon-edit">
@@ -189,7 +189,7 @@
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="删除" placement="top">
                     <el-button
-                        v-if='scope.row.user==userId || userId==1'
+                        v-if='scope.row.user==userId || userId==2'
                         size="mini"
                         type="danger"
                         @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
