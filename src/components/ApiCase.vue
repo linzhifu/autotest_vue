@@ -174,7 +174,7 @@
             </template>
         </el-table-column>
         <el-table-column align="center">
-            <template slot="header" slot-scope="scope">
+            <template slot="header">
                 <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
             </template>
             <template slot-scope="scope">
@@ -1123,13 +1123,15 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row, update=true) {
-            if (!row.apiname || !row.apiurl || !row.apimethod) {
-                this.$message({
-                    message: "名称、URL和请求方法不能为空",
-                    type: 'error',
-                    center: true
-                })
-                return
+            if (update) {
+                if (!row.apiname || !row.apiurl || !row.apimethod) {
+                    this.$message({
+                        message: "名称、URL和请求方法不能为空",
+                        type: 'error',
+                        center: true
+                    })
+                    return
+                }
             }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
