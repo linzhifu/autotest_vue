@@ -315,6 +315,78 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
+        // 赋值变量
+        asign_var(data) {
+            // 赋值系统变量
+            if (data.indexOf('$') == 0) {
+                if (data == '$Date') {
+                    return Date.parse(new Date())
+                }
+            }
+            // 赋值自定义变量
+            else if (data.indexOf('&') == 0) {
+                return this.storage.getItem(data.slice(1))
+            }
+            else {
+                return data
+            }
+        },
+        // 遍历对象，并赋值变量
+        parse_obj(data) {
+            if (typeof(data) == 'string') {
+                return this.asign_var(data)
+            }
+            else if (typeof(data) == 'object') {
+                for (var _data in data) {
+                    data[_data] = this.parse_obj(data[_data])
+                }
+                return data
+            }
+            else {
+                return data
+            }
+        },
+        // 遍历对象，保存自定义变量
+        save_userObj(data, data1, key='response') {
+            if (typeof(data) == 'string') {
+                if (data.indexOf('&') == 0) {
+                    this.storage.setItem(data.slice(1), data1)
+                }
+                else {
+                    if (data == data1) {
+                    }
+                    else {
+                        throw key+' 不一致'
+                    }
+                }
+            }
+            else if (typeof(data) == 'object') {
+                if (typeof(data1) == 'object') {
+                    // 空对象
+                    if (JSON.stringify(data) == "{}" && data !=data1) {
+                        throw key+' 不一致'
+                    }
+                    for (var _data in data) {
+                        if (data1[_data] != undefined) {
+                            this.save_userObj(data[_data], data1[_data], _data)
+                        }
+                        else {
+                            throw _data+' 不一致'
+                        }
+                    }
+                }
+                else {
+                    throw key+' 不一致'
+                }
+            }
+            else {
+                if (data == data1) {
+                }
+                else {
+                    throw key+' 不一致'
+                }
+            }
+        },
         // 量产云平台测试用户登陆
         testUserLogin() {
             var loginUrl = '/api/v1/user/login'
@@ -519,19 +591,24 @@ export default {
                     data:data,
                 }).then((res)=>{
                     if(res.data.errcode==0){
+                        var headers = {'Content-Type': row.contentType}
+                        // 格式化param参数
                         var _value = {}
                         for (var i in this.params[row.id]) {
                             if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
-                                _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                                // 此处添加变量赋值
+                                var param_key = this.asign_var(this.params[row.id][i][0])
+                                var param_value = this.asign_var(this.params[row.id][i][1])
+                                _value[param_key] = param_value
                             }
                         }
                         var params = _value
-                        var headers = {'Content-Type': row.contentType}
+
+                        // 格式化body
                         var data = JSON.parse(this.body[row.id])
+                        data = this.parse_obj(data)
+
                         var res = JSON.parse(this.response[row.id])
-                        if (data.hasOwnProperty('timestamp')) {
-                            data['timestamp'] = Date.parse(new Date())
-                        }
                         this.axios({
                             baseURL:this.baseurl,
                             url:row.apiurl,
@@ -541,51 +618,13 @@ export default {
                             headers:headers
                         }).then(response=>{
                             row.testdata = response.data
-                            if (response.data.errcode==res['errcode']) {
-                                if ('data' in res) {
-                                    for (var i in res['data']) {
-                                        if (res['data'][i] != response.data['data'][i]) {
-                                            this.$message({
-                                                message: row['apiname'] + ' data不一致',
-                                                type: 'error',
-                                                center: true
-                                            })
-                                            // 删除权限
-                                            this.deleteAdmin(row)
-                                            this.loading=false
-                                            this.testBtn='开始测试'
-                                            return
-                                        }
-                                    }
-                                }
-                                if ('errmsg' in res) {
-                                    if (res['errmsg'] != response.data['errmsg']) {
-                                        this.$message({
-                                            message: row['apiname'] + ' errmsg不一致',
-                                            type: 'error',
-                                            center: true
-                                        })
-                                        // 删除权限
-                                        this.deleteAdmin(row)
-                                        this.loading=false
-                                        this.testBtn='开始测试'
-                                        return
-                                    }
-                                }
-                                this.$message({
-                                    message: row['apiname'] + ' 测试 PASS',
-                                    type: 'success',
-                                    center: true
-                                })
-                                // 删除权限
-                                this.deleteAdmin(row)
-                                this.loading=false
-                                this.testBtn='开始测试'
-                                return
+                            // 比较response
+                            try {
+                                this.save_userObj(res, response.data)
                             }
-                            else {
+                            catch(err) {
                                 this.$message({
-                                    message: row['apiname'] + ' errcode不一致',
+                                    message: row['apiname'] + ':' + err,
                                     type: 'error',
                                     center: true
                                 })
@@ -595,6 +634,16 @@ export default {
                                 this.testBtn='开始测试'
                                 return
                             }
+                            this.$message({
+                                message: row['apiname'] + ' 测试 PASS',
+                                type: 'success',
+                                center: true
+                            })
+                            // 删除权限
+                            this.deleteAdmin(row)
+                            this.loading=false
+                            this.testBtn='开始测试'
+                            return
                         },error=>{
                             console.log(error.response.data)
                             row.testdata=error.response.data
@@ -664,23 +713,25 @@ export default {
                     data:data,
                 }).then((res)=>{
                     if(res.data.errcode==0){
+                        var headers = {'Content-Type': row.contentType}
+
+                        // 格式化params
                         var _value = {}
                         for (var i in this.params[row.id]) {
                             if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
-                                _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                                // 此处添加变量赋值
+                                var param_key = this.asign_var(this.params[row.id][i][0])
+                                var param_value = this.asign_var(this.params[row.id][i][1])
+                                _value[param_key] = param_value
                             }
                         }
                         var params = _value
-                        if (params.hasOwnProperty('userid') && params.hasOwnProperty('token')) {
-                            params['userid'] = this.testUserId
-                            params['token'] = this.testUserToken
-                        }
-                        var headers = {'Content-Type': row.contentType}
+
+                        // 格式化body
                         var data = JSON.parse(this.body[row.id])
+                        data = this.parse_obj(data)
+
                         var res = JSON.parse(this.response[row.id])
-                        if (data.hasOwnProperty('timestamp')) {
-                            data['timestamp'] = Date.parse(new Date())
-                        }
                         this.axios({
                             baseURL:this.baseurl,
                             url:row.apiurl,
@@ -690,60 +741,32 @@ export default {
                             headers:headers
                         }).then(response=>{
                             row.testdata = response.data
-                            if (response.data.errcode==res['errcode']) {
-                                if ('data' in res) {
-                                    for (var i in res['data']) {
-                                        if (res['data'][i] != response.data['data'][i]) {
-                                            this.$message({
-                                                message: row['apiname'] + ' data不一致',
-                                                type: 'error',
-                                                center: true
-                                            })
-                                            // 删除权限
-                                            this.deleteAuth(row)
-                                            this.loading=false
-                                            this.testBtn='开始测试'
-                                            return
-                                        }
-                                    }
-                                }
-                                if ('errmsg' in res) {
-                                    if (res['errmsg'] != response.data['errmsg']) {
-                                        this.$message({
-                                            message: row['apiname'] + ' errmsg不一致',
-                                            type: 'error',
-                                            center: true
-                                        })
-                                        // 删除权限
-                                        this.deleteAuth(row)
-                                        this.loading=false
-                                        this.testBtn='开始测试'
-                                        return
-                                    }
-                                }
-                                this.$message({
-                                    message: row['apiname'] + ' 测试 PASS',
-                                    type: 'success',
-                                    center: true
-                                })
-                                // 删除权限
-                                this.deleteAuth(row)
-                                this.loading=false
-                                this.testBtn='开始测试'
-                                return
+                            // 比较response
+                            try {
+                                this.save_userObj(res, response.data)
                             }
-                            else {
+                            catch(err) {
                                 this.$message({
-                                    message: row['apiname'] + ' errcode不一致',
+                                    message: row['apiname'] + ':' + err,
                                     type: 'error',
                                     center: true
                                 })
                                 // 删除权限
-                                this.deleteAuth(row)
+                                this.deleteAdmin(row)
                                 this.loading=false
                                 this.testBtn='开始测试'
                                 return
                             }
+                            this.$message({
+                                message: row['apiname'] + ' 测试 PASS',
+                                type: 'success',
+                                center: true
+                            })
+                            // 删除权限
+                            this.deleteAuth(row)
+                            this.loading=false
+                            this.testBtn='开始测试'
+                            return
                         },error=>{
                             console.log(error.response.data)
                             row.testdata=error.response.data
@@ -780,19 +803,25 @@ export default {
                 })
             }
             else {
+                var headers = {'Content-Type': row.contentType}
+
+                // 格式化params
                 var _value = {}
                 for (var i in this.params[row.id]) {
                     if (this.params[row.id][i][0] != '' && this.params[row.id][i][1] != ''){
-                        _value[this.params[row.id][i][0]] = this.params[row.id][i][1]
+                        // 此处添加变量赋值
+                        var param_key = this.asign_var(this.params[row.id][i][0])
+                        var param_value = this.asign_var(this.params[row.id][i][1])
+                        _value[param_key] = param_value
                     }
                 }
                 var params = _value
-                var headers = {'Content-Type': row.contentType}
+
+                // 格式化body
                 var data = JSON.parse(this.body[row.id])
+                data = this.parse_obj(data)
+
                 var res = JSON.parse(this.response[row.id])
-                if (data.hasOwnProperty('timestamp')) {
-                    data['timestamp'] = Date.parse(new Date())
-                }
                 this.axios({
                     baseURL:this.baseurl,
                     url:row.apiurl,
@@ -802,52 +831,30 @@ export default {
                     headers:headers
                 }).then(response=>{
                     row.testdata = response.data
-                    if (response.data.errcode==res['errcode']) {
-                        if ('data' in res) {
-                            for (var i in res['data']) {
-                                if (res['data'][i] != response.data['data'][i]) {
-                                    this.$message({
-                                        message: row['apiname'] + ' data不一致',
-                                        type: 'error',
-                                        center: true
-                                    })
-                                    this.loading=false
-                                    this.testBtn='开始测试'
-                                    return
-                                }
-                            }
-                        }
-                        if ('errmsg' in res) {
-                            if (res['errmsg'] != response.data['errmsg']) {
-                                this.$message({
-                                    message: row['apiname'] + ' errmsg不一致',
-                                    type: 'error',
-                                    center: true
-                                })
-                                this.loading=false
-                                this.testBtn='开始测试'
-                                return
-                            }
-                        }
-                        this.$message({
-                            message: row['apiname'] + ' 测试 PASS',
-                            type: 'success',
-                            center: true
-                        })
-                        this.loading=false
-                        this.testBtn='开始测试'
-                        return
+                    // 比较response
+                    try {
+                        this.save_userObj(res, response.data)
                     }
-                    else {
+                    catch(err) {
                         this.$message({
-                            message: row['apiname'] + ' errcode不一致',
+                            message: row['apiname'] + ':' + err,
                             type: 'error',
                             center: true
                         })
+                        // 删除权限
+                        this.deleteAdmin(row)
                         this.loading=false
                         this.testBtn='开始测试'
                         return
                     }
+                    this.$message({
+                        message: row['apiname'] + ' 测试 PASS',
+                        type: 'success',
+                        center: true
+                    })
+                    this.loading=false
+                    this.testBtn='开始测试'
+                    return
                 },error=>{
                     console.log(error.response.data)
                     row.testdata=error.response.data
