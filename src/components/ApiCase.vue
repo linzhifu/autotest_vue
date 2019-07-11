@@ -85,13 +85,58 @@
                     <el-tab-pane label="Body">
                         <el-select  v-model="scope.row.contentType" style="width:300px">
                             <el-option v-for="item in ['application/x-www-form-urlencoded','application/json']" :key="item" :value="item"></el-option>
-                        </el-select><br><br>
-                        <el-input  type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])"></el-input><br><br>
+                        </el-select>
+                        <!-- JSON -->
+                        <el-input  v-if="scope.row.contentType=='application/json'" type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])" style="margin-top:10px"></el-input><br><br>
+                        <!-- Form -->
+                        <el-table
+                            v-if="scope.row.contentType=='application/x-www-form-urlencoded'"
+                            border
+                            :data="body_form[scope.row.id]"
+                            style="width: 100%"
+                            :header-cell-style="{background:'#F2F6FC'}">
+                            <el-table-column label="KEY">
+                                <template slot-scope="scope">
+                                    <el-input v-model="scope.row[0]"></el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="Type" width="100">
+                                <template slot-scope="scope">
+                                    <el-select  v-model="scope.row[1]">
+                                        <el-option v-for="item in ['text','file']" :key="item" :value="item"></el-option>
+                                    </el-select>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="VALUE">
+                                <template slot-scope="scope">
+                                    <el-input v-if="scope.row[1]=='text'" type="text" v-model="scope.row[2]"></el-input>
+                                    <!-- <el-input v-if="scope.row[1]=='file'" type="file"></el-input> -->
+                                    <input type="file" v-if="scope.row[1]=='file'" @change="changefile($event, scope.row)">
+                                </template>
+                            </el-table-column>
+                            <el-table-column width="80" align="center">
+                                <template slot-scope="scopeParam">
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    icon="el-icon-delete"
+                                    @click.prevent="removeForm(scopeParam,scope.row.id)">
+                                </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <br>
+                        <el-button
+                            v-if="scope.row.contentType=='application/x-www-form-urlencoded'"
+                            size="mini"
+                            type="primary"
+                            @click="addForm(body_form[scope.row.id])" class="el-icon-plus">添加表单
+                        </el-button>
                         <el-button
                             v-if='scope.row.user==userId || userId==2'
                             size="mini"
                             type="primary"
-                            @click="edit_body(scope.row,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
+                            @click="edit_Form(scope.row,'apijson',body_form[scope.row.id])" class="el-icon-edit">{{editForm}}
                         </el-button>
                     </el-tab-pane>
                     <!-- response -->
@@ -273,6 +318,7 @@ export default {
             error:{},
             editParam:'提交修改',
             editBody:'提交修改',
+            editForm:'提交修改',
             editResponse:'提交修改',
             editAuth: '提交修改',
             testType: this.$route.query.testType,
@@ -307,10 +353,15 @@ export default {
             ],
             params:{},
             body:{},
+            body_form: {},
             response:{},
         }
     },
     methods: {
+        changefile(obj,row) {
+            // 获取上传文件对象
+            row[2] = obj.target.files[0]
+        },
         // 返回上一级
         go_back() {
             this.$router.back(-1)
@@ -563,10 +614,6 @@ export default {
         },
         // API单元测试
         apiTest(row) {
-            if (!this.isJsonString(this.body[row.id])) {
-                this.$message.error('body数据不符合json格式');
-                return
-            }
             if (!this.isJsonString(this.response[row.id])) {
                 this.$message.error('response数据不符合json格式');
                 return
@@ -818,8 +865,22 @@ export default {
                 var params = _value
 
                 // 格式化body
-                var data = JSON.parse(this.body[row.id])
-                data = this.parse_obj(data)
+                var data
+                if (row.contentType == "application/x-www-form-urlencoded") {
+                    data = new FormData()
+                    var _body = this.body_form[row.id]
+                    for (var i in _body) {
+                        data.append(_body[i][0],_body[i][2])
+                    }
+                }
+                else {
+                    if (!this.isJsonString(this.body[row.id])) {
+                        this.$message.error('body数据不符合json格式');
+                        return
+                    }
+                    data = JSON.parse(this.body[row.id])
+                    data = this.parse_obj(data)
+                }
 
                 var res = JSON.parse(this.response[row.id])
                 this.axios({
@@ -856,7 +917,6 @@ export default {
                     this.testBtn='开始测试'
                     return
                 },error=>{
-                    console.log(error.response.data)
                     row.testdata=error.response.data
                     this.$message({
                         message: '请检查 ' + this.baseurl + ' 服务器是否正常',
@@ -977,6 +1037,53 @@ export default {
             this.handleEdit(row, false)
             this.editParam = '提交修改'
         },
+        // 添加表单
+        addForm(object) {
+            object.push(['','text', ''])
+            this.editForm = '提交修改*'
+        },
+        // 删除表单
+        removeForm(object,id) {
+            this.$confirm('提交修改后将永久删除, 是否继续?', '提示', {
+                distinguishCancelAndClose: true,
+                type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                // 必须用这种全局方法，Vue才能监控数据变化
+                this.$delete(this.body_form[id],object.$index)
+                this.editForm = '提交修改*'
+            }).catch(() => {
+            })
+        },
+        // 提交修改表单
+        edit_Form(object,key,value) {
+            var row = {
+            }
+            row['id'] = object.id
+            var _value = {}
+            for (var i in value) {
+                // 合并表单对象如 {'test','file','testfile'}
+                // test是key，file是类型，testfile是value
+                // 合并为 {'test':'file$testfile'}
+                if (value[i][0] != '' && value[i][2] != ''){
+                    _value[value[i][0]] = value[i][1] + '$' + value[i][2]
+                }
+                else {
+                    this.$message({
+                        message: '参数不能为空',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                    return
+                }
+            }
+            row[key] = JSON.stringify(_value)
+            row['contentType'] = object['contentType']
+            this.handleEdit(row, false)
+            this.editForm = '提交修改'
+        },
         // body数据发生变化
         body_change(value) {
             this.editBody = '提交修改*'
@@ -987,7 +1094,7 @@ export default {
                 });
             }
         },
-        // 提交修改param
+        // 提交修改body
         edit_body(object,key,value) {
             var row = {
             }
@@ -1046,6 +1153,7 @@ export default {
         // 获取数据列表
         get_apiCases() {
             var params = []
+            var body_form = []
             var response_obj
             var body
             var params_data = {
@@ -1071,14 +1179,40 @@ export default {
                     else {
                         params=[]
                     }
+                    // 必须用这种全局方法，Vue才能监控数据变化
+                    this.$set(this.params,response.data.results[i].id,params)
+                    params=[]
 
-                    // 获取body
-                    if (response.data.results[i].apijson) {
-                        body = JSON.parse(response.data.results[i].apijson)
+                    // 获取body  
+                    // Form
+                    if (response.data.results[i].contentType == 'application/x-www-form-urlencoded') {
+                        if (response.data.results[i].apijson) {
+                            var _body = JSON.parse(response.data.results[i].apijson)
+                            for (var key in _body){
+                                // 分解表单对象如 {'test':'file$testfile'}
+                                // test是key，file是类型，testfile是value
+                                body_form.push([key,_body[key].slice(0,4), _body[key].slice(5)])
+                            }
+                        }
+                        else {
+                            body_form = []
+                        }
                     }
+                    // JSON
                     else {
-                        body={}
+                        if (response.data.results[i].apijson) {
+                            var _body = JSON.parse(response.data.results[i].apijson)
+                            body = _body
+                        }
+                        else {
+                            body = {}
+                        }
                     }
+                    // 必须用这种全局方法，Vue才能监控数据变化
+                    this.$set(this.body,response.data.results[i].id,JSON.stringify(body,null,4))
+                    this.$set(this.body_form,response.data.results[i].id,body_form)
+                    body = {}
+                    body_form = []
 
                     // 获取response
                     if (response.data.results[i].apiresponse) {
@@ -1088,9 +1222,8 @@ export default {
                         response_obj={}
                     }
                     // 必须用这种全局方法，Vue才能监控数据变化
-                    this.$set(this.params,response.data.results[i].id,params)
-                    this.$set(this.body,response.data.results[i].id,JSON.stringify(body,null,4))
                     this.$set(this.response,response.data.results[i].id,JSON.stringify(response_obj,null,4))
+                    response_obj={}
                 }
                 // 判断是否有上一页
                 this.pre=response.data.previous
