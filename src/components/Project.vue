@@ -9,12 +9,12 @@
     </div>
     <!-- 项目列表 -->
     <el-table
-     stripe
-     border
-     :data="projects.filter(data => !search || data.proname.toLowerCase().includes(search.toLowerCase()) || data.prodes.toLowerCase().includes(search.toLowerCase()))"
-     empty-text="暂无项目"
-     :header-cell-style="{background:'#ddd'}"
-     highlight-current-row>
+        stripe
+        border
+        :data="projects.filter(data => !search || data.proname.toLowerCase().includes(search.toLowerCase()) || data.prodes.toLowerCase().includes(search.toLowerCase()))"
+        empty-text="暂无项目"
+        :header-cell-style="{background:'#ddd'}"
+        highlight-current-row>
         <el-table-column label="项目名称" align="center" prop="proname" sortable>
         </el-table-column>
         <el-table-column label="项目描述" align="center" prop="prodes">
@@ -55,7 +55,7 @@
             </template>
         </el-table-column>
         <el-table-column align="center">
-            <template slot="header" slot-scope="scope">
+            <template slot="header">
                 <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
             </template>
             <template slot-scope="scope">

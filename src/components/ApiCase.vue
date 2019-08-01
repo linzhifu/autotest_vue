@@ -133,10 +133,16 @@
                             @click="addForm(body_form[scope.row.id])" class="el-icon-plus">添加表单
                         </el-button>
                         <el-button
-                            v-if='scope.row.user==userId || userId==2'
+                            v-if='(scope.row.user==userId || userId==2) && scope.row.contentType=="application/x-www-form-urlencoded"'
                             size="mini"
                             type="primary"
                             @click="edit_Form(scope.row,'apijson',body_form[scope.row.id])" class="el-icon-edit">{{editForm}}
+                        </el-button>
+                        <el-button
+                            v-if='(scope.row.user==userId || userId==2) && scope.row.contentType=="application/json"'
+                            size="mini"
+                            type="primary"
+                            @click="edit_body(scope.row,'apijson',body[scope.row.id])" class="el-icon-edit">{{editBody}}
                         </el-button>
                     </el-tab-pane>
                     <!-- response -->
@@ -149,9 +155,10 @@
                             @click="edit_response(scope.row.id,'apiresponse',response[scope.row.id])" class="el-icon-edit">{{editResponse}}
                         </el-button>
                     </el-tab-pane>
+                    <!-- 权限管理 -->
                     <el-tab-pane label="权限管理" v-if="projectName == '量产云平台'">
-                        <el-checkbox v-model="scope.row.isAdmin" @change="scope.row.isAuth = !scope.row.isAdmin;auth_change()">管理员</el-checkbox>
-                        <el-checkbox v-model="scope.row.isAuth" @change="scope.row.isAdmin = !scope.row.isAuth;auth_change()">授权</el-checkbox>
+                        <el-checkbox v-model="scope.row.isAdmin" @change="if (scope.row.isAdmin) {scope.row.isAuth = !scope.row.isAdmin};auth_change()">管理员</el-checkbox>
+                        <el-checkbox v-model="scope.row.isAuth" @change="if (scope.row.isAuth) {scope.row.isAdmin = !scope.row.isAuth};auth_change()">授权</el-checkbox>
                         <br><br>
                         <div>操作者信息：</div><br>
                         <el-form inline>
@@ -345,6 +352,10 @@ export default {
                 {
                     'label':'patch',
                     'value':'patch'
+                },
+                {
+                    'label':'put',
+                    'value':'put'
                 },
                 {
                     'label':'delete',
@@ -652,8 +663,37 @@ export default {
                         var params = _value
 
                         // 格式化body
-                        var data = JSON.parse(this.body[row.id])
-                        data = this.parse_obj(data)
+                        var data
+                        if (row.contentType == "application/x-www-form-urlencoded") {
+                            data = new FormData()
+                            var _body = this.body_form[row.id]
+                            // 转为object
+                            var _data = {}
+                            for (var i in _body) {
+                                if (_body[i][1] == 'file') {
+                                    data.append(_body[i][0], _body[i][2])
+                                    console.log(typeof(_body[i][2]))
+                                }
+                                else {
+                                    _data[_body[i][0]]=_body[i][2]
+                                }
+                            }
+                            // console.log(_data)
+                            // 并赋值变量
+                            _data = this.parse_obj(_data)
+                            // 生成表单参数
+                            for (var i in _data) {
+                                data.append(i,_data[i])
+                            }
+                        }
+                        else {
+                            if (!this.isJsonString(this.body[row.id])) {
+                                this.$message.error('body数据不符合json格式');
+                                return
+                            }
+                            data = JSON.parse(this.body[row.id])
+                            data = this.parse_obj(data)
+                        }
 
                         var res = JSON.parse(this.response[row.id])
                         this.axios({
@@ -775,8 +815,30 @@ export default {
                         var params = _value
 
                         // 格式化body
-                        var data = JSON.parse(this.body[row.id])
-                        data = this.parse_obj(data)
+                        var data
+                        if (row.contentType == "application/x-www-form-urlencoded") {
+                            data = new FormData()
+                            var _body = this.body_form[row.id]
+                            // 转为object
+                            var _data = {}
+                            for (var i in _body) {
+                                _data[_body[i][0]]=_body[i][2]
+                            }
+                            // 并赋值变量
+                            _data = this.parse_obj(_data)
+                            // 生成表单参数
+                            for (var i in _data) {
+                                data.append(i,_data[i])
+                            }
+                        }
+                        else {
+                            if (!this.isJsonString(this.body[row.id])) {
+                                this.$message.error('body数据不符合json格式');
+                                return
+                            }
+                            data = JSON.parse(this.body[row.id])
+                            data = this.parse_obj(data)
+                        }
 
                         var res = JSON.parse(this.response[row.id])
                         this.axios({
@@ -869,8 +931,23 @@ export default {
                 if (row.contentType == "application/x-www-form-urlencoded") {
                     data = new FormData()
                     var _body = this.body_form[row.id]
+                    // 转为object
+                    var _data = {}
                     for (var i in _body) {
-                        data.append(_body[i][0],_body[i][2])
+                        if (_body[i][1] == 'file') {
+                            data.append(_body[i][0], _body[i][2])
+                            // console.log(_body[i][2])
+                        }
+                        else {
+                            _data[_body[i][0]]=_body[i][2]
+                        }
+                    }
+                    console.log(_data)
+                    // 并赋值变量
+                    _data = this.parse_obj(_data)
+                    // 生成表单参数
+                    for (var i in _data) {
+                        data.append(i,_data[i])
                     }
                 }
                 else {
@@ -902,10 +979,10 @@ export default {
                             type: 'error',
                             center: true
                         })
-                        // 删除权限
-                        this.deleteAdmin(row)
-                        this.loading=false
-                        this.testBtn='开始测试'
+                        // // 删除权限
+                        // this.deleteAdmin(row)
+                        // this.loading=false
+                        // this.testBtn='开始测试'
                         return
                     }
                     this.$message({
@@ -1138,6 +1215,16 @@ export default {
         // 提交修改auth
         edit_auth(object) {
             var row = {
+            }
+            if (object.isAuth) {
+                if (!object.operatorType || !object.operatorId || !object.objectType || !object.objectId || object.actions) {
+                    this.$message({
+                        message: "必填项不能为空",
+                        type: 'error',
+                        center: true
+                    })
+                    return
+                }
             }
             row['id'] = object.id
             row['isAdmin'] = object.isAdmin
