@@ -386,6 +386,9 @@ export default {
                 }
             }
             // 赋值自定义变量
+            else if (data.indexOf('&i-') == 0) {
+                return parseInt(this.storage.getItem(data.slice(3)))
+            }
             else if (data.indexOf('&') == 0) {
                 return this.storage.getItem(data.slice(1))
             }
@@ -981,8 +984,8 @@ export default {
                         })
                         // // 删除权限
                         // this.deleteAdmin(row)
-                        // this.loading=false
-                        // this.testBtn='开始测试'
+                        this.loading=false
+                        this.testBtn='开始测试'
                         return
                     }
                     this.$message({
