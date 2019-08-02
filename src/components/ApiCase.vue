@@ -239,6 +239,14 @@
                         @click="open_edit(scope.row)" class="el-icon-edit">
                     </el-button>
                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="快捷复制" placement="top">
+                    <el-button
+                        v-if='scope.row.user==userId || userId==2'
+                        size="mini"
+                        type="primary"
+                        @click="cope_apicase(scope.row)" icon="el-icon-plus">
+                    </el-button>
+                </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="删除" placement="top">
                     <el-button
                         v-if='scope.row.user==userId || userId==2'
@@ -379,6 +387,8 @@ export default {
         },
         // 赋值变量
         asign_var(data) {
+            // alert(data)
+            // alert(data.indexOf('['))
             // 赋值系统变量
             if (data.indexOf('$') == 0) {
                 if (data == '$Date') {
@@ -386,11 +396,25 @@ export default {
                 }
             }
             // 赋值自定义变量
+            // 整数型
             else if (data.indexOf('&i-') == 0) {
                 return parseInt(this.storage.getItem(data.slice(3)))
             }
+            // 字符串
             else if (data.indexOf('&') == 0) {
                 return this.storage.getItem(data.slice(1))
+            }
+            // 列表
+            else if ((data.indexOf('[') == 0) && (data.indexOf(']') == data.length-1)) {
+                var _data = JSON.parse(data)
+                console.log(_data)
+                for (var i in _data) {
+                    if (typeof(_data[i]) == 'string' || typeof(_data[i]) == 'object' ) {
+                        alert(_data)
+                        _data[i] = this.asign_var(_data[i])
+                    }
+                }
+                return JSON.stringify(_data)
             }
             else {
                 return data
@@ -1490,6 +1514,42 @@ export default {
             this.apiname=''
             this.apiurl=''
             this.editObj.apimethod=''
+        },
+        // 复制数据
+        cope_apicase(row) {
+            delete row.id
+            var body_data = row
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/apiCase/',
+                method:'post',
+                params:params_data,
+                data:body_data
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '添加成功',
+                        type: 'success',
+                        center: true
+                    });
+                    this.get_apiCases()
+                }
+                else {
+                    this.$message({
+                        message: "新建失败",
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
         },
         // 上一页
         get_pre() {
