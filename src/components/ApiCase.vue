@@ -407,10 +407,10 @@ export default {
             // 列表
             else if ((data.indexOf('[') == 0) && (data.indexOf(']') == data.length-1)) {
                 var _data = JSON.parse(data)
-                console.log(_data)
+                // console.log(_data)
                 for (var i in _data) {
                     if (typeof(_data[i]) == 'string' || typeof(_data[i]) == 'object' ) {
-                        alert(_data)
+                        // alert(_data)
                         _data[i] = this.asign_var(_data[i])
                     }
                 }
@@ -1518,6 +1518,7 @@ export default {
         // 复制数据
         cope_apicase(row) {
             delete row.id
+            row.testdata = ''
             var body_data = row
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
