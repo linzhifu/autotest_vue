@@ -729,7 +729,11 @@ export default {
                             method:row.apimethod,
                             params:params,
                             data:data,
-                            headers:headers
+                            headers:headers,
+                            // 定义可获得的http响应状态码
+                            validateStatus: function (status) {
+                                return status >= 200 && status <= 500;
+                            },
                         }).then(response=>{
                             row.testdata = response.data
                             // 比较response
@@ -874,7 +878,11 @@ export default {
                             method:row.apimethod,
                             params:params,
                             data:data,
-                            headers:headers
+                            headers:headers,
+                            // 定义可获得的http响应状态码
+                            validateStatus: function (status) {
+                                return status >= 200 && status <= 500;
+                            },
                         }).then(response=>{
                             row.testdata = response.data
                             // 比较response
@@ -993,7 +1001,11 @@ export default {
                     method:row.apimethod,
                     params:params,
                     data:data,
-                    headers:headers
+                    headers:headers,
+                    // 定义可获得的http响应状态码
+                    validateStatus: function (status) {
+                        return status >= 200 && status <= 500;
+                    },
                 }).then(response=>{
                     row.testdata = response.data
                     // 比较response
