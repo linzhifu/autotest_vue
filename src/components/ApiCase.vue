@@ -394,6 +394,12 @@ export default {
                 if (data == '$Date') {
                     return Date.parse(new Date())
                 }
+                if (data == '$true') {
+                    return true
+                }
+                if (data == 'false') {
+                    return false
+                }
             }
             // 赋值自定义变量
             // 整数型
