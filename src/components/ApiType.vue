@@ -15,6 +15,9 @@
         <el-button type="primary" @click="new_webcase">添加分类</el-button>
         <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
         <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
+        <el-tooltip class="item" effect="dark" content="设置API自定义变量" placement="top-start">
+            <el-button icon="el-icon-edit" type="primary" style="float: right;margin-left:10px" @click="apiVarFormVisible = true" v-if="this.$route.query.projectName == '量产云平台'"></el-button>
+        </el-tooltip>
         <el-button type="primary" @click="apiTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
@@ -114,6 +117,56 @@
             <el-button type="primary" @click="handleEdit(editObj)">确 定</el-button>
         </div>
     </el-dialog>
+    <!-- 设置自定义变量-->
+    <el-dialog width="500px" title='自定义变量' :visible.sync="apiVarFormVisible">
+        <div>
+            <el-button type="primary" @click="new_var()">添加</el-button>
+            <el-input placeholder="请输入变量名" v-model="varname" style="width:150px"></el-input>
+            <el-input placeholder="请输入变量值" v-model="varvalue" style="width:150px"></el-input>
+        <br><br>
+        </div>
+        <el-table
+            border
+            :data="apiVars"
+            style="width: 100%"
+            :header-cell-style="{background:'#F2F6FC'}">
+            <el-table-column label="变量名">
+                <template slot-scope="scope">
+                    <el-input v-model="scope.row.varname"></el-input>
+                </template>
+            </el-table-column>
+            <el-table-column label="变量值">
+                <template slot-scope="scope">
+                    <el-input v-model="scope.row.varvalue"></el-input>
+                </template>
+            </el-table-column>
+            <el-table-column width="140" align="center">
+                <template slot-scope="scope">
+                    <span v-if='!(scope.row.user==userId) && !(userId==2)'>暂无权限操作</span>
+                    <el-tooltip class="item" effect="dark" content="修改" placement="top">
+                        <el-button
+                            v-if='scope.row.user==userId || userId==2'
+                            size="mini"
+                            type="primary"
+                            @click="edit_var(scope.row)" class="el-icon-edit">
+                        </el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                        <el-button
+                            v-if='scope.row.user==userId || userId==2'
+                            size="mini"
+                            type="danger"
+                            @click="delete_var(scope.row)" icon="el-icon-delete">
+                        </el-button>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="apiVarFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="apiVarFormVisible = false;set_var()">设置</el-button>
+        </div>
+    </el-dialog>
 </div>
 </template>
 
@@ -134,10 +187,14 @@ export default {
             adminUserToken:this.storage.getItem('adminUserToken'),
             testBtn:'开始测试',
             loading:false,
+            apiVarFormVisible:false,
+            varname:'',
+            varvalue:'',
             typename: '',
             typedes: '',
             search: '',
             testtypes: [],
+            apiVars: [],
             pre:'',
             next:'',
             isNextDisabled:false,
@@ -276,6 +333,202 @@ export default {
                     })
                 this.$router.push('/')
             })
+        },
+        // 获取数据列表(apiCaseVars)
+        get_apiVars() {
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'apiManager':this.object_id
+            }
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/apiVar/',
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.apiVars=response.data.results
+            },error=>{
+                this.$message({
+                        message: '匿名用户，请先登录',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                this.$router.push('/')
+            })
+        },
+        // 设置自定义参数
+        set_var() {
+            for (var i in this.apiVars) {
+                console.log(this.apiVars)
+                this.storage.setItem(this.apiVars[i].varname.slice(1), this.apiVars[i].varvalue)
+            }
+        },
+        // 添加变量
+        new_var() {
+            if (!this.varname || !this.varvalue) {
+                this.$message({
+                    message: "名称和值不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            if (this.varname.indexOf('&') != 0) {
+                this.$message({
+                    message: "名称必须以&开头，如&abc",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            if (this.varname.slice(1) == '') {
+                this.$message({
+                    message: "名称&后不能为空(错误：&，必须：&abc)",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            var body_data = {
+                'varname': this.varname,
+                'varvalue': this.varvalue,
+                'apiManager': this.object_id
+            }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/apiVar/',
+                method:'post',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '添加成功',
+                        type: 'success',
+                        center: true
+                    });
+                    this.get_apiVars()
+                }
+                else {
+                    this.$message({
+                        message: "添加失败",
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
+            this.varname=''
+            this.varvalue=''
+        },
+        // 编辑修改数据
+        edit_var(row) {
+            if (!row.varname || !row.varvalue) {
+                this.$message({
+                    message: "名称和值不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            if (row.varname.indexOf('&') != 0) {
+                this.$message({
+                    message: "名称必须以&开头，如&abc",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            if (row.varname.slice(1) == '') {
+                this.$message({
+                    message: "名称&后不能为空(错误：&，必须：&abc)",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/apiVar/'+row.id+'/',
+                method:'patch',
+                params:params_data,
+                data:row
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success',
+                        center: true
+                    });
+                    this.get_apiVars()
+                }
+                else {
+                    this.$message({
+                        message: "修改失败",
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
+        },
+        // 删除数据
+        delete_var(row) {
+            this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
+                distinguishCancelAndClose: true,
+                type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                var params_data = {'userId':this.userId,'token':this.token}
+                this.axios({
+                    baseURL:this.url,
+                    url:'api/v1/apiVar/'+row.id+'/',
+                    method:'delete',
+                    params:params_data,
+                }).then(response=>{
+                    // 判断是否成功
+                    if (!response.data.errcode) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            center: true
+                        });
+                        this.get_apiVars()
+                    }
+                    else {
+                        this.$message({
+                            message: "删除失败",
+                            type: 'error',
+                            center: true
+                        })
+                    }
+                },error=>{
+                    this.$message({
+                        message: '自动化测试平台异常，请检查网络',
+                        type: 'error',
+                        center: true
+                    })
+                })
+            }).catch(() => {
+            })
+
         },
         // 打开编辑
         open_edit(row) {
@@ -520,6 +773,8 @@ export default {
     },
     created() {
         this.get_testtypes()
+        this.get_apiVars()
+        this.set_var()
         // 获取项目列表
     },
     filters:{
