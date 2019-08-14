@@ -6,39 +6,41 @@
             项目：{{this.$route.query.projectName}}
     </div>
     <div style="font-size:17px;margin-bottom:10px">
-            测试：{{this.$route.query.webName}}
+            app：{{this.$route.query.appName}}
     </div>
     <div style="font-size:17px">
-            案例：{{this.$route.query.webCase}}
+            案例：{{this.$route.query.appCase}}
     </div><br>
     <el-button type="primary" @click="webTest()" style="" :loading="loading">{{testBtn}}</el-button>
     <br><br>
     <el-collapse v-model="activeName" accordion>
         <el-collapse-item title="操作步骤" name="1">
-            <!-- 添加web操作 -->
+            <!-- 添加app操作 -->
             <div>
-                <el-button type="primary" @click="new_webcase">添加步骤</el-button>
-                <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+                <el-button type="primary" @click="new_appcase">添加步骤</el-button>
+                <el-input placeholder="请输入名称" v-model="appname" style="width:200px"></el-input>
                 <br><br>
             </div>
-            <!-- 前端selenium操作步骤 -->
+            <!-- appium操作步骤 -->
             <el-table
              border
              stripe
-             :data="webCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+             :data="appCases.filter(data => (!search || data.appname.toLowerCase().includes(search.toLowerCase())))"
              empty-text="暂无项目"
              :default-sort = "{prop: 'index', order: 'ascending'}"
              :header-cell-style="{background:'#ddd'}"
              highlight-current-row>
                 <el-table-column label="" align="center" prop="index" width="50px" sortable>
                 </el-table-column>
-                <el-table-column label="步骤" align="center" prop="webname">
+                <el-table-column label="步骤" align="center" prop="appname">
                 </el-table-column>
-                <el-table-column label="CSS选择器" align="center" prop="webcss">
+                <el-table-column label="元素定位方法" align="center" prop="selectmethod">
                 </el-table-column>
-                <el-table-column label="元素操作" align="center" prop="weboprate">
+                <el-table-column label="元素定位参数" align="center" prop="selectparam">
                 </el-table-column>
-                <el-table-column label="操作参数" align="center" prop="webparam">
+                <el-table-column label="元素操作" align="center" prop="appoprate">
+                </el-table-column>
+                <el-table-column label="操作参数" align="center" prop="appparam">
                 </el-table-column>
                 <el-table-column label="最近修改" align="center">
                     <template slot-scope="scope">
@@ -80,28 +82,30 @@
         <el-collapse-item title="操作验证" name="2">
         <!-- 添加验证操作 -->
         <div>
-            <el-button type="primary" @click="new_webcase('check')">添加验证</el-button>
-            <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
+            <el-button type="primary" @click="new_appcase('check')">添加验证</el-button>
+            <el-input placeholder="请输入名称" v-model="appname" style="width:200px"></el-input>
             <br><br>
         </div>
-        <!-- 验证数据列表 -->
+        <!-- app验证数据列表 -->
         <el-table
             border
             stripe
-            :data="checkWebCases.filter(data => (!search || data.webname.toLowerCase().includes(search.toLowerCase())))"
+            :data="checkAppCases.filter(data => (!search || data.appname.toLowerCase().includes(search.toLowerCase())))"
             empty-text="暂无项目"
             :default-sort = "{prop: 'index', order: 'ascending'}"
             :header-cell-style="{background:'#ddd'}"
             highlight-current-row>
             <el-table-column label="" align="center" prop="index" width="50px" sortable>
             </el-table-column>
-            <el-table-column label="验证" align="center" prop="webname">
+            <el-table-column label="验证" align="center" prop="appname">
             </el-table-column>
-            <el-table-column label="CSS选择器" align="center" prop="webcss">
+            <el-table-column label="元素定位方法" align="center" prop="selectmethod">
             </el-table-column>
-            <el-table-column label="元素操作" align="center" prop="weboprate">
+            <el-table-column label="元素定位参数" align="center" prop="selectparam">
             </el-table-column>
-            <el-table-column label="操作参数" align="center" prop="webparam">
+            <el-table-column label="元素操作" align="center" prop="appoprate">
+            </el-table-column>
+            <el-table-column label="操作参数" align="center" prop="appparam">
             </el-table-column>
             <el-table-column label="验证数据" align="center" prop="checktext">
             </el-table-column>
@@ -147,22 +151,27 @@
     <el-dialog :visible.sync="dialogFormVisible">
         <el-form>
             <el-form-item label="步骤" label-width="120px">
-            <el-input v-model="editObj.webname" autocomplete="off"></el-input>
+            <el-input v-model="editObj.appname" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
-            <el-form-item label="Css选择器" label-width="120px">
-            <el-input v-model="editObj.webcss" autocomplete="off"></el-input>
+            <el-form-item label="元素定位方法" label-width="120px">
+            <el-input v-model="editObj.selectmethod" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <el-form >
+            <el-form-item label="元素定位参数" label-width="120px">
+            <el-input v-model="editObj.selectparam" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form >
             <el-form-item label="元素操作" label-width="120px">
-            <el-input v-model="editObj.weboprate" autocomplete="off"></el-input>
+            <el-input v-model="editObj.appoprate" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form>
             <el-form-item label="操作参数" label-width="120px">
-            <el-input v-model="editObj.webparam" autocomplete="off"></el-input>
+            <el-input v-model="editObj.appparam" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <el-form v-if="editObj.type">
@@ -188,7 +197,7 @@
 /* eslint-disable */
 var user;
 export default {
-    name:'WebCase',
+    name:'AppCase',
     data() {
         return {
             axios: this.axios,
@@ -197,16 +206,15 @@ export default {
             token: this.storage.getItem('token'),
             testBtn:'开始测试',
             loading:false,
-            webname: '',
+            appname: '',
             search: '',
-            webCases: [],
-            checkWebCases:[],
+            appCases: [],
+            checkAppCases:[],
             pre:'',
             next:'',
             checkPre:'',
             checkNext:'',
             testType: this.$route.query.testType,
-            weburl: this.$route.query.weburl,
             isNextDisabled:false,
             isPreDisabled:false,
             isCheckNextDisabled:false,
@@ -214,10 +222,11 @@ export default {
             dialogFormVisible:false,
             editObj:{
                 id:'',
-                webname:'',
-                webcss:'',
-                weboprate:'',
-                webparam:'',
+                appname:'',
+                selectmethod:'',
+                selectparam:'',
+                appoprate:'',
+                appparam:'',
                 index:'',
                 type:'',
                 checktext:'',
@@ -293,7 +302,7 @@ export default {
             });
         },
         // 获取数据列表
-        get_webCases() {
+        get_appCases() {
             var params_data = {
                 'userId':this.userId,
                 'token':this.token,
@@ -301,11 +310,11 @@ export default {
             }
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/webCase/',
+                url:'api/v1/appCase/',
                 method:'get',
                 params:params_data,
             }).then(response=>{
-                this.webCases=response.data.results
+                this.appCases=response.data.results
                 // 判断是否有上一页
                 this.pre=response.data.previous
                 if (!this.pre) {
@@ -332,7 +341,7 @@ export default {
                 this.$router.push('/')
             })
         },
-        get_checkWebCases() {
+        get_checkAppCases() {
             var params_data = {
                 'userId':this.userId,
                 'token':this.token,
@@ -340,11 +349,11 @@ export default {
             }
             this.axios({
                 baseURL:this.url,
-                url:'api/v1/checkWebCase/',
+                url:'api/v1/checkAppCase/',
                 method:'get',
                 params:params_data,
             }).then(response=>{
-                this.checkWebCases=response.data.results
+                this.checkAppCases=response.data.results
                 // 判断是否有上一页
                 this.checkPre=response.data.previous
                 if (!this.checkPre) {
@@ -376,10 +385,11 @@ export default {
             this.dialogFormVisible = true
             // this.editObj = row
             this.editObj['id']=row.id
-            this.editObj['webname']=row.webname
-            this.editObj['webcss']=row.webcss
-            this.editObj['weboprate']=row.weboprate
-            this.editObj['webparam']=row.webparam
+            this.editObj['appname']=row.appname
+            this.editObj['selectmethod']=row.selectmethod
+            this.editObj['selectparam']=row.selectparam
+            this.editObj['appoprate']=row.appoprate
+            this.editObj['appparam']=row.appparam
             this.editObj['index']=row.index
             this.editObj['type']=type
             if (type=='check') {
@@ -388,7 +398,7 @@ export default {
         },
         // 编辑修改数据
         handleEdit(row) {
-            if (!row.webname && row.type!='check') {
+            if (!row.appname && row.type!='check') {
                 this.$message({
                     message: "步骤名称不能为空",
                     type: 'error',
@@ -396,7 +406,7 @@ export default {
                 })
                 return
             }
-            if (!row.webname && row.type=='check') {
+            if (!row.appname && row.type=='check') {
                 this.$message({
                     message: "验证名称不能为空",
                     type: 'error',
@@ -406,10 +416,10 @@ export default {
             }
             this.dialogFormVisible = false
             var params_data = {'userId':this.userId,'token':this.token}
-            var url = 'api/v1/webCase/'+row.id+'/'
+            var url = 'api/v1/appCase/'+row.id+'/'
             if (row['type']=='check') {
                 // 判断是操作哪个表格的数据
-                url = 'api/v1/checkWebCase/'+row.id+'/'
+                url = 'api/v1/checkAppCase/'+row.id+'/'
             }
             this.axios({
                 baseURL:this.url,
@@ -425,8 +435,8 @@ export default {
                         type: 'success',
                         center: true
                     });
-                    this.get_webCases()
-                    this.get_checkWebCases()
+                    this.get_appCases()
+                    this.get_checkAppCases()
                 }
                 else {
                     this.$message({
@@ -452,10 +462,10 @@ export default {
                 cancelButtonText: '取消',
             }).then(() => {
                 var params_data = {'userId':this.userId,'token':this.token}
-                var url = 'api/v1/webCase/'+row.id+'/'
+                var url = 'api/v1/appCase/'+row.id+'/'
                 if (type=='check') {
                     // 判断是操作哪个表格的数据
-                    url = 'api/v1/checkWebCase/'+row.id+'/'
+                    url = 'api/v1/checkAppCase/'+row.id+'/'
                 }
                 this.axios({
                     baseURL:this.url,
@@ -470,8 +480,8 @@ export default {
                             type: 'success',
                             center: true
                         });
-                        this.get_webCases()
-                        this.get_checkWebCases()
+                        this.get_appCases()
+                        this.get_checkAppCases()
                     }
                     else {
                         this.$message({
@@ -490,8 +500,8 @@ export default {
             })
         },
         // 添加数据
-        new_webcase(type) {
-            if (!this.webname && type!='check') {
+        new_appcase(type) {
+            if (!this.appname && type!='check') {
                 this.$message({
                     message: "步骤名称不能为空",
                     type: 'error',
@@ -499,7 +509,7 @@ export default {
                 })
                 return
             }
-            if (!this.webname && type=='check') {
+            if (!this.appname && type=='check') {
                 this.$message({
                     message: "验证名称不能为空",
                     type: 'error',
@@ -508,13 +518,13 @@ export default {
                 return
             }
             var body_data = {
-                'webname': this.webname,
+                'appname': this.appname,
                 'testType': this.testType,
                 'user':this.userId
             }
-            var url = 'api/v1/webCase/'
+            var url = 'api/v1/appCase/'
             if (type=='check') {
-                url = 'api/v1/checkWebCase/'
+                url = 'api/v1/checkAppCase/'
             }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -531,8 +541,8 @@ export default {
                         type: 'success',
                         center: true
                     });
-                    this.get_webCases()
-                    this.get_checkWebCases()
+                    this.get_appCases()
+                    this.get_checkAppCases()
                 }
                 else {
                     this.$message({
@@ -548,14 +558,14 @@ export default {
                     center: true
                 })
             })
-            this.webname=''
+            this.appname=''
         },
         // 上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.webCases=response.data.results
+                    this.appCases=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -594,7 +604,7 @@ export default {
             this.axios.get(this.checkPre).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.checkWebCases=response.data.results
+                    this.checkAppCases=response.data.results
                     // 判断是否有上一页
                     this.checkPre=response.data.previous
                     if (!this.checkPre) {
@@ -634,7 +644,7 @@ export default {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.webCases=response.data.results
+                    this.appCases=response.data.results
                     // 判断是否有上一页
                     this.pre=response.data.previous
                     if (!this.pre) {
@@ -671,7 +681,7 @@ export default {
             this.axios.get(this.checkNext).then(response=>{
                 // 判断是否成功
                 if (!response.data.errcode) {
-                    this.checkWebCases=response.data.results
+                    this.checkAppCases=response.data.results
                     // 判断是否有上一页
                     this.checkPre=response.data.previous
                     if (!this.checkPre) {
@@ -709,8 +719,8 @@ export default {
     },
     created() {
         // 获取数据列表
-        this.get_webCases()
-        this.get_checkWebCases()
+        this.get_appCases()
+        this.get_checkAppCases()
     },
     filters:{
         dateFormat:function(time) {

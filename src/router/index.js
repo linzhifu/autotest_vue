@@ -6,10 +6,13 @@ import User from '@/components/User'
 import Project from '@/components/Project'
 import WebManager from '@/components/WebManager'
 import ApiManager from '@/components/ApiManager'
+import AppManager from '@/components/AppManager'
 import ApiCase from '@/components/ApiCase'
 import WebCase from '@/components/WebCase'
+import AppCase from '@/components/AppCase'
 import WebType from '@/components/WebType'
 import ApiType from '@/components/ApiType'
+import AppType from '@/components/AppType'
 import Log from '@/components/Log'
 import Report from '@/components/Report'
 import Mpcloud from '@/components/template/Mpcloud'
@@ -52,6 +55,10 @@ export default new Router({
           component: ApiManager
         },
         {
+          path: 'appManager',
+          component: AppManager
+        },
+        {
           path: 'apiCase/:apiManagerId?',
           component: ApiCase
         },
@@ -60,8 +67,16 @@ export default new Router({
           component: WebCase
         },
         {
+          path: 'appCase/:appManagerId?',
+          component: AppCase
+        },
+        {
           path: 'webType/',
           component: WebType
+        },
+        {
+          path: 'appType/',
+          component: AppType
         },
         {
           path: 'apiType/',

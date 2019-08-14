@@ -397,7 +397,7 @@ export default {
                 if (data == '$true') {
                     return true
                 }
-                if (data == 'false') {
+                if (data == '$false') {
                     return false
                 }
             }
