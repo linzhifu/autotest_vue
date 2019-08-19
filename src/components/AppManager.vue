@@ -22,7 +22,7 @@
             :value="item.value">
             </el-option>
         </el-select>
-        <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
+        <el-button v-if="this.$route.query.projectId" type="primary" @click="appManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
     <!-- API列表 -->
@@ -196,79 +196,70 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // api测试
-        apiManagerTest() {
-            this.$confirm('即将开始 ' + this.$route.query.projectName + ' 后端测试，请耐心等待', '提示', {
+       // app测试
+        appManagerTest() {
+            this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
+                2 请确认是否已打开appium服务端 </br> \
+                3 测试大约需几分钟请耐心等待 </br> \
+                4 即将开始全部自定义测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$message({
-                    message: '测试开始',
-                    type: 'success',
-                    center: true
-                });
-                this.loading=true
-                this.testBtn='测试中...'
-                var params_data = {
-                    'userId':this.userId,
-                    'token':this.token,
-                    'projectId':this.projectId
-                }
-                var data = {}
-                if (this.$route.query.projectName == '量产云平台') {
-                    var data = {
-                        testUserInfo:{
-                            testUserId:this.testUserId,
-                            testUserToken:this.testUserToken,
-                            adminUserId:this.adminUserId,
-                            adminUserToken:this.adminUserToken,
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
+                    this.$message({
+                        message: '测试开始',
+                        type: 'success',
+                        center: true
+                    });
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'projectId':this.projectId
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/appManagerTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
                         }
-                    }
-                }
-                
-                this.axios({
-                    baseURL:this.url,
-                    url:'/api/v1/apiManagerTest/',
-                    method:'post',
-                    params:params_data,
-                    data:data
-                }).then(response=>{
-                    // 判断是否成功
-                    if (!response.data.errcode) {
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.loading=false
+                        this.testBtn='开始测试'
+                        this.get_appManagers()
+                    },error=>{
                         this.$message({
-                            message: this.$route.query.projectName + ' 后端测试 PASS',
-                            type: 'success',
-                            center: true,
-                            showClose: true,
-                            duration: 0
-                        });
-                    }
-                    else {
-                        this.$message({
-                            message: response.data.errmsg,
+                            message: '自动化测试平台异常，请检查网络',
                             type: 'error',
                             center: true,
                             showClose: true,
-                            duration: 0
+                            duration:0,
                         })
-                    }
-                    this.loading=false
-                    this.testBtn='开始测试'
-                    this.get_appManagers()
-                },error=>{
-                    this.$message({
-                        message: '自动化测试平台异常，请检查网络',
-                        type: 'error',
-                        center: true,
-                        showClose: true,
-                        duration: 0
+                        this.get_appManagers()
+                        this.loading=false
+                        this.testBtn='开始测试'
                     })
-                    this.get_appManagers()
-                    this.loading=false
-                    this.testBtn='开始测试'
-                })
-            }).catch(() => {        
+                }).catch(() => {        
             });
         },
         // 获取数据列表

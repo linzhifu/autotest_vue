@@ -15,7 +15,7 @@
         <el-button type="primary" @click="new_webcase">添加分类</el-button>
         <el-input placeholder="请输入名称" v-model="typename" style="width:200px"></el-input>
         <el-input placeholder="请输入描述" v-model="typedes" style="width:200px"></el-input>
-        <el-button type="primary" @click="webTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
+        <el-button type="primary" @click="appTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
         <br><br>
     </div>
     <!-- web列表 -->
@@ -156,9 +156,12 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // web测试
-        webTest() {
-            this.$confirm('1 请确认是否已打开浏览器服务端 </br>2 测试大约需几分钟请耐心等待 </br>3 即将开始 '+ this.$route.query.webName + ' 测试', '提示', {
+        // app测试
+        appTest() {
+            this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
+                2 请确认是否已打开appium服务端 </br> \
+                3 测试大约需几分钟请耐心等待 </br> \
+                4 即将开始 '+ this.$route.query.appName + ' app测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
@@ -176,11 +179,10 @@ export default {
                         'token':this.token,
                         'object_id':this.object_id,
                         'content_type':this.content_type,
-                        'url': this.weburl
                     }
                     this.axios({
                         baseURL:this.url,
-                        url:'/api/v1/webTypeTest/',
+                        url:'/api/v1/appTypeTest/',
                         method:'get',
                         params:params_data,
                     }).then(response=>{

@@ -11,7 +11,7 @@
     <div style="font-size:17px">
             案例：{{this.$route.query.appCase}}
     </div><br>
-    <el-button type="primary" @click="webTest()" style="" :loading="loading">{{testBtn}}</el-button>
+    <el-button type="primary" @click="appTest()" style="" :loading="loading">{{testBtn}}</el-button>
     <br><br>
     <el-collapse v-model="activeName" accordion>
         <el-collapse-item title="操作步骤" name="1">
@@ -239,9 +239,12 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // 前端测试
-        webTest() {
-            this.$confirm('1 请确认是否已打开浏览器服务端 </br>2 测试大约需几分钟请耐心等待 </br>3 即将开始 '+ this.$route.query.webCase + ' 测试', '提示', {
+        // app测试
+        appTest() {
+            this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
+                2 请确认是否已打开appium服务端</br> \
+                3 测试大约需几分钟请耐心等待 </br> \
+                4 即将开始 '+ this.$route.query.appCase + ' 测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
@@ -257,12 +260,11 @@ export default {
                     var params_data = {
                         'userId':this.userId,
                         'token':this.token,
-                        'testType':this.testType,
-                        'url': this.weburl
+                        'testType':this.testType
                     }
                     this.axios({
                         baseURL:this.url,
-                        url:'/api/v1/webCaseTest/',
+                        url:'/api/v1/appCaseTest/',
                         method:'get',
                         params:params_data,
                     }).then(response=>{
