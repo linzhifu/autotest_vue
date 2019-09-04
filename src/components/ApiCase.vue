@@ -210,19 +210,19 @@
         </el-table-column>
         <el-table-column label="名称" align="center" prop="apiname">
         </el-table-column>
-        <el-table-column label="请求方法" align="center" prop="apimethod">
+        <el-table-column label="请求方法" align="center" prop="apimethod" width="100">
         </el-table-column>
         <el-table-column label="URL" align="center" prop="apiurl">
-        </el-table-column>
-        <el-table-column label="测试结果" align="center">
-            <template slot-scope="scope">
-                <p v-if="scope.row.result" style="color:green">PASS</p>
-                <p v-else style="color:red">FAIL</p>
-            </template>
         </el-table-column>
         <el-table-column label="最近修改" align="center">
             <template slot-scope="scope">
                 <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
+        <el-table-column label="测试结果" align="center" width="100">
+            <template slot-scope="scope">
+                <p v-if="scope.row.result" style="color:green">PASS</p>
+                <p v-else style="color:red">FAIL</p>
             </template>
         </el-table-column>
         <el-table-column align="center">

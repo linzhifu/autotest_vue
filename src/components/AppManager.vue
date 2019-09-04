@@ -93,15 +93,15 @@
         </el-table-column>
         <el-table-column label="项目" align="center" prop="proname">
         </el-table-column>
-        <el-table-column label="测试结果" align="center" prop="result">
-            <template slot-scope="scope">
-                <p v-if="scope.row.result" style="color:green">PASS</p>
-                <p v-else style="color:red">FAIL</p>
-            </template>
-        </el-table-column>
         <el-table-column label="最近修改" align="center" prop="update_time">
             <template slot-scope="scope">
                 <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
+        <el-table-column label="测试结果" align="center" prop="result" width="100">
+            <template slot-scope="scope">
+                <p v-if="scope.row.result" style="color:green">PASS</p>
+                <p v-else style="color:red">FAIL</p>
             </template>
         </el-table-column>
         <el-table-column align="center">

@@ -38,7 +38,7 @@
                 </el-table-column>
                 <el-table-column label="元素定位参数" align="center" prop="selectparam">
                 </el-table-column>
-                <el-table-column label="元素操作" align="center" prop="appoprate">
+                <el-table-column label="元素操作方法" align="center" prop="appoprate">
                 </el-table-column>
                 <el-table-column label="操作参数" align="center" prop="appparam">
                 </el-table-column>

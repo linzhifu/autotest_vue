@@ -33,7 +33,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="" v-if="this.$route.query.projectName == '量产云平台'">
-                <template slot="header" slot-scope="scope">
+                <template slot="header">
                     <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
                 </template>
                 <template slot-scope="scope">
@@ -84,19 +84,19 @@
                 </el-table-column>
                 <el-table-column label="项目" align="center" prop="proname">
                 </el-table-column>
-                <el-table-column label="测试结果" align="center" prop="result">
-                    <template slot-scope="scope">
-                        <p v-if="scope.row.result" style="color:green">PASS</p>
-                        <p v-else style="color:red">FAIL</p>
-                    </template>
-                </el-table-column>
                 <el-table-column label="最近修改" align="center" prop="update_time">
                     <template slot-scope="scope">
                         <p>{{scope.row.update_time|dateFormat}}</p>
                     </template>
                 </el-table-column>
+                <el-table-column label="测试结果" align="center" prop="result" width="100">
+                    <template slot-scope="scope">
+                        <p v-if="scope.row.result" style="color:green">PASS</p>
+                        <p v-else style="color:red">FAIL</p>
+                    </template>
+                </el-table-column>
                 <el-table-column align="center">
-                    <template slot="header" slot-scope="scope">
+                    <template slot="header">
                         <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索"/>
                     </template>
                     <template slot-scope="scope">

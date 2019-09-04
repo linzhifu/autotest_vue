@@ -37,7 +37,7 @@
      empty-text="暂无项目"
      :header-cell-style="{background:'#ddd'}"
      highlight-current-row>
-        <el-table-column label="名称" align="center">
+        <el-table-column label="名称" align="center" width="100">
             <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="'点击进入 '+scope.row.apiname+' 模块'"  placement="top">
                     <a href="#" @click.prevent="go_apiTest(scope.row)">
@@ -52,15 +52,15 @@
         </el-table-column>
         <el-table-column label="项目" align="center" prop="proname">
         </el-table-column>
-        <el-table-column label="测试结果" align="center" prop="result">
-            <template slot-scope="scope">
-                <p v-if="scope.row.result" style="color:green">PASS</p>
-                <p v-else style="color:red">FAIL</p>
-            </template>
-        </el-table-column>
         <el-table-column label="最近修改" align="center" prop="update_time">
             <template slot-scope="scope">
                 <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
+        <el-table-column label="测试结果" align="center" prop="result" width="100">
+            <template slot-scope="scope">
+                <p v-if="scope.row.result" style="color:green">PASS</p>
+                <p v-else style="color:red">FAIL</p>
             </template>
         </el-table-column>
         <el-table-column align="center">

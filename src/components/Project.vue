@@ -19,7 +19,12 @@
         </el-table-column>
         <el-table-column label="项目描述" align="center" prop="prodes">
         </el-table-column>
-        <el-table-column label="前端" align="center">
+        <el-table-column label="最近修改" align="center" prop="update_time" sortable>
+            <template slot-scope="scope">
+                <p>{{scope.row.update_time|dateFormat}}</p>
+            </template>
+        </el-table-column>
+        <el-table-column label="前端" align="center" width="100">
             <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="点击加入前端测试" placement="top">
                     <a href="#" @click.prevent="go_webTest(scope.row)">
@@ -29,7 +34,7 @@
                 </el-tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="后端" align="center">
+        <el-table-column label="后端" align="center" width="100">
             <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="点击加入后端测试" placement="top">
                     <a href="#" @click.prevent="go_apiTest(scope.row)">
@@ -39,7 +44,7 @@
                 </el-tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="移动端" align="center">
+        <el-table-column label="移动端" align="center" width="100">
             <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="点击加入移动端测试" placement="top">
                     <a href="#" @click.prevent="go_appTest(scope.row)">
@@ -49,7 +54,7 @@
                 </el-tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="测试结果" align="center">
+        <el-table-column label="测试结果" align="center" width="100">
             <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="点击开始项目测试(前端+后端)" placement="top">
                     <a href="#" @click.prevent="projectTest(scope.row)">
@@ -59,12 +64,7 @@
                 </el-tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="最近修改" align="center" prop="update_time" sortable>
-            <template slot-scope="scope">
-                <p>{{scope.row.update_time|dateFormat}}</p>
-            </template>
-        </el-table-column>
-        <el-table-column align="center">
+        <el-table-column align="center" width="200px">
             <template slot="header">
                 <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
             </template>
