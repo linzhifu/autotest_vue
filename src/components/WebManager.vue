@@ -15,31 +15,31 @@
             <el-table
              :data="webAutoTests"
              style="width: 100%">
-            <el-table-column
-                prop="role"
-                label="角色"
-                width="180"
-                align="center">
-            </el-table-column>
-            <el-table-column label="测试项" align="" width="800">
-                <template slot-scope="scope">
-                    <el-checkbox checked @change="checked=>selectAll(checked,scope.row)">全部</el-checkbox>
-                    <span v-for="(option,index) in scope.row.options" :key=index>
-                        <span v-for="(value,key,index) in option" :key=index>
-                            <el-checkbox v-model='option[key]'>{{key}}</el-checkbox>
-                            &nbsp;&nbsp;
+                <el-table-column
+                    prop="role"
+                    label="角色"
+                    width="180"
+                    align="center">
+                </el-table-column>
+                <el-table-column label="测试项" align="" width="800">
+                    <template slot-scope="scope">
+                        <el-checkbox checked @change="checked=>selectAll(checked,scope.row)">全部</el-checkbox>
+                        <span v-for="(option,index) in scope.row.options" :key=index>
+                            <span v-for="(value,key,index) in option" :key=index>
+                                <el-checkbox v-model='option[key]'>{{key}}</el-checkbox>
+                                &nbsp;&nbsp;
+                            </span>
                         </span>
-                    </span>
-                </template>
-            </el-table-column>
-            <el-table-column align="" v-if="this.$route.query.projectName == '量产云平台'">
-                <template slot="header">
-                    <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
-                </template>
-                <template slot-scope="scope">
-                    <el-button type="primary" @click="testMpcloudCase(scope.row)" :loading="loading">{{testBtn}}</el-button>
-                </template>
-            </el-table-column>
+                    </template>
+                </el-table-column>
+                <el-table-column align="" v-if="this.$route.query.projectName == '量产云平台'">
+                    <template slot="header">
+                        <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button type="primary" @click="testMpcloudCase(scope.row)" :loading="loading">{{testBtn}}</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </template>
         </el-collapse-item>

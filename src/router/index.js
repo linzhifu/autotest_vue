@@ -15,7 +15,7 @@ import ApiType from '@/components/ApiType'
 import AppType from '@/components/AppType'
 import Log from '@/components/Log'
 import Report from '@/components/Report'
-import Mpcloud from '@/components/template/Mpcloud'
+import Src from '@/components/Src'
 
 Vue.use(Router)
 
@@ -91,8 +91,8 @@ export default new Router({
           component: Report
         },
         {
-          path: 'mpcloud/',
-          component: Mpcloud
+          path: 'src',
+          component: Src
         }
       ]
     }
