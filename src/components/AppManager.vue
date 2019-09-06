@@ -36,18 +36,15 @@
                 :header-cell-style="{background:'#ddd'}"
                 highlight-current-row>
                 <el-table-column label="名称" align="center" prop="appname">
-                </el-table-column>
-                <el-table-column label="描述" align="center" prop="appdes">
-                </el-table-column>
-                <el-table-column label="脚本" align="center" prop="srcname">
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" :content="'点击进入脚本编辑'"  placement="top">
                             <a href="#" @click.prevent="go_src(scope.row)">
-                                <p v-if="scope.row.srcname == null">暂无脚本，请添加</p>
-                            <p v-else>{{scope.row.srcname}}</p>
+                                <p>{{scope.row.appname}}</p>
                             </a>
                         </el-tooltip>
                     </template>
+                </el-table-column>
+                <el-table-column label="描述" align="center" prop="appdes">
                 </el-table-column>
                 <el-table-column label="项目" align="center" prop="proname">
                 </el-table-column>
@@ -975,6 +972,7 @@ export default {
             var url = '/home/src/'
             var query_data = {
                 'id':object.id, 
+                'userid':object.user,
                 'project':object.project,
                 'projectName':object.proname,
                 'appName':object.appname,
