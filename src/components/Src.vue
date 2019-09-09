@@ -16,10 +16,15 @@
         <div style="font-size:17px" v-if="this.$route.query.webName">
             前端：{{this.$route.query.webName}}
         </div>
-        <el-button type="primary" size="mini" @click="get_appTest">测试</el-button>
-        <el-button type="primary" size="mini" @click="edit_appsrc" style="margin-bottom:10px">{{editBtnText}}</el-button>
+        <el-button type="primary" size="mini" @click="get_appTest" :loading="loading">{{testBtn}}</el-button>
+        <el-button
+            type="primary"
+            size="mini"
+            @click="edit_appsrc" style="margin-bottom:10px"
+            v-if='this.$route.query.userid==userId || userId==2'>{{editBtnText}}
+        </el-button>
         <editor v-if='this.$route.query.userid==userId || userId==2'
-            width="570" height="800" v-model="code" :options="options" lang="python" theme="chrome">
+            width="" height="800" v-model="code" :options="options" lang="python" theme="chrome">
         </editor>
         <pre v-else width="570" height="800">{{code}}</pre>
     </div>
@@ -44,6 +49,8 @@ export default {
             token: this.storage.getItem('token'),
             code:'',
             old_code:'',
+            testBtn:'开始测试',
+            loading: false,
             options: {
                 // 目前功能不明
                 enableBasicAutocompletion: true,
@@ -60,47 +67,86 @@ export default {
         // 返回上一级
         go_back() {
             if (this.editBtnText == '提交修改*') {
-
+                this.$confirm('脚本未保存，是否确定离开?', '提示', {
+                    distinguishCancelAndClose: true,
+                    type: 'warning',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    }).then(() => {
+                        this.$router.back(-1)
+                    }).catch(() => {
+                })
             }
-            this.$confirm('脚本未保存，是否确定离开?', '提示', {
-                distinguishCancelAndClose: true,
-                type: 'warning',
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-            }).then(() => {
+            else {
                 this.$router.back(-1)
-            }).catch(() => {
-            })
+            }
+            
         },
         // 脚本测试
         get_appTest() {
-            var url = 'api/v1/saveSrc/'
-            var params_data = {
-                'userId':this.userId,
-                'token':this.token,
-                'type':this.$route.query.type,
-                'id':this.$route.query.id,
-            }
-            this.axios({
-                baseURL:this.url,
-                url:url,
-                method:'patch',
-                params:params_data,
-            }).then(response=>{
-                this.$message({
-                    message: response.data.errmsg,
-                    type: 'success',
-                    center: true
-                });
-            },error=>{
-                this.$message({
-                        message: '匿名用户，请先登录',
-                        type: 'error',
-                        center: true,
-                        showClose: true,
+            this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
+                2 请确认是否已打开appium服务端 </br> \
+                3 测试大约需几分钟请耐心等待 </br> \
+                4 即将开始全部自定义测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
+                    this.$message({
+                        message: '测试开始',
+                        type: 'success',
+                        center: true
+                    });
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var url = 'api/v1/saveSrc/'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'type':this.$route.query.type,
+                        'id':this.$route.query.id,
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:url,
+                        method:'patch',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    },error=>{
+                        this.$message({
+                            message: '自动化测试平台异常，请检查网络',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.loading=false
+                        this.testBtn='开始测试'
                     })
-                this.$router.push('/')
-            })
+                }).catch(() => {        
+            });
         },
         // 获取脚本
         get_appSrc() {
