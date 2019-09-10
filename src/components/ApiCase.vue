@@ -86,8 +86,23 @@
                         <el-select  v-model="scope.row.contentType" style="width:300px">
                             <el-option v-for="item in ['application/x-www-form-urlencoded','application/json']" :key="item" :value="item"></el-option>
                         </el-select>
+                        <br><br>
                         <!-- JSON -->
-                        <el-input  v-if="scope.row.contentType=='application/json'" type="textarea" autosize v-model="body[scope.row.id]" @change="body_change(body[scope.row.id])" style="margin-top:10px"></el-input><br><br>
+                        <!-- <el-input
+                            v-if="scope.row.contentType=='application/json'"
+                            type="textarea" autosize v-model="body[scope.row.id]"
+                            @change="body_change(body[scope.row.id])"
+                            style="margin-top:10px">
+                        </el-input> -->
+                        <editor
+                            v-if="scope.row.contentType=='application/json'"
+                            height="300"
+                            v-model="body[scope.row.id]"
+                            :options="options"
+                            lang="json"
+                            theme="crimson_editor"
+                            @input="json_change">
+                        </editor>
                         <!-- Form -->
                         <el-table
                             v-if="scope.row.contentType=='application/x-www-form-urlencoded'"
@@ -304,10 +319,27 @@
 
 <script>
 /* eslint-disable */
+import editor from 'vue2-ace-editor'
+import 'brace/mode/json'
+import 'brace/mode/javascript'
+import 'vue2-ace-editor/node_modules/brace/snippets/json'
+import 'brace/theme/crimson_editor'
+import 'brace/theme/chrome'
+import 'brace/ext/language_tools'
 export default {
     name:'ApiCase',
     data() {
         return {
+            options: {
+                // 目前功能不明
+                enableBasicAutocompletion: true,
+                // 代码块提示
+                enableSnippets: true,
+                // 自动补全
+                enableLiveAutocompletion: true,
+                // 语法高亮
+                highlightActiveLine: true
+            },
             projectName:this.$route.query.projectName,
             axios: this.axios,
             url: this.url,
@@ -376,7 +408,13 @@ export default {
             response:{},
         }
     },
+    components: {
+        editor
+    },
     methods: {
+        json_change() {
+            this.editBody='提交修改*'
+        },
         changefile(obj,row) {
             // 获取上传文件对象
             row[2] = obj.target.files[0]

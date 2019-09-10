@@ -8,12 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import './assets/css/main.css'
 import './assets/icon/iconfont.css'
-import editor from 'vue2-ace-editor'
-import 'brace/mode/javascript'
-import 'brace/theme/chrome'
 
 Vue.use(ElementUI)
-Vue.use(editor)
 
 Vue.config.productionTip = false
 // Vue.prototype.url = 'http://172.16.9.88/'

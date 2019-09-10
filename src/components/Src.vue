@@ -4,41 +4,61 @@
         <a href="#" @click.prevent="go_back">
             <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
         </a>
-        <div style="font-size:17px;margin-bottom:10px" v-if="this.$route.query.projectName">
-            项目：{{this.$route.query.projectName}}
-        </div>
-        <div style="font-size:17px;margin-bottom:10px" v-if="this.$route.query.appName">
-            app：{{this.$route.query.appName}}
-        </div>
-        <div style="font-size:17px;margin-bottom:10px" v-if="this.$route.query.apiName">
-            后端：{{this.$route.query.apiName}}
-        </div>
-        <div style="font-size:17px" v-if="this.$route.query.webName">
-            前端：{{this.$route.query.webName}}
-        </div>
-        <el-button type="primary" size="mini" @click="get_appTest" :loading="loading">{{testBtn}}</el-button>
-        <el-button
-            type="primary"
-            size="mini"
-            @click="edit_appsrc" style="margin-bottom:10px"
-            v-if='this.$route.query.userid==userId || userId==2'>{{editBtnText}}
-        </el-button>
-        <editor v-if='this.$route.query.userid==userId || userId==2'
-            width="" height="800" v-model="code" :options="options" lang="python" theme="chrome">
-        </editor>
-        <pre v-else width="570" height="800">{{code}}</pre>
+        <el-card class="box-card"  shadow='hover' :body-style=body_style>
+            <div slot="header" class="clearfix">
+                <div style="font-size:14px;margin-bottom:0px;float:left" v-if="this.$route.query.projectName">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    项目：{{this.$route.query.projectName}}
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <div style="font-size:14px;margin-bottom:0px;float:left" v-if="this.$route.query.appName">
+                    app：{{this.$route.query.appName}}
+                </div>
+                <div style="font-size:17px;margin-bottom:0px;float:left" v-if="this.$route.query.apiName">
+                    后端：{{this.$route.query.apiName}}
+                </div>
+                <div style="font-size:17px;float:left" v-if="this.$route.query.webName">
+                    前端：{{this.$route.query.webName}}
+                </div>
+                <div style="float: right;margin-bottom:10px;text-align:center">
+                    <!-- 修改 -->
+                    <el-button
+                        type="primary"
+                        size="mini"
+                        @click="edit_appsrc" style=""
+                        v-if='this.$route.query.userid==userId || userId==2'>{{editBtnText}}
+                    </el-button>
+                    <!-- 测试 -->
+                    <el-button
+                        type="primary"
+                        size="mini"
+                        @click="get_appTest"
+                        :loading="loading">{{testBtn}}
+                    </el-button>
+                </div>
+            </div>
+            <div>
+                <editor
+                    height="800"
+                    v-model="code"
+                    :options="options"
+                    lang="python"
+                    theme="crimson_editor">
+                </editor>
+            </div>
+        </el-card>
     </div>
 </template>
 
 <script>
 /* eslint-disable */
-    import editor from 'vue2-ace-editor'
-    import 'brace/mode/python'
-    import 'brace/mode/javascript'
-    import 'vue2-ace-editor/node_modules/brace/snippets/python'
-    import 'brace/theme/monokai'
-    import 'brace/theme/chrome'
-    import 'brace/ext/language_tools'
+import editor from 'vue2-ace-editor'
+import 'brace/mode/python'
+import 'brace/mode/javascript'
+import 'vue2-ace-editor/node_modules/brace/snippets/python'
+import 'brace/theme/crimson_editor'
+import 'brace/theme/chrome'
+import 'brace/ext/language_tools'
 export default {
     name:'Src',
     data() {
@@ -51,6 +71,10 @@ export default {
             old_code:'',
             testBtn:'开始测试',
             loading: false,
+            body_style: {
+                padding: '0px',
+                background:'#eee'        
+                },
             options: {
                 // 目前功能不明
                 enableBasicAutocompletion: true,
@@ -59,7 +83,9 @@ export default {
                 // 自动补全
                 enableLiveAutocompletion: true,
                 // 语法高亮
-                highlightActiveLine: true
+                highlightActiveLine: true,
+                // 只读
+                readOnly: true
             }
         }
     },

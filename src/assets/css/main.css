@@ -27,3 +27,7 @@ div.el-collapse-item__header.is-active {
 .fail input{
     color: red;
 }
+
+.el-card__header {
+    background: #eee
+}
