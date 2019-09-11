@@ -292,7 +292,7 @@ export default {
             next_src:'',
             isNextDisabled_src:false,
             isPreDisabled_src:false,
-            activeName: '',
+            activeName: '1',
             projectId: this.$route.query.projectId,
             projectName: this.$route.query.projectName,
             dialogFormVisible:false,
@@ -503,10 +503,12 @@ export default {
         // 获取数据列表
         get_appSrcCases() {
             var url = 'api/v1/appSrcCase/'
-            if (this.$route.query.projectId) {
-                url = url +'?project='+this.$route.query.projectId
-            }
-            var params_data = {'userId':this.userId,'token':this.token}
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'project':this.$route.query.projectId,
+                'src_type':'app'
+                }
             this.axios({
                 baseURL:this.url,
                 url:url,
@@ -831,7 +833,8 @@ export default {
                 'appname': this.appsrcname,
                 'appdes': this.appsrcdes,
                 'user': this.userId,
-                'project': this.projectId
+                'project': this.projectId,
+                'src_type':'app'
             }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -1047,7 +1050,7 @@ export default {
                 'project':object.project,
                 'projectName':object.proname,
                 'appName':object.appname,
-                'type': 'app',
+                'type': object.src_type,
             }
             this.$router.push({ path: url,query:query_data})
         },

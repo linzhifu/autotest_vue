@@ -9,91 +9,180 @@
             项目：{{this.$route.query.projectName}}
         </span><br><br>
     </div>
-    <!-- 添加API -->
-    <div>
-        <el-button type="primary" @click="new_webcase">添加模块</el-button>
-        <el-input placeholder="请输入名称" v-model="apiname" style="width:200px"></el-input>
-        <el-input placeholder="请输入描述" v-model="apides" style="width:200px"></el-input>
-        <el-input placeholder="请输入URL" v-model="apiurl" style="width:200px"></el-input>
-        <el-select v-if="!this.$route.query.projectId" v-model="projectId" placeholder="请选择项目">
-        <el-option
-            v-for="item in project_options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            </el-option>
-        </el-select>
-        <el-tooltip class="item" effect="dark" content="设置API测试用户账号" placement="top-start">
-            <el-button icon="el-icon-edit" type="primary" style="float: right;margin-left:10px" @click="testUserFormVisible = true" v-if="this.$route.query.projectName == '量产云平台'"></el-button>
-        </el-tooltip>
-        <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
-        <br><br>
-    </div>
-    <!-- API列表 -->
-    <el-table
-     stripe
-     border
-     :data="apiManagers.filter(data => !search || data.apiname.toLowerCase().includes(search.toLowerCase()) || data.apides.toLowerCase().includes(search.toLowerCase()))"
-     empty-text="暂无项目"
-     :header-cell-style="{background:'#ddd'}"
-     highlight-current-row>
-        <el-table-column label="名称" align="center" width="100">
-            <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" :content="'点击进入 '+scope.row.apiname+' 模块'"  placement="top">
-                    <a href="#" @click.prevent="go_apiTest(scope.row)">
-                        <p>{{scope.row.apiname}}</p>
-                    </a>
+    <el-collapse v-model="activeName" accordion>
+        <el-collapse-item title="脚本测试" name="1" style="font-size:17px">
+            <!-- 添加APP -->
+            <div>
+                <el-button type="primary" @click="new_appsrc">添加app</el-button>
+                <el-input placeholder="请输入名称" v-model="appsrcname" style="width:200px"></el-input>
+                <el-input placeholder="请输入描述" v-model="appsrcdes" style="width:200px"></el-input>
+                <el-select v-if="!this.$route.query.projectId" v-model="projectId" placeholder="请选择项目">
+                <el-option
+                    v-for="item in project_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-button
+                    v-if="this.$route.query.projectId"
+                    type="primary" style="float: right;"
+                    :loading="loading"
+                    @click="appSrcTest">{{testBtn}}</el-button>
+                <br><br>
+            </div>
+            <!-- APP列表 -->
+            <el-table
+                stripe
+                border
+                :data="appSrcCases.filter(data => !search || data.appname.toLowerCase().includes(search.toLowerCase()) || data.appdes.toLowerCase().includes(search.toLowerCase()))"
+                empty-text="暂无项目"
+                :header-cell-style="{background:'#ddd'}"
+                highlight-current-row>
+                <el-table-column label="名称" align="center" prop="appname">
+                    <template slot-scope="scope">
+                        <el-tooltip class="item" effect="dark" :content="'点击进入脚本编辑'"  placement="top">
+                            <a href="#" @click.prevent="go_src(scope.row)">
+                                <p>{{scope.row.appname}}</p>
+                            </a>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <el-table-column label="描述" align="center" prop="appdes">
+                </el-table-column>
+                <el-table-column label="项目" align="center" prop="proname">
+                </el-table-column>
+                <el-table-column label="最近修改" align="center" prop="update_time">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.update_time|dateFormat}}</p>
+                    </template>
+                </el-table-column>
+                <el-table-column label="测试结果" align="center" prop="result" width="100">
+                    <template slot-scope="scope">
+                        <p v-if="scope.row.result" style="color:green">PASS</p>
+                        <p v-else style="color:red">FAIL</p>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center">
+                    <template slot="header">
+                        <el-input v-model="search" size="mini" placeholder="输入项目名称关键字搜索"/>
+                    </template>
+                    <template slot-scope="scope">
+                        <span v-if='!(scope.row.user==userId) && !(userId==2)'>暂无权限操作</span>
+                        <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
+                            <el-button
+                                v-if='scope.row.user==userId || userId==2'
+                                size="mini"
+                                type="primary"
+                                @click="open_edit_src(scope.row)" class="el-icon-edit">
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                            <el-button
+                                v-if='scope.row.user==userId || userId==2'
+                                size="mini"
+                                type="danger"
+                                @click="handleDeleteSrc(scope.$index, scope.row)" icon="el-icon-delete">
+                            </el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br>
+            <!-- 翻页 -->
+            <div style="text-align: center;">
+                <el-button type="primary" :disabled="isPreDisabled_src" @click="get_pre_src">上一页</el-button>
+                <el-button type="primary" :disabled="isNextDisabled_src" @click="get_next_src">下一页</el-button>
+            </div>
+        </el-collapse-item>
+        <el-collapse-item title="自定义测试" name="2" style="font-size:17px">
+            <!-- 添加API -->
+            <div>
+                <el-button type="primary" @click="new_webcase">添加模块</el-button>
+                <el-input placeholder="请输入名称" v-model="apiname" style="width:200px"></el-input>
+                <el-input placeholder="请输入描述" v-model="apides" style="width:200px"></el-input>
+                <el-input placeholder="请输入URL" v-model="apiurl" style="width:200px"></el-input>
+                <el-select v-if="!this.$route.query.projectId" v-model="projectId" placeholder="请选择项目">
+                <el-option
+                    v-for="item in project_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-tooltip class="item" effect="dark" content="设置API测试用户账号" placement="top-start">
+                    <el-button icon="el-icon-edit" type="primary" style="float: right;margin-left:10px" @click="testUserFormVisible = true" v-if="this.$route.query.projectName == '量产云平台'"></el-button>
                 </el-tooltip>
-            </template>
-        </el-table-column>
-        <el-table-column label="描述" align="center" prop="apides">
-        </el-table-column>
-        <el-table-column label="URL" align="center" prop="apiurl">
-        </el-table-column>
-        <el-table-column label="项目" align="center" prop="proname">
-        </el-table-column>
-        <el-table-column label="最近修改" align="center" prop="update_time">
-            <template slot-scope="scope">
-                <p>{{scope.row.update_time|dateFormat}}</p>
-            </template>
-        </el-table-column>
-        <el-table-column label="测试结果" align="center" prop="result" width="100">
-            <template slot-scope="scope">
-                <p v-if="scope.row.result" style="color:green">PASS</p>
-                <p v-else style="color:red">FAIL</p>
-            </template>
-        </el-table-column>
-        <el-table-column align="center">
-            <template slot="header">
-                <el-input v-model="search" size="mini" placeholder="输入项目名称关键字搜索"/>
-            </template>
-            <template slot-scope="scope">
-                <span v-if='!(scope.row.user==userId) && !(userId==2)'>暂无权限操作</span>
-                <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
-                    <el-button
-                        v-if='scope.row.user==userId || userId==2'
-                        size="mini"
-                        type="primary"
-                        @click="open_edit(scope.row)" class="el-icon-edit">
-                    </el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="删除" placement="top">
-                    <el-button
-                        v-if='scope.row.user==userId || userId==2'
-                        size="mini"
-                        type="danger"
-                        @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
-                    </el-button>
-                </el-tooltip>
-            </template>
-        </el-table-column>
-    </el-table>
-    <br>
-    <!-- 翻页 -->
-    <div style="text-align: center;">
-        <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
-        <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
-    </div>
+                <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
+                <br><br>
+            </div>
+            <!-- API列表 -->
+            <el-table
+                stripe
+                border
+                :data="apiManagers.filter(data => !search || data.apiname.toLowerCase().includes(search.toLowerCase()) || data.apides.toLowerCase().includes(search.toLowerCase()))"
+                empty-text="暂无项目"
+                :header-cell-style="{background:'#ddd'}"
+                highlight-current-row>
+                <el-table-column label="名称" align="center" width="100">
+                    <template slot-scope="scope">
+                        <el-tooltip class="item" effect="dark" :content="'点击进入 '+scope.row.apiname+' 模块'"  placement="top">
+                            <a href="#" @click.prevent="go_apiTest(scope.row)">
+                                <p>{{scope.row.apiname}}</p>
+                            </a>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <el-table-column label="描述" align="center" prop="apides">
+                </el-table-column>
+                <el-table-column label="URL" align="center" prop="apiurl">
+                </el-table-column>
+                <el-table-column label="项目" align="center" prop="proname">
+                </el-table-column>
+                <el-table-column label="最近修改" align="center" prop="update_time">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.update_time|dateFormat}}</p>
+                    </template>
+                </el-table-column>
+                <el-table-column label="测试结果" align="center" prop="result" width="100">
+                    <template slot-scope="scope">
+                        <p v-if="scope.row.result" style="color:green">PASS</p>
+                        <p v-else style="color:red">FAIL</p>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center">
+                    <template slot="header">
+                        <el-input v-model="search" size="mini" placeholder="输入项目名称关键字搜索"/>
+                    </template>
+                    <template slot-scope="scope">
+                        <span v-if='!(scope.row.user==userId) && !(userId==2)'>暂无权限操作</span>
+                        <el-tooltip class="item" effect="dark" content="编辑修改" placement="top">
+                            <el-button
+                                v-if='scope.row.user==userId || userId==2'
+                                size="mini"
+                                type="primary"
+                                @click="open_edit(scope.row)" class="el-icon-edit">
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                            <el-button
+                                v-if='scope.row.user==userId || userId==2'
+                                size="mini"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)" icon="el-icon-delete">
+                            </el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br>
+            <!-- 翻页 -->
+            <div style="text-align: center;">
+                <el-button type="primary" :disabled="isPreDisabled" @click="get_pre">上一页</el-button>
+                <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
+            </div>
+        </el-collapse-item>
+    </el-collapse>
     <!-- 修改数据 -->
     <el-dialog :visible.sync="dialogFormVisible">
         <el-form>
@@ -114,6 +203,23 @@
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleEdit(editObj)">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 修改数据 -->
+    <el-dialog :visible.sync="dialogFormVisible_src">
+        <el-form>
+            <el-form-item label="名称" label-width="120px">
+            <el-input v-model="editObj.appname" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <el-form >
+            <el-form-item label="描述" label-width="120px">
+            <el-input v-model="editObj.appdes" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleEdit_src(editObj)">确 定</el-button>
         </div>
     </el-dialog>
     <!-- 设置测试用户 -->
@@ -171,21 +277,32 @@ export default {
             apides: '',
             apiurl:'',
             search: '',
+            appsrcname: '',
+            appsrcdes: '',
             apiManagers: [],
+            appSrcCases: [],
             project_options: [],
+            activeName:'1',
             pre:'',
             next:'',
             projectId: this.$route.query.projectId,
             projectName: this.$route.query.projectName,
             isNextDisabled:false,
             isPreDisabled:false,
+            pre_src:'',
+            next_src:'',
+            isNextDisabled_src:false,
+            isPreDisabled_src:false,
             dialogFormVisible:false,
+            dialogFormVisible_src:false,
             testUserFormVisible:false,
             editObj:{
                 id:'',
                 apiname:'',
                 apides:'',
                 apiurl:'',
+                appname:'',
+                appdes:'',
             }
         }
     },
@@ -465,6 +582,73 @@ export default {
             }).catch(() => {        
             });
         },
+         // app脚本测试
+        appSrcTest() {
+            this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
+                2 请确认是否已打开appium服务端 </br> \
+                3 测试大约需几分钟请耐心等待 </br> \
+                4 即将开始全部脚本测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
+                    this.$message({
+                        message: '测试开始',
+                        type: 'success',
+                        center: true
+                    });
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'project':this.projectId,
+                        'type':'api'
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/appSrcTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.get_appSrcCases()
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    },error=>{
+                        this.$message({
+                            message: '自动化测试平台异常，请检查网络',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.get_appSrcCases()
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    })
+                }).catch(() => {        
+            });
+        },
         // 获取数据列表
         get_apiManagers() {
             var url = 'api/v1/apiManager/'
@@ -520,6 +704,48 @@ export default {
                 this.$router.push('/')
             })
         },
+        // 获取数据列表
+        get_appSrcCases() {
+            var url = 'api/v1/appSrcCase/'
+            var params_data = {
+                'userId':this.userId,
+                'token':this.token,
+                'project':this.$route.query.projectId,
+                'src_type':'api'
+                }
+            this.axios({
+                baseURL:this.url,
+                url:url,
+                method:'get',
+                params:params_data,
+            }).then(response=>{
+                this.appSrcCases=response.data.results
+                // 判断是否有上一页
+                this.pre_src=response.data.previous
+                if (!this.pre_src) {
+                    this.isPreDisabled_src=true
+                }
+                else {
+                    this.isPreDisabled_src=false
+                }
+                // 判断是否有下一页
+                this.next_src=response.data.next
+                if (!this.next_src) {
+                    this.isNextDisabled_src=true
+                }
+                else {
+                    this.isNextDisabled_src=false
+                }
+            },error=>{
+                this.$message({
+                        message: '匿名用户，请先登录',
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                this.$router.push('/')
+            })
+        },
         // 打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
@@ -528,6 +754,14 @@ export default {
             this.editObj['apiname']=row.apiname
             this.editObj['apides']=row.apides
             this.editObj['apiurl']=row.apiurl
+        },
+        // 打开编辑
+        open_edit_src(row) {
+            this.dialogFormVisible_src = true
+            // this.editObj = row
+            this.editObj['id']=row.id
+            this.editObj['appname']=row.appname
+            this.editObj['appdes']=row.appdes
         },
         // 编辑修改数据
         handleEdit(row) {
@@ -572,6 +806,53 @@ export default {
                 })
             })
         },
+        // 编辑修改数据
+        handleEdit_src(row, update=true) {
+            if (update) {
+                if (!row.appname || !row.appdes) {
+                    this.$message({
+                        message: "名称、描述不能为空",
+                        type: 'error',
+                        center: true
+                    })
+                    return
+                }
+            }
+            this.dialogFormVisible_src = false
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/appSrcCase/'+row.id+'/',
+                method:'patch',
+                params:params_data,
+                data:row,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success',
+                        center: true
+                    });
+                    if (update) {
+                        this.get_appSrcCases()
+                    }
+                }
+                else {
+                    this.$message({
+                        message: "修改失败",
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
+        },
         // 删除数据
         handleDelete(index, row) {
             this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
@@ -595,6 +876,47 @@ export default {
                             center: true
                         });
                         this.get_apiManagers()
+                    }
+                    else {
+                        this.$message({
+                            message: "删除失败",
+                            type: 'error',
+                            center: true
+                        })
+                    }
+                },error=>{
+                   this.$message({
+                        message: '自动化测试平台异常，请检查网络',
+                        type: 'error',
+                        center: true
+                    })
+                })
+            }).catch(() => {
+            })
+        },
+        // 删除数据
+        handleDeleteSrc(index, row) {
+            this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
+                distinguishCancelAndClose: true,
+                type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                var params_data = {'userId':this.userId,'token':this.token}
+                this.axios({
+                    baseURL:this.url,
+                    url:'api/v1/appSrcCase/'+row.id+'/',
+                    method:'delete',
+                    params:params_data,
+                }).then(response=>{
+                    // 判断是否成功
+                    if (!response.data.errcode) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            center: true
+                        });
+                        this.get_appSrcCases()
                     }
                     else {
                         this.$message({
@@ -665,6 +987,57 @@ export default {
             this.apiname=''
             this.apides=''
             this.apiurl=''
+        },
+        // 添加数据
+        new_appsrc() {
+            if (!this.appsrcname || !this.appsrcdes) {
+                this.$message({
+                    message: "名称、描述不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            var body_data = {
+                'appname': this.appsrcname,
+                'appdes': this.appsrcdes,
+                'user': this.userId,
+                'project': this.projectId,
+                'src_type':'api'
+            }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/appSrcCase/',
+                method:'post',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '添加成功',
+                        type: 'success',
+                        center: true
+                    });
+                    this.get_appSrcCases()
+                }
+                else {
+                    this.$message({
+                        message: "新建失败",
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
+            this.appsrcname=''
+            this.appsrcdes=''
         },
         // 上一页
         get_pre() {
@@ -746,6 +1119,86 @@ export default {
                     })
             })
         },
+        // 上一页
+        get_pre_src() {
+            this.axios.get(this.pre_src).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.appSrcCases=response.data.results
+                    // 判断是否有上一页
+                    this.pre_src=response.data.previous
+                    if (!this.pre_src) {
+                        this.isPreDisabled_src=true
+                    }
+                    else {
+                        this.isPreDisabled_src=false
+                    }
+                    // 判断是否有下一页
+                    this.next_src=response.data.next
+                    if (!this.next_src) {
+                        this.isNextDisabled_src=true
+                    }
+                    else {
+                        this.isNextDisabled_src=false
+                    }
+                }
+                else {
+                    this.$message({
+                        message: "加载失败",
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.$message({
+                        message: error.response.data,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+            })
+        },
+        // 下一页
+        get_next_src() {
+            this.axios.get(this.next_src).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.appSrcCases=response.data.results
+                    // 判断是否有上一页
+                    this.pre_src=response.data.previous
+                    if (!this.pre_src) {
+                        this.isPreDisabled_src=true
+                    }
+                    else {
+                        this.isPreDisabled_src=false
+                    }
+                    // 判断是否有下一页
+                    this.next_src=response.data.next
+                    if (!this.next_src) {
+                        this.isNextDisabled_src=true
+                    }
+                    else {
+                        this.isNextDisabled_src=false
+                    }
+                }
+                else {
+                    this.$message({
+                        message: "加载失败",
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+                }
+            },error=>{
+                this.$message({
+                        message: error.response.data,
+                        type: 'error',
+                        center: true,
+                        showClose: true,
+                    })
+            })
+        },
         // 进入API
         go_apiTest(object) {
             var url = '/home/ApiType/'
@@ -755,6 +1208,19 @@ export default {
                 'apiurl':object.apiurl,
                 'projectName':object.proname,
                 'apiName':object.apiname
+            }
+            this.$router.push({ path: url,query:query_data})
+        },
+        // 进入脚本编辑
+        go_src(object) {
+            var url = '/home/src/'
+            var query_data = {
+                'id':object.id, 
+                'userid':object.user,
+                'project':object.project,
+                'projectName':object.proname,
+                'appName':object.appname,
+                'type': object.src_type,
             }
             this.$router.push({ path: url,query:query_data})
         },
@@ -817,6 +1283,7 @@ export default {
             if (!val) {
                 this.get_projects()
                 this.get_apiManagers()
+                this.get_appSrcCases()
             }
         }
     },
@@ -825,6 +1292,7 @@ export default {
     created() {
         // 获取数据列表
         this.get_apiManagers()
+        this.get_appSrcCases()
         // 获取项目列表
         if (!this.$route.query.projectId) {
             this.get_projects()

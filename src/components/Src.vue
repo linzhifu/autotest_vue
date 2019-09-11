@@ -11,14 +11,14 @@
                     项目：{{this.$route.query.projectName}}
                     &nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
-                <div style="font-size:14px;margin-bottom:0px;float:left" v-if="this.$route.query.appName">
+                <div style="font-size:14px;margin-bottom:0px;float:left" v-if="this.$route.query.type == 'app'">
                     app：{{this.$route.query.appName}}
                 </div>
-                <div style="font-size:17px;margin-bottom:0px;float:left" v-if="this.$route.query.apiName">
-                    后端：{{this.$route.query.apiName}}
+                <div style="font-size:14px;margin-bottom:0px;float:left" v-if="this.$route.query.type == 'api'">
+                    后端：{{this.$route.query.appName}}
                 </div>
-                <div style="font-size:17px;float:left" v-if="this.$route.query.webName">
-                    前端：{{this.$route.query.webName}}
+                <div style="font-size:14px;float:left" v-if="this.$route.query.type == 'web'">
+                    前端：{{this.$route.query.appName}}
                 </div>
                 <div style="float: right;margin-bottom:10px;text-align:center">
                     <!-- 修改 -->
@@ -257,6 +257,9 @@ export default {
     },
     created() {
         this.get_appSrc()
+        if (this.$route.query.userid==this.userId || this.userId==2) {
+            this.options.readOnly = false
+        }
     }
 }
 </script>
