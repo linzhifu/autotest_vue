@@ -38,7 +38,10 @@
                 :data="appSrcCases.filter(data => !search || data.appname.toLowerCase().includes(search.toLowerCase()) || data.appdes.toLowerCase().includes(search.toLowerCase()))"
                 empty-text="暂无项目"
                 :header-cell-style="{background:'#ddd'}"
+                :default-sort = "{prop: 'index', order: 'ascending'}"
                 highlight-current-row>
+                <el-table-column label="" align="center" prop="index" width="50px" sortable>
+                </el-table-column>
                 <el-table-column label="名称" align="center" prop="appname">
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" :content="'点击进入脚本编辑'"  placement="top">
@@ -253,6 +256,11 @@
             <el-input v-model="editObj.appdes" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
+        <el-form >
+            <el-form-item label="优先级" label-width="120px">
+             <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
+            </el-form-item>
+        </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleEdit_src(editObj)">确 定</el-button>
@@ -302,6 +310,7 @@ export default {
                 id:'',
                 appname:'',
                 appdes:'',
+                index:''
             },
             desired_caps:{},
         }
@@ -591,6 +600,7 @@ export default {
             this.editObj['id']=row.id
             this.editObj['appname']=row.appname
             this.editObj['appdes']=row.appdes
+            this.editObj['index'] = row.index
         },
         // 编辑修改数据
         handleEdit(row, update=true) {
@@ -708,7 +718,6 @@ export default {
                             type: 'success',
                             center: true
                         });
-                        this.get_appManagers()
                     }
                     else {
                         this.$message({
@@ -744,11 +753,41 @@ export default {
                 }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success',
-                            center: true
-                        });
+                        // 删除文件夹
+                        var params_data = {
+                            'userId':this.userId,
+                            'token':this.token,
+                            'id':row.id,
+                            'type':'app'
+                        }
+                        this.axios({
+                            baseURL:this.url,
+                            url:'/api/v1/appSrcTest/',
+                            method:'delete',
+                            params:params_data,
+                        }).then(response=>{
+                            // 判断是否成功
+                            if (!response.data.errcode) {
+                                this.$message({
+                                    message: '删除成功',
+                                    type: 'success',
+                                    center: true
+                                });
+                            }
+                            else {
+                                this.$message({
+                                    message: response.data.errmsg,
+                                    type: 'error',
+                                    center: true,
+                                })
+                            }
+                        },error=>{
+                            this.$message({
+                                message: '自动化测试平台异常，请检查网络',
+                                type: 'error',
+                                center: true,
+                            })
+                        })
                         this.get_appSrcCases()
                     }
                     else {

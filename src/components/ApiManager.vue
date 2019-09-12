@@ -38,7 +38,10 @@
                 :data="appSrcCases.filter(data => !search || data.appname.toLowerCase().includes(search.toLowerCase()) || data.appdes.toLowerCase().includes(search.toLowerCase()))"
                 empty-text="暂无项目"
                 :header-cell-style="{background:'#ddd'}"
+                :default-sort = "{prop: 'index', order: 'ascending'}"
                 highlight-current-row>
+                <el-table-column label="" align="center" prop="index" width="50px" sortable>
+                </el-table-column>
                 <el-table-column label="名称" align="center" prop="appname">
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" :content="'点击进入脚本编辑'"  placement="top">
@@ -124,7 +127,7 @@
                 empty-text="暂无项目"
                 :header-cell-style="{background:'#ddd'}"
                 highlight-current-row>
-                <el-table-column label="名称" align="center" width="100">
+                <el-table-column label="名称" align="center">
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" :content="'点击进入 '+scope.row.apiname+' 模块'"  placement="top">
                             <a href="#" @click.prevent="go_apiTest(scope.row)">
@@ -217,6 +220,11 @@
             <el-input v-model="editObj.appdes" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
+        <el-form >
+            <el-form-item label="优先级" label-width="120px">
+             <el-input-number v-model="editObj.index" controls-position="right"></el-input-number>
+            </el-form-item>
+        </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleEdit_src(editObj)">确 定</el-button>
@@ -303,6 +311,7 @@ export default {
                 apiurl:'',
                 appname:'',
                 appdes:'',
+                index:''
             }
         }
     },
@@ -585,9 +594,8 @@ export default {
          // app脚本测试
         appSrcTest() {
             this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
-                2 请确认是否已打开appium服务端 </br> \
-                3 测试大约需几分钟请耐心等待 </br> \
-                4 即将开始全部脚本测试', '提示', {
+                2 测试大约需几分钟请耐心等待 </br> \
+                3 即将开始全部脚本测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
@@ -762,6 +770,7 @@ export default {
             this.editObj['id']=row.id
             this.editObj['appname']=row.appname
             this.editObj['appdes']=row.appdes
+            this.editObj['index']=row.index
         },
         // 编辑修改数据
         handleEdit(row) {
@@ -894,7 +903,7 @@ export default {
             }).catch(() => {
             })
         },
-        // 删除数据
+       // 删除数据
         handleDeleteSrc(index, row) {
             this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
@@ -911,11 +920,41 @@ export default {
                 }).then(response=>{
                     // 判断是否成功
                     if (!response.data.errcode) {
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success',
-                            center: true
-                        });
+                        // 文件路径
+                        var params_data = {
+                            'userId':this.userId,
+                            'token':this.token,
+                            'id':row.id,
+                            'type':'api'
+                        }
+                        this.axios({
+                            baseURL:this.url,
+                            url:'/api/v1/appSrcTest/',
+                            method:'delete',
+                            params:params_data,
+                        }).then(response=>{
+                            // 判断是否成功
+                            if (!response.data.errcode) {
+                                this.$message({
+                                    message: '删除成功',
+                                    type: 'success',
+                                    center: true
+                                });
+                            }
+                            else {
+                                this.$message({
+                                    message: response.data.errmsg,
+                                    type: 'error',
+                                    center: true,
+                                })
+                            }
+                        },error=>{
+                            this.$message({
+                                message: '自动化测试平台异常，请检查网络',
+                                type: 'error',
+                                center: true,
+                            })
+                        })
                         this.get_appSrcCases()
                     }
                     else {
