@@ -6,7 +6,7 @@
         </a>
         <el-card class="box-card"  shadow='hover' :body-style=body_style>
             <div slot="header" class="clearfix">
-                <span style="font-size:14px;margin-bottom:10px;float:left" v-if="this.$route.query.projectName">
+                <span style="font-size:14px;margin-bottom:10px;" v-if="this.$route.query.projectName">
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     项目：{{this.$route.query.projectName}}
                     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -125,6 +125,15 @@ export default {
         },
         // 编辑脚本
         handleTabsEdit(targetName, action) {
+            if (this.srcUser!=this.userId && this.userId!=2) {
+                this.$message({
+                    message: '没有权限',
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            // 添加脚本
             if (action === 'add') {
                 this.$prompt('请输入文件名', '提示', {
                     confirmButtonText: '确定',
@@ -209,12 +218,10 @@ export default {
                 })
             }   
         },
-        // 脚本测试
+        // 开始脚本测试
         get_appTest() {
-            this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
-                2 请确认是否已打开所需服务端 </br> \
-                3 测试大约需几分钟请耐心等待 </br> \
-                4 即将开始全部自定义测试', '提示', {
+            this.$confirm('1 测试大约需几分钟请耐心等待 </br> \
+                2 即将开始测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
