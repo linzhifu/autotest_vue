@@ -604,7 +604,8 @@ export default {
             var url = '/home/webManager/'
             var query = {
                 'projectId': project.id,
-                'projectName':project.proname
+                'projectName':project.proname,
+                'type':'前端'
             }
             this.$router.push({ path: url,query:query})
         },
@@ -618,6 +619,7 @@ export default {
                 'adminPsw':project.adminPsw,
                 'testUser':project.testUser,
                 'testPsw':project.testPsw,
+                'type':'后端'
             }
             this.$router.push({ path: url, query:query})
         },
@@ -626,7 +628,8 @@ export default {
             var url = '/home/appManager/'
             var query = {
                 'projectId': project.id,
-                'projectName':project.proname
+                'projectName':project.proname,
+                'type':'移动端'
             }
             this.$router.push({ path: url, query:query})
         },

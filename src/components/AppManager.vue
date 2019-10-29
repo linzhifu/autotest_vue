@@ -6,7 +6,7 @@
             <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
         </a>
         <span style="font-size:17px" v-if="this.$route.query.projectName">
-            项目：{{this.$route.query.projectName}}
+            项目：{{this.$route.query.projectName + ' - ' + this.$route.query.type}}
         </span><br><br>
     </div>
     <el-collapse v-model="activeName" accordion>
@@ -854,7 +854,8 @@ export default {
                         type: 'success',
                         center: true
                     });
-                    this.get_appSrcCases()
+                    // this.get_appSrcCases()
+                    this.go_src(response.data.data)
                 }
                 else {
                     this.$message({
