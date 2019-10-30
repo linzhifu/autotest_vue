@@ -10,6 +10,12 @@
         </span><br><br>
     </div>
     <el-collapse v-model="activeName" accordion>
+        <!-- 自动化测试 -->
+        <el-collapse-item title="自动化测试" name="1" style="font-size:17px">
+            <dir>
+                <span style="font-size:17px">即将发布，敬请期待</span>
+            </dir>
+        </el-collapse-item>
         <!-- 单元测试 -->
         <el-collapse-item title="单元测试" name="2" style="font-size:17px">
             <!-- 添加APP -->
@@ -302,7 +308,7 @@ export default {
             next_src:'',
             isNextDisabled_src:false,
             isPreDisabled_src:false,
-            activeName: '2',
+            activeName: '1',
             projectId: this.$route.query.projectId,
             projectName: this.$route.query.projectName,
             dialogFormVisible:false,
@@ -322,12 +328,12 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // app测试
+        // 单元测试-运行测试
         appManagerTest() {
             this.$confirm('1 请确认移动端是否开启开发者模式并连接测试PC </br> \
                 2 请确认是否已打开appium服务端 </br> \
                 3 测试大约需几分钟请耐心等待 </br> \
-                4 即将开始全部自定义测试', '提示', {
+                4 即将开始全部单元测试', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
@@ -388,7 +394,7 @@ export default {
                 }).catch(() => {        
             });
         },
-        // 获取数据列表
+        // 单元测试-获取数据列表
         get_appManagers() {
             var url = 'api/v1/appManager/'
             var desired_caps = []
@@ -449,7 +455,7 @@ export default {
             object.push(['',''])
             this.editParam = '提交修改*'
         },
-        // 删除param
+        // 单元测试-删除param
         remove_desired_caps(object,id) {
             this.$confirm('提交修改后将永久删除, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
@@ -463,7 +469,7 @@ export default {
             }).catch(() => {
             })
         },
-        // 提交修改param
+        // 单元测试-提交修改param
         edit_desired_caps(id,key,value) {
             var row = {
             }
@@ -478,7 +484,7 @@ export default {
             this.handleEdit(row, false)
             this.editParam = '提交修改'
         },
-        // 打开编辑
+        // 单元测试-打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
             // this.editObj = row
@@ -486,7 +492,7 @@ export default {
             this.editObj['appname']=row.appname
             this.editObj['appdes']=row.appdes
         },
-        // 编辑修改数据
+        // 单元测试-编辑修改数据
         handleEdit(row, update=true) {
             if (update) {
                 if (!row.appname || !row.appdes) {
@@ -533,7 +539,7 @@ export default {
                 })
             })
         },
-        // 删除数据
+        // 单元测试-删除数据
         handleDelete(index, row) {
             this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
@@ -573,7 +579,7 @@ export default {
             }).catch(() => {
             })
         },
-        // 添加数据
+        // 单元测试-添加数据
         new_app() {
             if (!this.appname || !this.appdes) {
                 this.$message({
@@ -624,7 +630,7 @@ export default {
             this.appname=''
             this.appdes=''
         },
-        // 上一页
+        // 单元测试-上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
@@ -664,7 +670,7 @@ export default {
                     })
             })
         },
-        // 下一页
+        // 单元测试-下一页
         get_next() {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
@@ -704,14 +710,15 @@ export default {
                     })
             })
         },
-        // 进入API
+        // 单元测试-进入单元
         go_appTest(object) {
             var url = '/home/AppType/'
             var query_data = {
                 'object_id':object.id, 
                 'content_type': object.contenttype,
                 'projectName':object.proname,
-                'appName':object.appname
+                'appName':object.appname,
+                'type':this.$route.query.type
             }
             this.$router.push({ path: url,query:query_data})
         },

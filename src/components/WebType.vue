@@ -5,7 +5,7 @@
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
     <div style="font-size:17px;margin-bottom:10px">
-            项目：{{this.$route.query.projectName}}
+            项目：{{this.$route.query.projectName + '-' + this.$route.query.type}}
     </div>
     <div style="font-size:17px">
             测试：{{this.$route.query.webName}}
@@ -497,7 +497,8 @@ export default {
                 'weburl':this.weburl,
                 'projectName':this.$route.query.projectName,
                 'webName':this.$route.query.webName,
-                'webCase':row['typename']
+                'webCase':row['typename'],
+                'type':this.$route.query.type
             }
             this.$router.push({ path: url,query:query_data})
         },

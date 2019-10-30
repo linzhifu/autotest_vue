@@ -9,6 +9,7 @@
             项目：{{this.$route.query.projectName + ' - ' + this.$route.query.type}}
         </span><br><br>
     </div>
+    <!-- 测试面板 -->
     <el-collapse v-model="activeName" accordion>
         <!-- 自动化测试 -->
         <el-collapse-item title="自动化测试" name="1" style="font-size:17px">
@@ -46,9 +47,9 @@
         </el-collapse-item>
         <!-- 单元测试 -->
         <el-collapse-item title="单元测试" name="2" style="font-size:17px">
-            <!-- 添加web -->
+            <!-- 添加案例 -->
             <div>
-                <el-button type="primary" @click="new_webcase">添加测试</el-button>
+                <el-button type="primary" @click="new_webcase">添加单元</el-button>
                 <el-input placeholder="请输入名称" v-model="webname" style="width:200px"></el-input>
                 <el-input placeholder="请输入描述" v-model="webdes" style="width:200px"></el-input>
                 <el-input placeholder="请输入URL" v-model="weburl" style="width:200px"></el-input>
@@ -273,7 +274,7 @@ export default {
     name:'WebManager',
     data() {
         return {
-            activeName: '2',
+            activeName: '1',
             axios: this.axios,
             url: this.url,
             userId: this.storage.getItem('userId'),
@@ -329,69 +330,6 @@ export default {
                     option[i] = checked
                 }
             }
-        },
-        // web测试
-        apiManagerTest() {
-            this.$confirm('1 请确认是否已打开浏览器服务端 </br> 2 测试大约需几分钟请耐心等待 </br>3 即将开始全部自定义测试', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-                dangerouslyUseHTMLString: true
-                }).then(() => {
-                    this.$message({
-                        message: '测试开始',
-                        type: 'success',
-                        center: true
-                    });
-                    this.loading=true
-                    this.testBtn='测试中...'
-                    var params_data = {
-                        'userId':this.userId,
-                        'token':this.token,
-                        'projectId':this.projectId
-                    }
-                    this.axios({
-                        baseURL:this.url,
-                        url:'/api/v1/webManagerTest/',
-                        method:'get',
-                        params:params_data,
-                    }).then(response=>{
-                        // 判断是否成功
-                        if (!response.data.errcode) {
-                            this.$message({
-                                message: 'PASS',
-                                type: 'success',
-                                center: true,
-                                showClose: true,
-                                duration:0,
-                            });
-                        }
-                        else {
-                            this.$message({
-                                message: response.data.errmsg,
-                                type: 'error',
-                                center: true,
-                                showClose: true,
-                                duration:0,
-                            })
-                        }
-                        this.loading=false
-                        this.testBtn='开始测试'
-                        this.get_webManagers()
-                    },error=>{
-                        this.$message({
-                            message: '自动化测试平台异常，请检查网络',
-                            type: 'error',
-                            center: true,
-                            showClose: true,
-                            duration:0,
-                        })
-                        this.get_webManagers()
-                        this.loading=false
-                        this.testBtn='开始测试'
-                    })
-                }).catch(() => {        
-            });
         },
         // 量产云平台单元测试
         testMpcloudCase(row) {
@@ -529,7 +467,72 @@ export default {
                 // this.$router.push('/')
             })
         },
-        // 获取自定义数据
+        // 单元测试-运行测试
+        apiManagerTest() {
+            this.$confirm('1 请确认是否已打开浏览器服务端 </br> \
+                            2 测试大约需几分钟请耐心等待 </br> \
+                            3 即将开始单元测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true
+                }).then(() => {
+                    this.$message({
+                        message: '测试开始',
+                        type: 'success',
+                        center: true
+                    });
+                    this.loading=true
+                    this.testBtn='测试中...'
+                    var params_data = {
+                        'userId':this.userId,
+                        'token':this.token,
+                        'projectId':this.projectId
+                    }
+                    this.axios({
+                        baseURL:this.url,
+                        url:'/api/v1/webManagerTest/',
+                        method:'get',
+                        params:params_data,
+                    }).then(response=>{
+                        // 判断是否成功
+                        if (!response.data.errcode) {
+                            this.$message({
+                                message: 'PASS',
+                                type: 'success',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            });
+                        }
+                        else {
+                            this.$message({
+                                message: response.data.errmsg,
+                                type: 'error',
+                                center: true,
+                                showClose: true,
+                                duration:0,
+                            })
+                        }
+                        this.loading=false
+                        this.testBtn='开始测试'
+                        this.get_webManagers()
+                    },error=>{
+                        this.$message({
+                            message: '自动化测试平台异常，请检查网络',
+                            type: 'error',
+                            center: true,
+                            showClose: true,
+                            duration:0,
+                        })
+                        this.get_webManagers()
+                        this.loading=false
+                        this.testBtn='开始测试'
+                    })
+                }).catch(() => {        
+            });
+        },
+        // 单元测试-获取数据
         get_webManagers() {
             var url = 'api/v1/webManager/'
             if (this.$route.query.projectId) {
@@ -569,7 +572,59 @@ export default {
                 this.$router.push('/')
             })
         },
-        // 打开编辑
+        // 单元测试-添加数据
+        new_webcase() {
+            if (!this.webname || !this.webdes || !this.weburl) {
+                this.$message({
+                    message: "名称、描述和URL不能为空",
+                    type: 'error',
+                    center: true
+                })
+                return
+            }
+            var body_data = {
+                'webname': this.webname,
+                'webdes': this.webdes,
+                'weburl': this.weburl,
+                'user': this.userId,
+                'project': this.projectId
+            }
+            var params_data = {'userId':this.userId,'token':this.token}
+            this.axios({
+                baseURL:this.url,
+                url:'api/v1/webManager/',
+                method:'post',
+                params:params_data,
+                data:body_data,
+            }).then(response=>{
+                // 判断是否成功
+                if (!response.data.errcode) {
+                    this.$message({
+                        message: '创建成功',
+                        type: 'success',
+                        center: true
+                    });
+                    this.get_webManagers()
+                }
+                else {
+                    this.$message({
+                        message: "新建失败",
+                        type: 'error',
+                        center: true
+                    })
+                }
+            },error=>{
+                this.$message({
+                    message: '自动化测试平台异常，请检查网络',
+                    type: 'error',
+                    center: true
+                })
+            })
+            this.webname=''
+            this.webdes=''
+            this.weburl=''
+        },
+        // 单元测试-打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
             // this.editObj = row
@@ -578,7 +633,7 @@ export default {
             this.editObj['webdes']=row.webdes
             this.editObj['weburl']=row.weburl
         },
-        // 编辑修改数据
+        // 单元测试-提交修改
         handleEdit(row) {
             if (!row.webname || !row.webdes || !row.weburl) {
                 this.$message({
@@ -621,7 +676,7 @@ export default {
                 })
             })
         },
-        // 删除数据
+        // 单元测试-删除数据
         handleDelete(index, row) {
             this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
@@ -663,59 +718,7 @@ export default {
             })
 
         },
-        // 添加数据
-        new_webcase() {
-            if (!this.webname || !this.webdes || !this.weburl) {
-                this.$message({
-                    message: "名称、描述和URL不能为空",
-                    type: 'error',
-                    center: true
-                })
-                return
-            }
-            var body_data = {
-                'webname': this.webname,
-                'webdes': this.webdes,
-                'weburl': this.weburl,
-                'user': this.userId,
-                'project': this.projectId
-            }
-            var params_data = {'userId':this.userId,'token':this.token}
-            this.axios({
-                baseURL:this.url,
-                url:'api/v1/webManager/',
-                method:'post',
-                params:params_data,
-                data:body_data,
-            }).then(response=>{
-                // 判断是否成功
-                if (!response.data.errcode) {
-                    this.$message({
-                        message: '添加成功',
-                        type: 'success',
-                        center: true
-                    });
-                    this.get_webManagers()
-                }
-                else {
-                    this.$message({
-                        message: "添加失败",
-                        type: 'error',
-                        center: true
-                    })
-                }
-            },error=>{
-                this.$message({
-                    message: '自动化测试平台异常，请检查网络',
-                    type: 'error',
-                    center: true
-                })
-            })
-            this.webname=''
-            this.webdes=''
-            this.weburl=''
-        },
-        // 上一页
+        // 单元测试-上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
@@ -753,7 +756,7 @@ export default {
                     })
             })
         },
-        // 下一页
+        // 单元测试-下一页
         get_next() {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
@@ -791,7 +794,7 @@ export default {
                     })
             })
         },
-        // 进入前端测试案例
+        // 单元测试-进入案例
         go_webTest(object) {
             var url = '/home/webType/'
             var query_data = {
@@ -799,7 +802,8 @@ export default {
                 'content_type': object.contenttype,
                 'weburl':object.weburl,
                 'projectName':object.proname,
-                'webName':object.webname
+                'webName':object.webname,
+                'type':this.$route.query.type
             }
             this.$router.push({ path: url,query:query_data})
         },

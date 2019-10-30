@@ -10,6 +10,12 @@
         </span><br><br>
     </div>
     <el-collapse v-model="activeName" accordion>
+        <!-- 自动化测试 -->
+        <el-collapse-item title="自动化测试" name="1" style="font-size:17px">
+            <dir>
+                <span style="font-size:17px">即将发布，敬请期待</span>
+            </dir>
+        </el-collapse-item>
         <!-- 单元测试 -->
         <el-collapse-item title="单元测试" name="2" style="font-size:17px">
             <!-- 添加API -->

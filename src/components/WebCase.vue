@@ -3,7 +3,7 @@
     <!-- 返回上一级 -->
     <a href="#" @click.prevent="go_back"><i class="el-icon-d-arrow-left"></i>返回上一级</a><br><br>
     <div style="font-size:17px;margin-bottom:10px">
-            项目：{{this.$route.query.projectName}}
+            项目：{{this.$route.query.projectName + '-' + this.$route.query.type}}
     </div>
     <div style="font-size:17px;margin-bottom:10px">
             测试：{{this.$route.query.webName}}
