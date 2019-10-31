@@ -5,7 +5,7 @@
         <i class="el-icon-d-arrow-left"></i>返回上一级<br><br>
     </a>
     <div style="font-size:17px;margin-bottom:10px">
-            项目：{{this.$route.query.projectName}}
+            项目：{{this.$route.query.projectName + ' - ' + this.$route.query.type}}
     </div>
     <div style="font-size:17px">
             测试：{{this.$route.query.apiName}}
@@ -756,7 +756,7 @@ export default {
                     })
             })
         },
-        // 进入前端测试案例
+        // 进入后端测试案例
         go_apiTest(row) {
             var url = '/home/apiCase/'
             var query_data = {
@@ -764,7 +764,8 @@ export default {
                 'apiurl':this.apiurl,
                 'projectName':this.$route.query.projectName,
                 'apiName':this.$route.query.apiName,
-                'apiCase':row['typename']
+                'apiCase':row['typename'],
+                'type':this.$route.query.type
             }
             this.$router.push({ path: url,query:query_data})
         },

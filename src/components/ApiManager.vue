@@ -524,7 +524,7 @@ export default {
                 return
             })
         },
-        // api测试
+        // 单元测试-运行测试
         apiManagerTest() {
             this.$confirm('即将开始 ' + this.$route.query.projectName + ' 后端测试，请耐心等待', '提示', {
                 confirmButtonText: '确定',
@@ -599,7 +599,7 @@ export default {
             }).catch(() => {        
             });
         },
-        // 获取数据列表
+        // 单元测试-获取数据
         get_apiManagers() {
             var url = 'api/v1/apiManager/'
             if (this.$route.query.projectId) {
@@ -654,7 +654,7 @@ export default {
                 this.$router.push('/')
             })
         },
-        // 打开编辑
+        // 单元测试-打开编辑
         open_edit(row) {
             this.dialogFormVisible = true
             // this.editObj = row
@@ -663,7 +663,7 @@ export default {
             this.editObj['apides']=row.apides
             this.editObj['apiurl']=row.apiurl
         },
-        // 编辑修改数据
+        // 单元测试-提交修改
         handleEdit(row) {
             if (!row.apiname || !row.apides || !row.apiurl) {
                 this.$message({
@@ -706,7 +706,7 @@ export default {
                 })
             })
         },
-        // 删除数据
+        // 单元测试-删除数据
         handleDelete(index, row) {
             this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
                 distinguishCancelAndClose: true,
@@ -747,7 +747,7 @@ export default {
             }).catch(() => {
             })
         },
-        // 添加数据
+        // 单元测试-添加数据
         new_webcase() {
             if (!this.apiname || !this.apides || !this.apiurl) {
                 this.$message({
@@ -800,7 +800,7 @@ export default {
             this.apides=''
             this.apiurl=''
         },
-        // 上一页
+        // 单元测试-上一页
         get_pre() {
             this.axios.get(this.pre).then(response=>{
                 // 判断是否成功
@@ -840,7 +840,7 @@ export default {
                     })
             })
         },
-        // 下一页
+        // 单元测试-下一页
         get_next() {
             this.axios.get(this.next).then(response=>{
                 // 判断是否成功
@@ -880,7 +880,7 @@ export default {
                     })
             })
         },
-        // 进入API
+        // 单元测试-进入测试
         go_apiTest(object) {
             var url = '/home/ApiType/'
             var query_data = {
@@ -888,7 +888,8 @@ export default {
                 'content_type': object.contenttype,
                 'apiurl':object.apiurl,
                 'projectName':object.proname,
-                'apiName':object.apiname
+                'apiName':object.apiname,
+                'type':this.$route.query.type
             }
             this.$router.push({ path: url,query:query_data})
         },
