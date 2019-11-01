@@ -62,7 +62,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column align="center" width="280">
-                    <template slot="header" slot-scope="scope">
+                    <template slot="header">
                         <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
                     </template>
                     <template slot-scope="scope">

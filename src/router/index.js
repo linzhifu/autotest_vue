@@ -16,6 +16,7 @@ import AppType from '@/components/AppType'
 import Log from '@/components/Log'
 import Report from '@/components/Report'
 import Src from '@/components/Src'
+import Mpcloud from '@/components/template/Mpcloud'
 
 Vue.use(Router)
 
@@ -93,6 +94,10 @@ export default new Router({
         {
           path: 'src',
           component: Src
+        },
+        {
+          path: 'mpcloud',
+          component: Mpcloud
         }
       ]
     }
