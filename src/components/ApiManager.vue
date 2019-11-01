@@ -298,7 +298,7 @@ export default {
             apiManagers: [],
             appSrcCases: [],
             project_options: [],
-            activeName:'2',
+            activeName:'1',
             pre:'',
             next:'',
             projectId: this.$route.query.projectId,

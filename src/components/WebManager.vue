@@ -13,37 +13,41 @@
     <el-collapse v-model="activeName" accordion>
         <!-- 自动化测试 -->
         <el-collapse-item title="自动化测试" name="1" style="font-size:17px">
-           <template>
-                <el-table
-                    :data="webAutoTests"
-                    style="width: 100%">
-                    <el-table-column
-                        prop="role"
-                        label="角色"
-                        width="180"
-                        align="center">
-                    </el-table-column>
-                    <el-table-column label="测试项" align="" width="800">
-                        <template slot-scope="scope">
-                            <el-checkbox checked @change="checked=>selectAll(checked,scope.row)">全部</el-checkbox>
-                            <span v-for="(option,index) in scope.row.options" :key=index>
-                                <span v-for="(value,key,index) in option" :key=index>
-                                    <el-checkbox v-model='option[key]'>{{key}}</el-checkbox>
-                                    &nbsp;&nbsp;
-                                </span>
+            <!-- 量产云平台 -->
+            <el-table
+                v-if="this.$route.query.projectName == '量产云平台'"
+                :data="webAutoTests"
+                style="width: 100%">
+                <el-table-column
+                    prop="role"
+                    label="角色"
+                    width="180"
+                    align="center">
+                </el-table-column>
+                <el-table-column label="测试项" align="" width="800">
+                    <template slot-scope="scope">
+                        <el-checkbox checked @change="checked=>mpcloudSelectAll(checked,scope.row)">全部</el-checkbox>
+                        <span v-for="(option,index) in scope.row.options" :key=index>
+                            <span v-for="(value,key,index) in option" :key=index>
+                                <el-checkbox v-model='option[key]'>{{key}}</el-checkbox>
+                                &nbsp;&nbsp;
                             </span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column align="" v-if="this.$route.query.projectName == '量产云平台'">
-                        <template slot="header">
-                            <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
-                        </template>
-                        <template slot-scope="scope">
-                            <el-button type="primary" @click="testMpcloudCase(scope.row)" :loading="loading">{{testBtn}}</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </template>
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="">
+                    <template slot="header">
+                        <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button type="primary" @click="testMpcloudCase(scope.row)" :loading="loading">{{testBtn}}</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 其他 -->
+            <div v-else>
+                <span style="font-size:17px">即将发布，敬请期待</span>
+            </div>
         </el-collapse-item>
         <!-- 单元测试 -->
         <el-collapse-item title="单元测试" name="2" style="font-size:17px">
@@ -61,7 +65,7 @@
                     :value="item.value">
                     </el-option>
                 </el-select>
-                <el-button v-if="this.$route.query.projectId" type="primary" @click="apiManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
+                <el-button v-if="this.$route.query.projectId" type="primary" @click="webManagerTest" style="float: right;" :loading="loading">{{testBtn}}</el-button>
                 <br><br>
             </div>
             <!-- web列表 -->
@@ -318,8 +322,8 @@ export default {
         go_back() {
             this.$router.back(-1)
         },
-        // 全选
-        selectAll(checked, row) {
+        // 自动化测试-量产云平台-全选
+        mpcloudSelectAll(checked, row) {
             // console.log(row['options'])
             var options = row['options']
             var option
@@ -331,7 +335,7 @@ export default {
                 }
             }
         },
-        // 量产云平台单元测试
+        // 自动化测试-量产云平台-单元测试
         testMpcloudCase(row) {
             this.$confirm('1 请确认是否已打开浏览器服务端 </br>2 测试大约需几分钟请耐心等待 </br>3 即将开始 '+ (row['role']) + ' 测试', '提示', {
                 confirmButtonText: '确定',
@@ -348,7 +352,7 @@ export default {
                     this.testBtn='测试中...'
                     this.axios({
                         baseURL:this.url,
-                        url:'/api/v1/webAutoTest/',
+                        url:'/api/v1/webAutoTest/?projectId='+this.projectId,
                         method:'patch',
                         data:row,
                     }).then(response=>{
@@ -387,7 +391,7 @@ export default {
                 }).catch(() => {      
             });
         },
-        // 量产云平台整体测试
+        // 自动化测试-量产云平台-整体测试
         testMpcloud() {
             this.$confirm('1 请确认是否已打开浏览器服务端 </br> 2 测试大约需30分钟请耐心等待 </br>3 即将开始全部角色测试', '提示', {
                 confirmButtonText: '确定',
@@ -404,7 +408,7 @@ export default {
                     this.testBtn='测试中...'
                     this.axios({
                         baseURL:this.url,
-                        url:'/api/v1/webAutoTest/',
+                        url:'/api/v1/webAutoTest/?projectId='+this.projectId,
                         method:'post',
                         data:this.webAutoTests,
                     }).then(response=>{
@@ -443,11 +447,11 @@ export default {
                 }).catch(() => {         
             });
         },
-        // 获取自动化数据
+        // 自动化测试-量产云平台-获取数据
         get_webAutotest() {
             var url = 'api/v1/webAutoTest/'
             if (this.$route.query.projectName) {
-                url = url +'?project='+this.$route.query.projectName
+                url = url +'?projectId='+this.projectId
             }
             var params_data = {'userId':this.userId,'token':this.token}
             this.axios({
@@ -468,7 +472,7 @@ export default {
             })
         },
         // 单元测试-运行测试
-        apiManagerTest() {
+        webManagerTest() {
             this.$confirm('1 请确认是否已打开浏览器服务端 </br> \
                             2 测试大约需几分钟请耐心等待 </br> \
                             3 即将开始单元测试', '提示', {
