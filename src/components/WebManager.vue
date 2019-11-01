@@ -14,36 +14,46 @@
         <!-- 自动化测试 -->
         <el-collapse-item title="自动化测试" name="1" style="font-size:17px">
             <!-- 量产云平台 -->
-            <el-table
-                v-if="this.$route.query.projectName == '量产云平台'"
-                :data="webAutoTests"
-                style="width: 100%">
-                <el-table-column
-                    prop="role"
-                    label="角色"
-                    width="180"
-                    align="center">
-                </el-table-column>
-                <el-table-column label="测试项" align="" width="800">
-                    <template slot-scope="scope">
-                        <el-checkbox checked @change="checked=>mpcloudSelectAll(checked,scope.row)">全部</el-checkbox>
-                        <span v-for="(option,index) in scope.row.options" :key=index>
-                            <span v-for="(value,key,index) in option" :key=index>
-                                <el-checkbox v-model='option[key]'>{{key}}</el-checkbox>
-                                &nbsp;&nbsp;
+            <div v-if="this.$route.query.projectName == '量产云平台'">
+                <!-- 量产云平台地址： -->
+                <el-select v-model="mpcloudUrl" placeholder="请选择云平台URL">
+                    <el-option
+                        v-for="item in mpcloudUrl_options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-table
+                    :data="webAutoTests"
+                    style="width: 100%">
+                    <el-table-column
+                        prop="role"
+                        label="角色"
+                        width="180"
+                        align="center">
+                    </el-table-column>
+                    <el-table-column label="测试项" align="" width="800">
+                        <template slot-scope="scope">
+                            <el-checkbox checked @change="checked=>mpcloudSelectAll(checked,scope.row)">全部</el-checkbox>
+                            <span v-for="(option,index) in scope.row.options" :key=index>
+                                <span v-for="(value,key,index) in option" :key=index>
+                                    <el-checkbox v-model='option[key]'>{{key}}</el-checkbox>
+                                    &nbsp;&nbsp;
+                                </span>
                             </span>
-                        </span>
-                    </template>
-                </el-table-column>
-                <el-table-column align="">
-                    <template slot="header">
-                        <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
-                    </template>
-                    <template slot-scope="scope">
-                        <el-button type="primary" @click="testMpcloudCase(scope.row)" :loading="loading">{{testBtn}}</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
+                        </template>
+                    </el-table-column>
+                    <el-table-column align="">
+                        <template slot="header">
+                            <el-button type="primary" @click="testMpcloud()" align="center" :loading="loading">{{testBtn}}</el-button>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-button type="primary" @click="testMpcloudCase(scope.row)" :loading="loading">{{testBtn}}</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
             <!-- 其他 -->
             <div v-else>
                 <span style="font-size:17px">即将发布，敬请期待</span>
@@ -134,7 +144,7 @@
                 <el-button type="primary" :disabled="isNextDisabled" @click="get_next">下一页</el-button>
             </div>
         </el-collapse-item>
-         <!-- 脚本测试 -->
+        <!-- 脚本测试 -->
         <el-collapse-item title="脚本测试" name="3" style="font-size:17px">
             <!-- 添加脚本 -->
             <div>
@@ -295,6 +305,16 @@ export default {
             appSrcCases: [],
             webAutoTests: [],
             project_options: [],
+            mpcloudUrl:'http://172.16.9.229:18080',
+            mpcloudUrl_options:[
+                {
+                'lable':'https://mpstest.longsys.com',
+                'value':'https://mpstest.longsys.com'
+                },{
+                'lable':'http://172.16.9.229:18080',
+                'value':'http://172.16.9.229:18080'
+                }
+            ],
             pre:'',
             next:'',
             isNextDisabled:false,
@@ -350,10 +370,14 @@ export default {
                     });
                     this.loading=true
                     this.testBtn='测试中...'
+                    var params_data={
+                        'url':this.mpcloudUrl
+                    }
                     this.axios({
                         baseURL:this.url,
                         url:'/api/v1/webAutoTest/?projectId='+this.projectId,
                         method:'patch',
+                        params:params_data,
                         data:row,
                     }).then(response=>{
                         // 判断是否成功
@@ -406,10 +430,14 @@ export default {
                     });
                     this.loading=true
                     this.testBtn='测试中...'
+                    var params_data={
+                        'url':this.mpcloudUrl
+                    }
                     this.axios({
                         baseURL:this.url,
                         url:'/api/v1/webAutoTest/?projectId='+this.projectId,
                         method:'post',
+                        params:params_data,
                         data:this.webAutoTests,
                     }).then(response=>{
                         // 判断是否成功
@@ -1259,10 +1287,13 @@ export default {
     created() {
         this.get_webManagers()
         this.get_webAutotest()
-         this.get_appSrcCases()
+        this.get_appSrcCases()
         // 获取项目列表
         if (!this.$route.query.projectId) {
             this.get_projects()
+        }
+        if (this.userId==2) {
+            this.mpcloudUrl = 'https://mpstest.longsys.com'
         }
     },
     filters:{
